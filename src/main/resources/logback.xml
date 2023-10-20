@@ -1,0 +1,34 @@
+<configuration>
+    <appender name="ECS" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="co.elastic.logging.logback.EcsEncoder">
+            <serviceName>notifications</serviceName>
+        </encoder>
+    </appender>
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <!-- Optionally change minimum Event level. Default for Events is ERROR -->
+        <minimumEventLevel>WARN</minimumEventLevel>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="ECS"/>
+        <appender-ref ref="Sentry"/>
+    </root>
+    <logger name="com.nlmk.adp" level="DEBUG" additivity="false">
+        <appender-ref ref="ECS"/>
+    </logger>
+    <!-- Интеграция сервис слежения -> notifications по ресту -->
+    <logger name="com.nlmk.adp.controller.VehicleController" level="TRACE" additivity="false">
+        <appender-ref ref="ECS"/>
+    </logger>
+    <!-- Кафка слушатели -->
+    <logger name="com.nlmk.adp.kafka" level="TRACE" additivity="false">
+        <appender-ref ref="ECS"/>
+    </logger>
+    <!-- Обработчики сообщений из кафка топиков -->
+    <logger name="com.nlmk.adp.service.impl.kafka" level="TRACE" additivity="false">
+        <appender-ref ref="ECS"/>
+    </logger>
+    <!-- Аспект отправки сообщений в кафку -->
+    <logger name="com.nlmk.adp.service.impl.kafka.KafkaSenderService" level="TRACE" additivity="false">
+        <appender-ref ref="ECS"/>
+    </logger>
+</configuration>

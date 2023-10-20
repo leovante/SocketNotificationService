@@ -1,0 +1,99 @@
+server:
+  port: ${SERVER_PORT:7070}
+
+spring:
+  application:
+    name: nlmk-mes-notifications
+  mvc:
+    locale: ${LOCALE:ru_RU}
+    locale-resolver: fixed
+  messages:
+    basename: i18n/messages
+  zipkin:
+    enabled: ${ZIPKIN_ENABLED:false}
+    baseUrl: ${ZIPKIN_BASE_URL}
+  sleuth:
+    enabled: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: ${SHOW_SQL:true}
+  security:
+    oauth2:
+      client:
+        registration:
+          client:
+            provider: keycloak
+            client-id: ${KEYCLOAK_CLIENT_ID:notifications-id}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:XkRTXmXhQx7KzWHkL7g4kYPHew9NOhmo}
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/auth
+            token-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/token
+  cache:
+    caffeine:
+      nsi:
+        expireAfterWrite: 60  # в минутах
+
+keycloak:
+  enabled: true
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}
+  realm: ${KEYCLOAK_REALM:nlmk-local}
+  resource: ${springdoc.swagger-ui.oauth.client-id}
+  bearer-only: true
+  cors: true
+  cors-allowed-headers: '*'
+  cors-allowed-methods: '*'
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: ${KEYCLOAK_CLIENT_ID:notifications-id}
+      client-secret: ${KEYCLOAK_CLIENT_SECRET:1VXjz363YasrBia2LgDZfvEOA0ELxOlu}
+
+
+logging:
+  aop-debug-rest: ${AOP_DEBUG_REST:false}
+  aop-debug-kafka: ${AOP_DEBUG_KAFKA:false}
+  aop-debug-service: ${AOP_DEBUG_SERVICE:false}
+  level:
+    root: ${LOG_LEVEL:INFO}
+  config: classpath:logback-local.xml
+
+management:
+  endpoints:
+    web:
+      exposure.include: ${MONITORING_ENDPOINTS:health, info, prometheus}
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  info:
+    build:
+      enabled: true
+    git:
+      mode: "full"
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENVIRONMENT:}
+opentracing:
+  jaeger:
+    enabled: false
+    udp-sender:
+      host: ''
+      port: ''
+    service-name: nlmk-mes-notifications
+
+locale:
+  lang: ru
+  country: RU

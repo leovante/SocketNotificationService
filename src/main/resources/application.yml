@@ -1,0 +1,101 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog-master.xml
+  application:
+    name: nlmk-mes-notifications
+  mvc:
+    locale: ${LOCALE:ru_RU}
+    locale-resolver: fixed
+  messages:
+    basename: i18n/messages
+  zipkin:
+    enabled: ${ZIPKIN_ENABLED:false}
+    baseUrl: ${ZIPKIN_BASE_URL}
+  sleuth:
+    enabled: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: ${SHOW_SQL:false}
+  security:
+    oauth2:
+      client:
+        registration:
+          client:
+            provider: keycloak
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            authorization-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth
+            token-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
+  cache:
+    caffeine:
+      nsi:
+        expireAfterWrite: 60  # в минутах
+
+keycloak:
+  enabled: true
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ${KEYCLOAK_REALM}
+  resource: ${KEYCLOAK_CLIENT_ID}
+  bearer-only: true
+  cors: true
+  cors-allowed-headers: '*'
+  cors-allowed-methods: '*'
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    oauth:
+      client-id: ${KEYCLOAK_CLIENT_ID}
+      client-secret: ${KEYCLOAK_CLIENT_SECRET}
+
+logging:
+  aop-debug-rest: ${AOP_DEBUG_REST:false}
+  aop-debug-kafka: ${AOP_DEBUG_KAFKA:false}
+  aop-debug-service: ${AOP_DEBUG_SERVICE:false}
+  level:
+    root: ${LOG_LEVEL:INFO}
+  config: ${LOGBACK_CONFIG_PATH:}
+
+management:
+  endpoints:
+    web:
+      exposure.include: ${MONITORING_ENDPOINTS:health, info, metrics, prometheus}
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  info:
+    build:
+      enabled: true
+    git:
+      mode: "full"
+sentry:
+  dsn: ${SENTRY_DSN}
+  environment: ${SENTRY_ENVIRONMENT}
+opentracing:
+  jaeger:
+    enabled: ${JAEGER_ENABLED:false}
+    udp-sender:
+      host: ${JAEGER_AGENT_HOST}
+      port: ${JAEGER_AGENT_PORT}
+    service-name: nlmk-mes-notifications
+
+locale:
+  lang: ru
+  country: RU
+
+async:
+  enabled: true

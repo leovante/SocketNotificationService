@@ -1,0 +1,32 @@
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %highlight(%-5level) [%thread] %logger{0}: %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+    </root>
+    <logger name="com.nlmk.adp" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <!-- Интеграция сервис слежения -> notifications по ресту -->
+    <logger name="com.nlmk.adp.controller.VehicleController" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <!-- Кафка слушатели -->
+    <logger name="com.nlmk.adp.kafka" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <!-- Обработчики сообщений из кафка топиков -->
+    <logger name="com.nlmk.adp.service.impl.kafka" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <!-- Аспект отправки сообщений в кафку -->
+    <logger name="com.nlmk.adp.service.impl.kafka.KafkaSenderService" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <logger name="com.nlmk.adp.service.FeedingStackSenderToKafkaService" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+</configuration>
