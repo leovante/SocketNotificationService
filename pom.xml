@@ -10,15 +10,15 @@
         <relativePath />
     </parent>
 
-    <groupId>com.nlmk.mes.khp</groupId>
-    <artifactId>nlmk-mes-khp-notifications</artifactId>
+    <groupId>com.nlmk.mes</groupId>
+    <artifactId>nlmk-mes-notifications</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <scm>
-        <url>https://git.nlmk.com/mes-adp/nlmk-mes-khp-notifications</url>
-        <connection>scm:git:https://git.nlmk.com/mes-adp/nlmk-mes-khp-notifications.git</connection>
+        <url>https://git.nlmk.com/mes-adp/nlmk-mes-notifications</url>
+        <connection>scm:git:https://git.nlmk.com/mes-adp/nlmk-mes-notifications.git</connection>
         <tag>HEAD</tag>
     </scm>
-    <name>nlmk-mes-khp-notifications</name>
+    <name>nlmk-mes-notifications</name>
 
     <properties>
         <java.version>17</java.version>
