@@ -189,10 +189,11 @@
                 "name": "types",
                 "symbols": [
                   "APPROACH",
-                  "DISCHARGE"
+                  "DISCHARGE",
+                  "EMAIL"
                 ]
               },
-              "doc": "Тип уведомления, участвует в дифференциации уведомления цветом, звуком, иным оформлением на FE"
+              "doc": "Тип уведомления"
             },
             {
               "name": "AcceptRoles",
