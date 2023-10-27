@@ -1,0 +1,35 @@
+{
+  "defaults": {
+    "advice": "Обратитесь к администратору"
+  },
+  "allowRules": [
+    {
+      "id": "all-api",
+      "subj": {
+        "eq": [
+          {
+            "attribute": "Roles",
+            "comparison": "eq",
+            "value": "*"
+          }
+        ]
+      },
+      "obj": {
+        "eq": [
+          {
+            "attribute": "Id",
+            "comparison": "eq",
+            "value": "/api/**"
+          }
+        ]
+      },
+      "act": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    }
+  ]
+}

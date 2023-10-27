@@ -1,0 +1,231 @@
+{
+    "type": "record",
+    "name": "NotificationVer1",
+    "namespace": "nlmk.l3.mesadp",
+    "doc": "Система уведомлений коксохимического производства",
+    "fields": [
+        {
+            "name": "ts",
+            "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            },
+            "doc": "Дата-Время события с миллисекундной точностью"
+        },
+        {
+            "name": "op",
+            "type": {
+                "type": "enum",
+                "name": "EnumOp",
+                "symbols": [
+                    "U",
+                    "D",
+                    "I"
+                ]
+            },
+            "doc": "Вид операции [U]pdate, [D]elete, [I]nsert"
+        },
+        {
+            "name": "pk",
+            "type": {
+                "type": "record",
+                "name": "PkType",
+                "fields": [
+                    {
+                        "name": "systemCode",
+                        "type": "string",
+                        "doc": "Код внешней системы"
+                    },
+                    {
+                        "name": "date",
+                        "type": "string",
+                        "doc": "Календарный день, за который передаются метрики"
+                    }
+                ]
+            },
+            "doc": "Первичный ключ записи в виде структуры"
+        },
+        {
+            "name": "sys",
+            "type": [
+                "null",
+                {
+                    "type": "record",
+                    "name": "Sys",
+                    "namespace": "nlmk",
+                    "fields": [
+                        {
+                            "name": "seqID",
+                            "type": "long",
+                            "doc": "Монотонно возрастающий счетчик для проверки или восстановления оригинальной последовательности",
+                            "default": -1
+                        },
+                        {
+                            "name": "traceID",
+                            "type": "string",
+                            "doc": "Сквозной Trace ID (обычно UUID)",
+                            "default": ""
+                        }
+                    ]
+                }
+            ],
+            "doc": "Системные поля, заполняемые источником",
+            "default": null
+        },
+        {
+            "name": "metadata",
+            "type": [
+                "null",
+                {
+                    "type": "record",
+                    "name": "Metadata",
+                    "fields": [
+                        {
+                            "name": "kafkaKeySchemaID",
+                            "type": "int",
+                            "doc": "Версия схемы ключа",
+                            "default": -1
+                        },
+                        {
+                            "name": "kafkaValueSchemaID",
+                            "type": "int",
+                            "doc": "Версия схемы значения",
+                            "default": -1
+                        },
+                        {
+                            "name": "kafkaKey",
+                            "type": "string",
+                            "doc": "Ключ в Kafka",
+                            "default": ""
+                        },
+                        {
+                            "name": "kafkaPartition",
+                            "type": "int",
+                            "doc": "Номер партиции",
+                            "default": -1
+                        },
+                        {
+                            "name": "kafkaOffset",
+                            "type": "long",
+                            "doc": "Offset в Kafka",
+                            "default": -1
+                        },
+                        {
+                            "name": "kafkaTimestamp",
+                            "type": "string",
+                            "doc": "Время сообщения в Kafka",
+                            "default": ""
+                        },
+                        {
+                            "name": "kafkaTopic",
+                            "type": "string",
+                            "doc": "Имя топика",
+                            "default": ""
+                        },
+                        {
+                            "name": "kafkaHeaders",
+                            "type": [
+                                "null",
+                                {
+                                    "type": "map",
+                                    "values": "string"
+                                }
+                            ],
+                            "doc": "Заголовки в Kafka",
+                            "default": null
+                        }
+                    ]
+                }
+            ],
+            "doc": "Мета структура, заполняется Подписчиком после чтения",
+            "default": null
+        },
+        {
+            "name": "data",
+            "doc": "Данные",
+            "type": [
+                "null",
+                {
+                    "type": "record",
+                    "name": "RecordData",
+                    "namespace": "nlmk.l3.mesadp.db.notification.service.ver0",
+                    "fields": [
+                        {
+                            "name": "EventUUID",
+                            "type": {
+                                "type": "string",
+                                "logicalType": "uuid"
+                            },
+                            "doc": "UUID из Kafka"
+                        },
+                        {
+                            "name": "EventId",
+                            "type": "int",
+                            "doc": "Идентификатор уведомления, к которому привязано событие"
+                        },
+                        {
+                            "name": "EventTimestamp",
+                            "type": "string",
+                            "doc": "Время события в ISO 8601:2004 с указанием TZ"
+                        },
+                        {
+                            "name": "NotificationHeader",
+                            "type": "string",
+                            "doc": "Название уведомления, отображаемое в заголовке, кратко передает суть сообщения"
+                        },
+                        {
+                            "name": "ShortUrl",
+                            "type": "string",
+                            "doc": "Ссылка на ту часть системы, в которую пользователь должен перейти при клике на уведомление"
+                        },
+                        {
+                            "name": "NotificatonBody",
+                            "type": "string",
+                            "doc": "Полный текст уведомления"
+                        },
+                        {
+                            "name": "NotificationType",
+                            "type": {
+                                "type": "enum",
+                                "name": "types",
+                                "symbols": [
+                                    "APPROACH",
+                                    "DISCHARGE"
+                                ]
+                            },
+                            "doc": "Тип уведомления, участвует в дифференциации уведомления цветом, звуком, иным оформлением на FE"
+                        },
+                        {
+                            "name": "AcceptRoles",
+                            "type": {
+                                "type": "array",
+                                "items": "string"
+                            },
+                            "doc": "Роли пользователей, которые получат уведомление (увидят его)"
+                        },
+                        {
+                            "name": "RejectRoles",
+                            "type": {
+                                "type": "array",
+                                "items": "string"
+                            },
+                            "doc": "Роли пользователей, которые НЕ получат уведомление (не увидят его)"
+                        },
+                         {
+                            "name": "KeycloakUserId",
+                            "type": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "logicalType": "uuid"
+                                }
+                            },
+                            "doc": "UUID пользователей из KeyCloack для адресных уведомлений"
+                        }
+                    ]
+                }
+            ],
+            "default": null
+        }
+    ]
+}

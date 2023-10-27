@@ -38,13 +38,34 @@ spring:
             authorization-grant-type: client_credentials
         provider:
           keycloak:
-            authorization-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/auth
-            token-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/token
+            authorization-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/auth
+            token-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/token
   cache:
     caffeine:
       nsi:
         expireAfterWrite: 60  # в минутах
+  kafka:
+    enabled: false
+    consumer:
+      topic:
+        notification-messsage: ${NLMK_MES_KAFKA_MESSAGE}
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      auto-offset-reset: ${KAFKA_OFFSET_RESET:latest}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      group-id: ${KAFKA_GROUP_ID}
+      security:
+        protocol: ${KAFKA_SECURITY_PROTOCOL}
+      ssl:
+        key-password: ${KAFKA_SSL_KEY_PASSWORD}
+        key-store-password: ${KAFKA_SSL_KEYSTORE_PASSWORD}
+        trust-store-password: ${KAFKA_SSL_TRUSTSTORE_PASSWORD}
+        key-store-location: file:${KAFKA_SSL_KEYSTORE}
+        trust-store-location: file:${KAFKA_SSL_TRUSTSTORE}
 
+security:
+  enable: true
+  path-policy: ${PATH_POLICY:policy/security-policy.json}
 keycloak:
   enabled: true
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}
