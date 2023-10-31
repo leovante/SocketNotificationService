@@ -1,16 +1,13 @@
 {
   "type": "record",
-  "name": "NotificationVer1",
-  "namespace": "nlmk.adp.khc",
-  "doc": "Система уведомлений коксохимического производства",
+  "name": "DbUserNotificationVer0",
+  "namespace": "nlmk.l3.mesadp",
+  "doc": "Пользовательские уведомления в системе МЕС АДП",
   "fields": [
     {
       "name": "ts",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      },
-      "doc": "Дата-Время события с миллисекундной точностью"
+      "type": "string",
+      "doc": "Время события для уведомления в ISO 8601:2004 с указанием TZ"
     },
     {
       "name": "op",
@@ -30,16 +27,15 @@
       "type": {
         "type": "record",
         "name": "PkType",
+        "namespace": "nlmk.l3.mesadp.db.user.notification.ver0",
         "fields": [
           {
-            "name": "systemCode",
-            "type": "string",
-            "doc": "Код внешней системы"
-          },
-          {
-            "name": "date",
-            "type": "string",
-            "doc": "Календарный день, за который передаются метрики"
+            "name": "id",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            },
+            "doc": "Идентификатор события  (UUID, генерируется отправителем)",
           }
         ]
       },
@@ -148,71 +144,51 @@
         {
           "type": "record",
           "name": "RecordData",
+          "namespace": "nlmk.l3.mesadp.db.user.notification.ver0",
           "fields": [
             {
-              "name": "EventUUID",
-              "type": {
-                "type": "string",
-                "logicalType": "uuid"
-              },
-              "doc": "UUID из Kafka"
-            },
-            {
-              "name": "EventId",
-              "type": "int",
-              "doc": "Идентификатор уведомления, к которому привязано событие"
-            },
-            {
-              "name": "EventTimestamp",
-              "type": "string",
-              "doc": "Время события в ISO 8601:2004 с указанием TZ"
-            },
-            {
-              "name": "NotificationHeader",
+              "name": "header",
               "type": "string",
               "doc": "Название уведомления, отображаемое в заголовке, кратко передает суть сообщения"
             },
             {
-              "name": "ShortUrl",
-              "type": "string",
-              "doc": "Ссылка на ту часть системы, в которую пользователь должен перейти при клике на уведомление"
-            },
-            {
-              "name": "NotificatonBody",
+              "name": "body",
               "type": "string",
               "doc": "Полный текст уведомления"
             },
             {
-              "name": "NotificationType",
+              "name": "href",
+              "type": "string",
+              "doc": "Ссылка на ту часть системы, в которую пользователь должен перейти при клике на уведомление"
+            },
+            {
+              "name": "type",
               "type": {
                 "type": "enum",
-                "name": "types",
+                "name": "NotificationType",
                 "symbols": [
-                  "APPROACH",
-                  "DISCHARGE",
-                  "EMAIL"
+                  "INFO",
+                  "ATTENTION",
+                  "ALERT"
                 ]
               },
-              "doc": "Тип уведомления"
+              "doc": "Тип уведомления (по умолчанию INFO)",
+              "default": null,
             },
             {
-              "name": "AcceptRoles",
-              "type": {
-                "type": "array",
-                "items": "string"
-              },
-              "doc": "Роли пользователей, которые получат уведомление (увидят его)"
+              "name": "acceptRoles",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": "string"
+                }
+              ],
+              "default": null,
+              "doc": "Роли пользователей, которые получат уведомление (по умолчанию - все пользователи)"
             },
             {
-              "name": "RejectRoles",
-              "type": {
-                "type": "array",
-                "items": "string"
-              },
-              "doc": "Роли пользователей, которые НЕ получат уведомление (не увидят его)"
-            },
-            {
-              "name": "KeycloakUserIds",
+              "name": "acceptEmails",
               "type": {
                 "type": "array",
                 "items": {
@@ -220,7 +196,19 @@
                   "logicalType": "uuid"
                 }
               },
-              "doc": "UUID пользователей из KeyCloack для адресных уведомлений"
+              "doc": "E-Mail-ы пользователей для адресных уведомлений"
+            },
+            {
+              "name": "rejectRoles",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": "string"
+                }
+              ],
+              "doc": "Роли пользователей, которые НЕ получат уведомление, даже если попадают под условия accept",
+              "default": null
             }
           ]
         }
