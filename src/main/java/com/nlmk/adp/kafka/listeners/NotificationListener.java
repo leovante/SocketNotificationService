@@ -14,7 +14,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
-import nlmk.l3.mesadp.NotificationVer1;
+import com.nlmk.adp.services.NotificationsService;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * листенер сообщений по кафка.
@@ -24,6 +25,8 @@ import nlmk.l3.mesadp.NotificationVer1;
 @AllArgsConstructor
 @ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 public class NotificationListener {
+
+    private final NotificationsService notificationsService;
 
     /**
      * handleNotificationMessage.
@@ -46,14 +49,16 @@ public class NotificationListener {
             groupId = "${spring.kafka.consumer.group-id}",
             autoStartup = "true",
             containerFactory = "messageConsumerContainerFactory")
-    public void handleNotificationMessage(@Payload NotificationVer1 message,
-                                     @Header(RECEIVED_TOPIC) String topic,
-                                     @Header(RECEIVED_PARTITION_ID) String partitionId,
-                                     @Header(OFFSET) String offset,
-                                     @Header(RECEIVED_TIMESTAMP) Long timestamp,
-                                     @Header(TIMESTAMP_TYPE) String timestampType) {
-        log.info("Received aggregator task {}. Partition: {}. Offset: {}. Message: {}",
+    public void handleNotificationMessage(@Payload DbUserNotificationVer0 message,
+                                          @Header(RECEIVED_TOPIC) String topic,
+                                          @Header(RECEIVED_PARTITION_ID) String partitionId,
+                                          @Header(OFFSET) String offset,
+                                          @Header(RECEIVED_TIMESTAMP) Long timestamp,
+                                          @Header(TIMESTAMP_TYPE) String timestampType) {
+        log.info("Receive notification message {}. Partition: {}. Offset: {}. Message: {}",
                 topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
+
+        notificationsService.dispatch("msg");
 
     }
 

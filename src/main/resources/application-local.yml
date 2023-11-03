@@ -2,6 +2,8 @@ server:
   port: ${SERVER_PORT:7070}
 
 spring:
+  liquibase:
+    change-log: classpath:db/changelog-master.xml
   application:
     name: nlmk-mes-notifications
   mvc:
@@ -45,7 +47,7 @@ spring:
       nsi:
         expireAfterWrite: 60  # в минутах
   kafka:
-    enabled: false
+    enabled: true
     consumer:
       topic:
         notification-messsage: ${NLMK_MES_KAFKA_MESSAGE}
@@ -88,6 +90,7 @@ logging:
   aop-debug-service: ${AOP_DEBUG_SERVICE:false}
   level:
     root: ${LOG_LEVEL:INFO}
+    com.nlmk.adp: DEBUG
   config: classpath:logback-local.xml
 
 management:

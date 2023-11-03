@@ -18,7 +18,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import nlmk.l3.mesadp.NotificationVer1;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * Конфигурация получения собщений по кафка.
@@ -39,14 +39,14 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
      */
     @Qualifier("messageConsumerFactory")
     @Bean
-    public ConsumerFactory<String, NotificationVer1> messageConsumerFactory() {
+    public ConsumerFactory<String, DbUserNotificationVer0> messageConsumerFactory() {
         var conf = new HashMap<>(
                 this.common.buildConsumerProperties()
         );
         conf.putAll(this.buildProperties());
-        var factory = new DefaultKafkaConsumerFactory<String, NotificationVer1>(conf);
+        var factory = new DefaultKafkaConsumerFactory<String, DbUserNotificationVer0>(conf);
         var deserializer =
-                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(NotificationVer1.class, false));
+                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(DbUserNotificationVer0.class, false));
         factory.setValueDeserializer(deserializer);
 
         return factory;
@@ -62,10 +62,10 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
      */
     @SuppressWarnings("UnnecessaryParentheses")
     @Bean(name = "messageConsumerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, NotificationVer1>
+    public ConcurrentKafkaListenerContainerFactory<String, DbUserNotificationVer0>
             kafkaListenerContainerFactory(
-            ConsumerFactory<String, NotificationVer1> messageConsumerFactory) {
-        final ConcurrentKafkaListenerContainerFactory<String, NotificationVer1> factory =
+            ConsumerFactory<String, DbUserNotificationVer0> messageConsumerFactory) {
+        final ConcurrentKafkaListenerContainerFactory<String, DbUserNotificationVer0> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(messageConsumerFactory);
         factory.setErrorHandler(((exception, message) ->
