@@ -1,51 +1,68 @@
 package com.nlmk.adp.config;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nlmk.adp.services.interceptor_websocket.HttpHandshakeInterceptor;
+import com.nlmk.adp.services.interceptor_websocket.UserInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.session.Session;
+import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
+import org.springframework.session.web.socket.server.SessionRepositoryMessageInterceptor;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-import com.nlmk.adp.dto.StompPrincipal;
+import java.util.List;
+
 
 /**
  * WebSocketConfig.
  */
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> /*implements WebSocketMessageBrokerConfigurer*/ {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private SessionRepositoryMessageInterceptor sessionRepositoryMessageInterceptor;
+    @Autowired
+    private HttpHandshakeInterceptor handshakeInterceptor;
+    @Autowired
+    private UserInterceptor userInterceptor;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/user");
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry
+    protected void configureStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
+        stompEndpointRegistry
                 .addEndpoint("/ws/websocket")
-                .setHandshakeHandler(new CustomHandshakeHandler())
-                .setAllowedOrigins("*")
-        //      .withSockJS()
+                .addInterceptors(handshakeInterceptor)
+                .addInterceptors(sessionRepositoryMessageInterceptor)
+                /*.setHandshakeHandler(new DefaultHandshakeHandler(){//попытка создать юзера для метода simpUserRegistry
+                    @Override
+                    protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+                        if (request instanceof ServletServerHttpRequest r) {
+                            var session = r.getServletRequest().getSession(false);
+                            return session == null ? null : new StompPrincipal(session.getId());
+                        }
+                        return super.determineUser(request, wsHandler, attributes);
+                    }
+                })*/
+                .setAllowedOriginPatterns("*")
+                .withSockJS()
         ;
+        stompEndpointRegistry.addEndpoint("/hello");
     }
 
     @Override
@@ -59,17 +76,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         return false;
     }
 
-    class CustomHandshakeHandler extends DefaultHandshakeHandler {
-        // Custom class for storing principal
-        @Override
-        protected Principal determineUser(
-                ServerHttpRequest request,
-                WebSocketHandler wsHandler,
-                Map<String, Object> attributes
-        ) {
-            // Generate principal with UUID as name
-            return new StompPrincipal(UUID.randomUUID().toString());
-        }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.setInterceptors(userInterceptor);
     }
 
 }
