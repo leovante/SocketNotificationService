@@ -14,8 +14,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
-// import com.nlmk.adp.services.NotificationsService;
+import com.nlmk.adp.dto.DbUserNotificationVer0;
+import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
 
 /**
  * листенер сообщений по кафка.
@@ -26,7 +26,7 @@ import nlmk.l3.mesadp.DbUserNotificationVer0;
 @ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 public class NotificationListener {
 
-    //    private final NotificationsService notificationsService;
+        private final NotificationsDispatcher notificationsService;
 
     /**
      * handleNotificationMessage.
@@ -58,7 +58,7 @@ public class NotificationListener {
         log.info("Receive notification message {}. Partition: {}. Offset: {}. Message: {}",
                 topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
 
-        //        notificationsService.dispatch("msg");
+                notificationsService.dispatch(message);
 
     }
 

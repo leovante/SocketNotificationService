@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "kafkaTimestamp": "1212"
+  },
+  "data": {
+    "body": "body",
+    "header": "header",
+    "href": "href",
+    "acceptRoles": [
+      "admin",
+      "admin1"
+    ],
+    "rejectRoles": [
+      "operator"
+    ],
+    "acceptEmails": [
+      "test@gmk.com"
+    ]
+  }
+}

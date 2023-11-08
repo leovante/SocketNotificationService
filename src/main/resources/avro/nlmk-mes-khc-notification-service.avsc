@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "DbUserNotificationVer0",
-  "namespace": "nlmk.l3.mesadp",
+  "namespace": "com.nlmk.adp.dto",
   "doc": "Пользовательские уведомления в системе МЕС АДП",
   "fields": [
     {

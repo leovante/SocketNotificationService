@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class SocketMessageSenderImpl implements SocketMessageSender {
+public class SocketMessageSenderImpl implements SocketMessageSenderService {
 
     private final SimpMessagingTemplate template;
     private final SimpUserRegistry simpUserRegistry;

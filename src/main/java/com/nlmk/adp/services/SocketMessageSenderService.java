@@ -1,5 +1,5 @@
 package com.nlmk.adp.services;
 
-public interface SocketMessageSender {
+public interface SocketMessageSenderService {
     void send(String msg);
 }

@@ -65,9 +65,6 @@ spring:
         key-store-location: file:${KAFKA_SSL_KEYSTORE}
         trust-store-location: file:${KAFKA_SSL_TRUSTSTORE}
 
-security:
-  enable: true
-  path-policy: ${PATH_POLICY:policy/security-policy.json}
 keycloak:
   enabled: true
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}

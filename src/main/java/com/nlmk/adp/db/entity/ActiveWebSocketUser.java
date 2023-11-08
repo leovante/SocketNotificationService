@@ -1,4 +1,4 @@
-package com.nlmk.adp.entity;
+package com.nlmk.adp.db.entity;
 
 import lombok.*;
 
