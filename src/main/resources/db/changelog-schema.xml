@@ -22,36 +22,9 @@
             </column>
             <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления">
             </column>
-            <column name="type" type="VARCHAR(100)" remarks="Тип сообщения">
-            </column>
             <column name="expired_at" type="TIMESTAMP" remarks="Дата завершения">
             </column>
             <column name="href" type="VARCHAR(100)" remarks="Ссылка">
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet id="1.0-create-notification-emails-table" author="Dmitry Temnikov">
-        <preConditions>
-            <not>
-                <tableExists tableName="notification_emails"/>
-            </not>
-        </preConditions>
-        <createTable tableName="notification_emails" remarks="Уведомления по почте">
-            <column name="id" type="UUID" remarks="Уникальный идентификатор">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" remarks="Дата создания">
-            </column>
-            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления">
-            </column>
-            <column name="notification_id" type="UUID" remarks="Идентификатор уведомления">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="email" type="VARCHAR(100)" remarks="Электронная почта">
-            </column>
-            <column name="sending_status" type="VARCHAR(100)" remarks="Статус отправки">
-            </column>
-            <column name="sended_at" type="TIMESTAMP" remarks="Дата отправления">
             </column>
         </createTable>
     </changeSet>
@@ -62,52 +35,40 @@
             </not>
         </preConditions>
         <createTable tableName="notification_roles" remarks="Уведомления">
-            <column name="id" type="UUID" remarks="Уникальный идентификатор">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" remarks="Дата создания">
-            </column>
-            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления">
-            </column>
             <column name="notification_id" type="UUID" remarks="Идентификатор уведомления">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_notification_role"/>
             </column>
             <column name="role" type="VARCHAR(100)" remarks="Роль">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_notification_role"/>
             </column>
             <column name="role_type" type="VARCHAR(100)" remarks="Тип роли">
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="1.0-create-notification-user-done-table" author="Dmitry Temnikov">
+    <changeSet id="1.0-create-notification-user-success-table" author="Dmitry Temnikov">
         <preConditions>
             <not>
-                <tableExists tableName="notification_user_done"/>
+                <tableExists tableName="notification_user_success"/>
             </not>
         </preConditions>
-        <createTable tableName="notification_user_done" remarks="Уведомления">
-            <column name="id" type="UUID" remarks="Уникальный идентификатор">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" remarks="Дата создания">
-            </column>
-            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления">
-            </column>
+        <createTable tableName="notification_user_success" remarks="Уведомления">
             <column name="notification_id" type="UUID" remarks="Идентификатор уведомления">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_notification_email"/>
             </column>
-            <column name="sended_at" type="VARCHAR(100)" remarks="Дата отправки">
+            <column name="email" type="VARCHAR(100)" remarks="Почта">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_notification_email"/>
             </column>
-            <column name="sub" type="UUID" remarks="Уникальный код пользователя">
+            <column name="read_at" type="VARCHAR(100)" remarks="Дата прочтения">
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="1.0-create-invalid-notification-table" author="Dmitry Temnikov">
+    <changeSet id="1.0-create-invalid-notifications-table" author="Dmitry Temnikov">
         <preConditions>
             <not>
-                <tableExists tableName="invalid_notification"/>
+                <tableExists tableName="invalid_notifications"/>
             </not>
         </preConditions>
-        <createTable tableName="invalid_notification" remarks="Ошибки уведомлений">
+        <createTable tableName="invalid_notifications" remarks="Ошибки уведомлений">
             <column name="id" type="UUID" remarks="Уникальный идентификатор">
                 <constraints primaryKey="true"/>
             </column>
@@ -122,54 +83,22 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0-add-notification-emails-index" author="Dmitry Temnikov">
-        <createIndex indexName="notification-emails-email-idx" tableName="notification_emails">
-            <column name="email"/>
-        </createIndex>
-    </changeSet>
-
     <changeSet id="1.0-add-notification-roles-index" author="Dmitry Temnikov">
         <createIndex indexName="notification-roles-role-idx" tableName="notification_roles">
             <column name="role"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="1.0-add-notification-user-done-index" author="Dmitry Temnikov">
-        <createIndex indexName="notification-user-done-idx" tableName="notification_user_done">
-            <column name="sub"/>
+    <changeSet id="1.0-add-notification-user-success-index" author="Dmitry Temnikov">
+        <createIndex indexName="notification-user-success-email-idx" tableName="notification_user_success">
+            <column name="email"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="1.0-add-invalid-notification-index" author="Dmitry Temnikov">
-        <createIndex indexName="invalid-notification-idx" tableName="invalid_notification">
+    <changeSet id="1.0-add-invalid-notifications-index" author="Dmitry Temnikov">
+        <createIndex indexName="invalid-notifications-idx" tableName="invalid_notifications">
             <column name="raw_message"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="1.0-alter-notification_emails_fk" author="Dmitry Temnikov">
-        <sql>
-            ALTER TABLE notification_emails
-                ADD CONSTRAINT fk_notification_emails_notification
-                    FOREIGN KEY (notification_id) REFERENCES notification (id)
-                        ON DELETE SET NULL;
-        </sql>
-    </changeSet>
-
-    <changeSet id="1.0-alter-notification_roles_fk" author="Dmitry Temnikov">
-        <sql>
-            ALTER TABLE notification_roles
-                ADD CONSTRAINT fk_notification_roles_notification
-                    FOREIGN KEY (notification_id) REFERENCES notification (id)
-                        ON DELETE SET NULL;
-        </sql>
-    </changeSet>
-
-    <changeSet id="1.0-alter-notification_user_done_fk" author="Dmitry Temnikov">
-        <sql>
-            ALTER TABLE notification_roles
-                ADD CONSTRAINT fk_notification_user_done_notification
-                    FOREIGN KEY (notification_id) REFERENCES notification (id)
-                        ON DELETE SET NULL;
-        </sql>
-    </changeSet>
 </databaseChangeLog>
