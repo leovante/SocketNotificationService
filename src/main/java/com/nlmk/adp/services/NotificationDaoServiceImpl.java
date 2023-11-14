@@ -21,10 +21,12 @@ public class NotificationDaoServiceImpl implements NotificationDaoService {
     private final NotificationRoleRepository notificationRoleRepository;
     private final NotificationEmailRepository notificationEmailRepository;
 
+    @Override
     @Transactional
     public NotificationEntity save(NotificationDto model) {
         var entity = notificationDaoMapper.mapDtoToEntity(model);
         entity.setCreatedAt(OffsetDateTime.now());
+        entity.setExpiredAt(OffsetDateTime.now().plusDays(1));
 
         var snapshot = notificationRepository.save(entity);
 

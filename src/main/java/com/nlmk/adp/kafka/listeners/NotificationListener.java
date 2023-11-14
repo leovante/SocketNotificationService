@@ -1,5 +1,6 @@
 package com.nlmk.adp.kafka.listeners;
 
+import com.nlmk.adp.dto.NotificationCheck;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 /**
  * листенер сообщений по кафка.
@@ -24,6 +28,7 @@ import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
 @Service
 @AllArgsConstructor
 @ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
+@Validated
 public class NotificationListener {
 
         private final NotificationsDispatcher notificationsService;
@@ -49,7 +54,7 @@ public class NotificationListener {
             groupId = "${spring.kafka.consumer.group-id}",
             autoStartup = "true",
             containerFactory = "messageConsumerContainerFactory")
-    public void handleNotificationMessage(@Payload DbUserNotificationVer0 message,
+    public void handleNotificationMessage(@Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
                                           @Header(RECEIVED_TOPIC) String topic,
                                           @Header(RECEIVED_PARTITION_ID) String partitionId,
                                           @Header(OFFSET) String offset,

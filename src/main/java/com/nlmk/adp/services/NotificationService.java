@@ -5,5 +5,5 @@ import com.nlmk.adp.kafka.dto.NotificationDto;
 
 public interface NotificationService {
     void send(NotificationDto body);
-    void invalidate(DbUserNotificationVer0 body);
+    void invalidate(DbUserNotificationVer0 body, String reason);
 }

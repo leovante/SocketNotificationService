@@ -6,10 +6,6 @@ import com.nlmk.adp.services.mapper.NotificationDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
-import static java.util.Optional.ofNullable;
-
 @Service
 @AllArgsConstructor
 public class NotificationDispatcherImpl implements NotificationsDispatcher {
@@ -19,11 +15,6 @@ public class NotificationDispatcherImpl implements NotificationsDispatcher {
 
     @Override
     public void dispatch(DbUserNotificationVer0 notification) {
-        var data = notification.getData();
-        if (data.getBody() == null || data.getHeader() == null) {
-            notificationService.invalidate(notification);
-        }
-
         var dto = notificationDtoMapper.mapDataToDto(notification);
         notificationService.send(dto);
     }

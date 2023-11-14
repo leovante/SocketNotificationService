@@ -23,8 +23,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void invalidate(DbUserNotificationVer0 body) {
-        invalidNotificationsDaoService.save(ObjectMapperHelper.writeValueAsString(body));
+    public void invalidate(DbUserNotificationVer0 body, String reason) {
+        var snapshot = ObjectMapperHelper.getObjectMapper().valueToTree(body);
+        invalidNotificationsDaoService.save(snapshot, reason);
     }
 
 }

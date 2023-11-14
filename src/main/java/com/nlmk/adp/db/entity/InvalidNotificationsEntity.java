@@ -1,5 +1,7 @@
 package com.nlmk.adp.db.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
@@ -23,17 +25,17 @@ public class InvalidNotificationsEntity {
     private UUID id;
 
     @Column(name = "created_at")
-    private OffsetDateTime created_at;
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
-    private OffsetDateTime updated_at;
+    private OffsetDateTime updatedAt;
 
     @Column(name = "raw_message")
-    @Length(max = 4000)
-    private String raw_message;
+    @Convert(converter = RawMessageConverter.class)
+    private JsonNode rawMessage;
 
     @Column(name = "error_message")
-    @Length(max = 100)
-    private String error_message;
+    @Length(max = 8092)
+    private String errorMessage;
 
 }

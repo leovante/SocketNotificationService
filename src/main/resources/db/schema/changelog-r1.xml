@@ -79,9 +79,9 @@
             </column>
             <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления">
             </column>
-            <column name="raw_message" type="VARCHAR(4096)" remarks="Сообщение">
+            <column name="raw_message" type="VARCHAR(8092)" remarks="Сообщение">
             </column>
-            <column name="error_message" type="VARCHAR(100)" remarks="Сообщение ошибки">
+            <column name="error_message" type="VARCHAR(8092)" remarks="Сообщение ошибки">
             </column>
         </createTable>
     </changeSet>
