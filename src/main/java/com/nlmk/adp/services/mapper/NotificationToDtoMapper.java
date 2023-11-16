@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mapper(componentModel = "spring", uses = {DateMapper.class})
-public interface NotificationDtoMapper {
+public interface NotificationToDtoMapper {
 
     @Mapping(target = "header", source = "data.header")
     @Mapping(target = "body", source = "data.body")
@@ -23,13 +23,15 @@ public interface NotificationDtoMapper {
     @Mapping(target = "kafkaDt", source = "metadata.kafkaTimestamp")
     NotificationDto mapDataToDto(DbUserNotificationVer0 req);
 
+
+
     default List<RoleDto> mapRolesToDto(RecordData data) {
         var accRoles = data.getAcceptRoles();
         var rejRoles = data.getRejectRoles();
 
         return Stream.concat(
-                accRoles.stream().map(i -> new RoleDto(i, "accept")),
-                rejRoles.stream().map(i -> new RoleDto(i, "reject"))
+                accRoles.stream().map(i -> new RoleDto(i, RoleStatus.ACCEPT.toString())),
+                rejRoles.stream().map(i -> new RoleDto(i, RoleStatus.REJECT.toString()))
         ).collect(Collectors.toList());
     }
 

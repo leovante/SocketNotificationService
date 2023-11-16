@@ -2,7 +2,7 @@ package com.nlmk.adp.kafka.dispatcher;
 
 import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.services.NotificationService;
-import com.nlmk.adp.services.mapper.NotificationDtoMapper;
+import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class NotificationDispatcherImpl implements NotificationsDispatcher {
 
     private final NotificationService notificationService;
-    private final NotificationDtoMapper notificationDtoMapper;
+    private final NotificationToDtoMapper notificationDtoMapper;
 
     @Override
     public void dispatch(DbUserNotificationVer0 notification) {

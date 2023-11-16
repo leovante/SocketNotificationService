@@ -1,9 +1,6 @@
 package com.nlmk.adp.services;
 
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -11,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 
 @Component
-public class AuthService {
+public class SecurityService {
     // This method MUST return a UsernamePasswordAuthenticationToken instance, the spring security chain is testing it with 'instanceof' later on. So don't use a subclass of it or any other class
     public KeycloakAuthenticationToken getAuthenticatedOrFail(final String  token) throws AuthenticationException {
 //        if (username == null || username.trim().isEmpty()) {

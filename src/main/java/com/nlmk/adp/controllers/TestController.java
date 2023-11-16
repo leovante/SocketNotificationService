@@ -38,7 +38,7 @@ public class TestController {
     public ResponseEntity<String> postNotification(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {
-        notificationService.send(payload);
+        notificationService.sendToKafka(payload);
         return ok("\"Success\"");
     }
 

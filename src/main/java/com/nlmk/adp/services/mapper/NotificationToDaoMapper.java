@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface NotificationDaoMapper {
+public interface NotificationToDaoMapper {
 
     @Mapping(target = "kafkaDt", source = "kafkaDt")
     @Mapping(target = "notificationRolesEntities", expression = "java(mapRolesToEntity(dto))")

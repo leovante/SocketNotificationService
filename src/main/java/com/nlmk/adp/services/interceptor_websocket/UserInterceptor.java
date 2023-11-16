@@ -1,13 +1,12 @@
 package com.nlmk.adp.services.interceptor_websocket;
 
-import com.nlmk.adp.services.AuthService;
+import com.nlmk.adp.services.SecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -28,7 +27,7 @@ public class UserInterceptor extends ChannelInterceptorAdapter {
     @Autowired
     private SessionRepository<MapSession> repository;
     @Autowired
-    private AuthService authService;
+    private SecurityService authService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
