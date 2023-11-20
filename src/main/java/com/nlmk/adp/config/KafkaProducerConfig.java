@@ -1,8 +1,8 @@
 package com.nlmk.adp.config;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;

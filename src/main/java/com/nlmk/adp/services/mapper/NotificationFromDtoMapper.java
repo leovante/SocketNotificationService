@@ -1,9 +1,9 @@
 package com.nlmk.adp.services.mapper;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

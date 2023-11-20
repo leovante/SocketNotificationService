@@ -1,5 +1,6 @@
 package com.nlmk.adp.dto;
 
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Constraint;
