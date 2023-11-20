@@ -1,0 +1,32 @@
+{
+  "ts": "2023-11-17T11:05:10.512229",
+  "op": "I",
+  "pk": {
+    "id": "4291570c-3d74-47b6-92f5-f4246147c98b"
+  },
+  "sys": {
+    "seqID": 475,
+    "traceID": "e53323eb-86e4-4fe4-8df5-2478892cfcb2"
+  },
+  "metadata": {
+    "kafkaKeySchemaID": 3,
+    "kafkaValueSchemaID": 5,
+    "kafkaKey": "639dccd7-6eb1-42c1-a3c3-df649bed4afd",
+    "kafkaPartition": 3,
+    "kafkaOffset": 983,
+    "kafkaTimestamp": "2023-11-17T11:05:10.514130",
+    "kafkaTopic": "topic_4",
+    "kafkaHeaders": null
+  },
+  "data": {
+    "header": "Прибывающий поезд",
+    "body": "Поезд 238194958 прибыл на станцию 298519851",
+    "href": "/dischargeVehiclesV2#?mode=KHC",
+    "type": "ALERT",
+    "acceptRoles": null,
+    "acceptEmails": [
+      "makarenko.a.a.@nlmk.com"
+    ],
+    "rejectRoles": null
+  }
+}
