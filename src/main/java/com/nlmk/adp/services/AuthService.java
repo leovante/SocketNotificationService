@@ -1,19 +1,27 @@
 package com.nlmk.adp.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nlmk.adp.dto.KeyckloakUserDto;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.Base64;
+import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class AuthService {
+
+    private final ObjectMapper mapper;
     // This method MUST return a UsernamePasswordAuthenticationToken instance, the spring security chain is testing it with 'instanceof' later on. So don't use a subclass of it or any other class
-    public KeycloakAuthenticationToken getAuthenticatedOrFail(final String  token) throws AuthenticationException {
+
+    @SneakyThrows
+    public KeycloakAuthenticationToken getAuthenticatedOrFail(final String token) throws AuthenticationException {
 //        if (username == null || username.trim().isEmpty()) {
 //            throw new AuthenticationCredentialsNotFoundException("Username was null or empty.");
 //        }
@@ -26,10 +34,17 @@ public class AuthService {
 //        }
 
         // null credentials, we do not pass the password along
+
+        var decoder = Base64.getDecoder();
+        String[] chunks = token.split("\\.");
+        String payload = new String(decoder.decode(chunks[1]));
+        KeyckloakUserDto user = mapper.readValue(payload, KeyckloakUserDto.class);
+        Set<String> roles = user.getResource_access().getAccount().getRoles();
+
         return new KeycloakAuthenticationToken(
-                null,
-                false,
-                Collections.singleton((GrantedAuthority) () -> "USER") // MUST provide at least one role
-        );
+                new SimpleKeycloakAccount(new KeycloakPrincipal<>(user.getScope(), null),
+                        roles,
+                        null),
+                false);
     }
 }

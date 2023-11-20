@@ -62,7 +62,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
         ;
-        stompEndpointRegistry.addEndpoint("/hello");
+//        stompEndpointRegistry.addEndpoint("/hello");
     }
 
     @Override

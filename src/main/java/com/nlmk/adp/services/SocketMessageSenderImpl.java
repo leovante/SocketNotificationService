@@ -16,25 +16,21 @@ public class SocketMessageSenderImpl implements SocketMessageSender {
     private final SimpMessagingTemplate template;
     private final SimpUserRegistry simpUserRegistry;
     private final MapSessionRepository sessionRepository;
+    private final String CUSTOM_TOPIC = "/topic/hello";
 
     @Override
     public void send(String msg) {
-        /*var users = simpUserRegistry
-                .getUsers()
-                .stream()
-                .map(SimpUser::getName)
-                .collect(Collectors.toList());*/
-
         var users = simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains("/topic/greetings"))
+                .findSubscriptions(i -> i.getDestination().contains(CUSTOM_TOPIC))
                 .stream()
                 .map(SimpSubscription::getSession)
                 .map(SimpSession::getUser)
                 .map(SimpUser::getName)
                 .toList();
 
-        template.convertAndSendToUser("sessionRegistry.getAllPrincipals().get(0)", "/topic/hello", msg);
-        template.convertAndSend("/topic/hello", msg);
+        users.forEach(user ->
+                template.convertAndSendToUser(user, CUSTOM_TOPIC, msg)
+        );
     }
 
 }
