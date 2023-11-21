@@ -1,17 +1,21 @@
 package com.nlmk.adp.services;
 
+import java.time.OffsetDateTime;
+
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.db.repository.NotificationRoleRepository;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-
+/**
+ * NotificationDaoServiceImpl.
+ */
 @Service
 @AllArgsConstructor
 public class NotificationDaoServiceImpl implements NotificationDaoService {

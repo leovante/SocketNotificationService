@@ -1,8 +1,8 @@
 package com.nlmk.adp.config;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nlmk.adp.services.interceptor_websocket.HttpHandshakeInterceptor;
-import com.nlmk.adp.services.interceptor_websocket.UserInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
@@ -17,15 +17,15 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
-import java.util.List;
-
+import com.nlmk.adp.services.interceptor.websocket.HttpHandshakeInterceptor;
+import com.nlmk.adp.services.interceptor.websocket.UserInterceptor;
 
 /**
  * WebSocketConfig.
  */
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> /*implements WebSocketMessageBrokerConfigurer*/ {
+public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -49,9 +49,12 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
                 .addEndpoint("/ws/websocket")
                 .addInterceptors(handshakeInterceptor)
                 .addInterceptors(sessionRepositoryMessageInterceptor)
-                /*.setHandshakeHandler(new DefaultHandshakeHandler(){//попытка создать юзера для метода simpUserRegistry
+                // попытка создать юзера для метода simpUserRegistry
+                /* .setHandshakeHandler(new DefaultHandshakeHandler(){
                     @Override
-                    protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+                    protected Principal determineUser(ServerHttpRequest request,
+                                                      WebSocketHandler wsHandler,
+                                                      Map<String, Object> attributes) {
                         if (request instanceof ServletServerHttpRequest r) {
                             var session = r.getServletRequest().getSession(false);
                             return session == null ? null : new StompPrincipal(session.getId());

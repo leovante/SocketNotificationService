@@ -1,25 +1,21 @@
 package com.nlmk.adp.kafka.listeners;
 
-import com.nlmk.adp.dto.NotificationCheck;
+import javax.validation.Valid;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
-import static org.springframework.kafka.support.KafkaHeaders.OFFSET;
-import static org.springframework.kafka.support.KafkaHeaders.RECEIVED_PARTITION_ID;
-import static org.springframework.kafka.support.KafkaHeaders.RECEIVED_TIMESTAMP;
-import static org.springframework.kafka.support.KafkaHeaders.RECEIVED_TOPIC;
-import static org.springframework.kafka.support.KafkaHeaders.TIMESTAMP_TYPE;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.dto.DbUserNotificationVer0;
+import com.nlmk.adp.dto.NotificationCheck;
 import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 
 /**
  * листенер сообщений по кафка.
@@ -31,7 +27,7 @@ import javax.validation.Valid;
 @Validated
 public class NotificationListener {
 
-        private final NotificationsDispatcher notificationsService;
+    private final NotificationsDispatcher notificationsService;
 
     /**
      * handleNotificationMessage.
@@ -55,16 +51,14 @@ public class NotificationListener {
             autoStartup = "true",
             containerFactory = "messageConsumerContainerFactory")
     public void handleNotificationMessage(@Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
-                                          @Header(RECEIVED_TOPIC) String topic,
-                                          @Header(RECEIVED_PARTITION_ID) String partitionId,
-                                          @Header(OFFSET) String offset,
-                                          @Header(RECEIVED_TIMESTAMP) Long timestamp,
-                                          @Header(TIMESTAMP_TYPE) String timestampType) {
+                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                                          @Header(KafkaHeaders.RECEIVED_PARTITION_ID) String partitionId,
+                                          @Header(KafkaHeaders.OFFSET) String offset,
+                                          @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
+                                          @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType) {
         log.info("Receive notification message {}. Partition: {}. Offset: {}. Message: {}",
                 topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
-
-                notificationsService.dispatch(message);
-
+        notificationsService.dispatch(message);
     }
 
 }

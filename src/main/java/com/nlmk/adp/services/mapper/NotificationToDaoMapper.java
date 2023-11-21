@@ -1,21 +1,41 @@
 package com.nlmk.adp.services.mapper;
 
-import com.nlmk.adp.db.entity.*;
-import com.nlmk.adp.kafka.dto.NotificationDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import com.nlmk.adp.db.entity.NotificationEmailPk;
+import com.nlmk.adp.db.entity.NotificationEntity;
+import com.nlmk.adp.db.entity.NotificationRolesEntity;
+import com.nlmk.adp.db.entity.NotificationRolesPk;
+import com.nlmk.adp.db.entity.NotificationUserSuccessEntity;
+import com.nlmk.adp.kafka.dto.NotificationDto;
+
+/**
+ * NotificationToDaoMapper.
+ */
 @Mapper(componentModel = "spring")
 public interface NotificationToDaoMapper {
 
+    /**
+     * mapDtoToEntity.
+     *
+     * @param dto dto
+     * @return NotificationEntity
+     */
     @Mapping(target = "kafkaDt", source = "kafkaDt")
     @Mapping(target = "notificationRolesEntities", expression = "java(mapRolesToEntity(dto))")
     @Mapping(target = "notificationUserSuccessEntities", expression = "java(mapEmailsToEntity(dto))")
     NotificationEntity mapDtoToEntity(NotificationDto dto);
 
+    /**
+     * mapRolesToEntity.
+     *
+     * @param notificationDto notificationDto
+     * @return Set
+     */
     default Set<NotificationRolesEntity> mapRolesToEntity(NotificationDto notificationDto) {
         return notificationDto.roles().stream()
                 .map(dto -> {
@@ -30,6 +50,12 @@ public interface NotificationToDaoMapper {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * mapEmailsToEntity.
+     *
+     * @param notificationDto notificationDto
+     * @return Set
+     */
     default Set<NotificationUserSuccessEntity> mapEmailsToEntity(NotificationDto notificationDto) {
         return notificationDto.emails().stream()
                 .map(dto -> {
@@ -42,4 +68,5 @@ public interface NotificationToDaoMapper {
                 })
                 .collect(Collectors.toSet());
     }
+
 }

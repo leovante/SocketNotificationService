@@ -1,4 +1,8 @@
-package com.nlmk.adp.services.interceptor_websocket;
+package com.nlmk.adp.services.interceptor.websocket;
+
+import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
@@ -12,14 +16,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import javax.servlet.http.HttpSession;
-import java.util.Map;
-
-import static java.util.Optional.ofNullable;
-
+/**
+ * HttpHandshakeInterceptor.
+ */
 @Slf4j
 @Component
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
+
     private static final String SPRING_SESSION_ID_ATTR_NAME = "SPRING.SESSION.ID";
     private static final String CURRENT_SESSION = "org.springframework.session.SessionRepository.CURRENT_SESSION";
 
@@ -32,14 +35,15 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
 
-            var ctx2 = (KeycloakSecurityContext) servletRequest.getServletRequest().getAttribute(KeycloakSecurityContext.class.getName());
-//            var token = ctx2.getToken();
+            var ctx2 = (KeycloakSecurityContext) servletRequest.getServletRequest()
+                    .getAttribute(KeycloakSecurityContext.class.getName());
+            // var token = ctx2.getToken();
 
             HttpSession session = servletRequest.getServletRequest().getSession();
 
-            ofNullable(attributes.get(SPRING_SESSION_ID_ATTR_NAME))
+            Optional.ofNullable(attributes.get(SPRING_SESSION_ID_ATTR_NAME))
                     .orElseGet(() -> attributes.put(SPRING_SESSION_ID_ATTR_NAME, session.getId()));
-            ofNullable(attributes.get(CURRENT_SESSION))
+            Optional.ofNullable(attributes.get(CURRENT_SESSION))
                     .orElseGet(() -> attributes.put(CURRENT_SESSION, session.getId()));
 
             repository.save(new MapSession(session.getId()));
@@ -49,7 +53,16 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
         return true;
     }
 
+    /**
+     * afterHandshake.
+     *
+     * @param request the current request
+     * @param response the current response
+     * @param wsHandler the target WebSocket handler
+     * @param ex an exception raised during the handshake, or {@code null} if none
+     */
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                Exception ex) {
     }
+
 }

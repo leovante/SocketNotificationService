@@ -1,20 +1,25 @@
 package com.nlmk.adp.db.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static javax.persistence.FetchType.LAZY;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Length;
 
+/**
+ * NotificationEntity.
+ */
 @Data
 @Entity
 @Table(name = "notification")
@@ -53,12 +58,11 @@ public class NotificationEntity {
     @Column(name = "kafka_dt")
     private OffsetDateTime kafkaDt;
 
-
-    @OneToMany(mappedBy = "primaryKey.notificationId", fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "primaryKey.notificationId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private Set<NotificationRolesEntity> notificationRolesEntities;
 
-    @OneToMany(mappedBy = "primaryKey.notificationId", fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "primaryKey.notificationId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private Set<NotificationUserSuccessEntity> notificationUserSuccessEntities;
 

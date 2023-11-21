@@ -1,6 +1,7 @@
 package com.nlmk.adp.config;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
+import java.util.HashMap;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,16 +14,25 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import java.util.HashMap;
+import com.nlmk.adp.dto.DbUserNotificationVer0;
 
+/**
+ * Конфигурация kafka producer.
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "spring.kafka.producer")
 @ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 public class KafkaProducerConfig extends KafkaProperties.Producer {
+
     private final KafkaProperties common;
 
+    /**
+     * messageProducerFactory.
+     *
+     * @return ProducerFactory
+     */
     @Qualifier("messageProducerFactory")
     @Bean
     public ProducerFactory<String, DbUserNotificationVer0> messageProducerFactory() {
@@ -30,15 +40,23 @@ public class KafkaProducerConfig extends KafkaProperties.Producer {
                 this.common.buildProducerProperties()
         );
         conf.putAll(this.buildProperties());
-        DefaultKafkaProducerFactory<String, DbUserNotificationVer0> producerFactory = new DefaultKafkaProducerFactory<>(conf);
+        DefaultKafkaProducerFactory<String, DbUserNotificationVer0> producerFactory =
+                new DefaultKafkaProducerFactory<>(conf);
 
         return producerFactory;
     }
 
+    /**
+     * messageKafkaTemplate.
+     *
+     * @param producerFactory producerFactory
+     * @return KafkaTemplate
+     */
     @Qualifier("messageKafkaProducerTemplate")
     @Bean
     public KafkaTemplate<String, DbUserNotificationVer0> messageKafkaTemplate(
             @Qualifier("messageProducerFactory") ProducerFactory<String, DbUserNotificationVer0> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
+
 }

@@ -1,12 +1,20 @@
 package com.nlmk.adp.db.entity;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.Table;
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
-import java.util.UUID;
-
+/**
+ * NotificationRolesEntity.
+ */
 @Setter
 @Getter
 @Entity
@@ -24,15 +32,29 @@ public class NotificationRolesEntity {
     @ManyToOne
     private NotificationEntity notification;
 
-
+    /**
+     * NotificationRolesEntity.
+     */
     public NotificationRolesEntity() {
     }
 
+    /**
+     * NotificationRolesEntity.
+     *
+     * @param notificationId notificationId
+     * @param role role
+     * @param roleType roleType
+     */
     public NotificationRolesEntity(UUID notificationId, String role, String roleType) {
         this.primaryKey = new NotificationRolesPk(notificationId, role);
         this.roleType = roleType;
     }
 
+    /**
+     * setNotification.
+     *
+     * @param notification notification
+     */
     public void setNotification(NotificationEntity notification) {
         this.notification = notification;
         if (this.getPrimaryKey() == null) {
@@ -40,4 +62,5 @@ public class NotificationRolesEntity {
         }
         this.getPrimaryKey().setNotificationId(notification.getId());
     }
+
 }

@@ -9,6 +9,9 @@ import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * SocketMessageSenderImpl.
+ */
 @Service
 @AllArgsConstructor
 public class SocketMessageSenderImpl implements SocketMessageSenderService {
@@ -19,7 +22,7 @@ public class SocketMessageSenderImpl implements SocketMessageSenderService {
 
     @Override
     public void send(String msg) {
-        /*var users = simpUserRegistry
+        /* var users = simpUserRegistry
                 .getUsers()
                 .stream()
                 .map(SimpUser::getName)

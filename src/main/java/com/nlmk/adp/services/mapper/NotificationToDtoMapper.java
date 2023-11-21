@@ -1,20 +1,30 @@
 package com.nlmk.adp.services.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
 import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
 import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+/**
+ * NotificationToDtoMapper.
+ */
 @Mapper(componentModel = "spring", uses = {DateMapper.class})
 public interface NotificationToDtoMapper {
 
+    /**
+     * mapDataToDto.
+     *
+     * @param req req
+     * @return NotificationDto
+     */
     @Mapping(target = "header", source = "data.header")
     @Mapping(target = "body", source = "data.body")
     @Mapping(target = "href", source = "data.href")
@@ -23,8 +33,12 @@ public interface NotificationToDtoMapper {
     @Mapping(target = "kafkaDt", source = "metadata.kafkaTimestamp")
     NotificationDto mapDataToDto(DbUserNotificationVer0 req);
 
-
-
+    /**
+     * mapRolesToDto.
+     *
+     * @param data data
+     * @return List
+     */
     default List<RoleDto> mapRolesToDto(RecordData data) {
         var accRoles = data.getAcceptRoles();
         var rejRoles = data.getRejectRoles();
@@ -35,6 +49,12 @@ public interface NotificationToDtoMapper {
         ).collect(Collectors.toList());
     }
 
+    /**
+     * mapEmailsToDto.
+     *
+     * @param emails emails
+     * @return List
+     */
     default List<UserEmailDto> mapEmailsToDto(List<String> emails) {
         return emails.stream().map(i -> new UserEmailDto(i, null)).collect(Collectors.toList());
     }

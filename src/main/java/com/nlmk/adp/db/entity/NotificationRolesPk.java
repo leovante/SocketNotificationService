@@ -1,12 +1,18 @@
 package com.nlmk.adp.db.entity;
 
-import lombok.*;
-import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+
+/**
+ * NotificationRolesPk.
+ */
 @Data
 @Embeddable
 @ToString(exclude = "notificationId")
@@ -20,12 +26,21 @@ public class NotificationRolesPk implements Serializable {
     @Length(max = 100)
     private String role;
 
-
+    /**
+     * NotificationRolesPk.
+     */
     public NotificationRolesPk() {
     }
 
+    /**
+     * NotificationRolesPk.
+     *
+     * @param notificationId notificationId
+     * @param role role
+     */
     public NotificationRolesPk(UUID notificationId, String role) {
         this.notificationId = notificationId;
         this.role = role;
     }
+
 }

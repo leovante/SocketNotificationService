@@ -1,15 +1,24 @@
 package com.nlmk.adp.db.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
-import java.time.OffsetDateTime;
-import java.util.UUID;
+import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 
+/**
+ * InvalidNotificationsEntity.
+ */
 @Entity
 @Table(name = "invalid_notifications")
 @Data

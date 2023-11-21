@@ -1,5 +1,6 @@
 package com.nlmk.adp.services.handler;
 
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import static java.util.Optional.ofNullable;
-
+/**
+ * StompHandler.
+ */
 @Slf4j
 @Component
 public class StompHandler {
@@ -20,7 +22,12 @@ public class StompHandler {
     private final SessionRepository repository;
     private final SimpMessageSendingOperations messagingTemplate;
 
-
+    /**
+     * StompHandler.
+     *
+     * @param messagingTemplate messagingTemplate
+     * @param repository repository
+     */
     public StompHandler(SimpMessageSendingOperations messagingTemplate,
                         SessionRepository repository) {
         super();
@@ -28,6 +35,11 @@ public class StompHandler {
         this.messagingTemplate = messagingTemplate;
     }
 
+    /**
+     * ConnectEvent.
+     *
+     * @param <S> S
+     */
     @Component
     class ConnectEvent<S> implements ApplicationListener<SessionConnectEvent> {
 
@@ -45,7 +57,11 @@ public class StompHandler {
 
     }
 
-
+    /**
+     * DisconnectEvent.
+     *
+     * @param <S> S
+     */
     @Component
     class DisconnectEvent<S> implements ApplicationListener<SessionDisconnectEvent> {
 
@@ -54,12 +70,11 @@ public class StompHandler {
             var headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
             var session = SimpMessageHeaderAccessor.getSessionId(headers.getMessageHeaders());
 
-            ofNullable(repository.findById(session)).ifPresent(user ->
+            Optional.ofNullable(repository.findById(session)).ifPresent(user ->
                     repository.deleteById(user.getId())
             );
             log.debug("stomp session destroyed");
         }
-
     }
 
 }

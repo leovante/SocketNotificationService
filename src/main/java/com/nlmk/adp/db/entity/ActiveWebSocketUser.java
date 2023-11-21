@@ -1,11 +1,17 @@
 package com.nlmk.adp.db.entity;
 
-import lombok.*;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Calendar;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * ActiveWebSocketUser.
+ */
 @Entity
 @Getter
 @Setter

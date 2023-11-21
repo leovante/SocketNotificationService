@@ -1,12 +1,16 @@
 package com.nlmk.adp.services;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.mapper.NotificationFromDtoMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
+/**
+ * NotificationServiceImpl.
+ */
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {

@@ -1,15 +1,19 @@
 package com.nlmk.adp.db.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.util.UUID;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.UUID;
-
+/**
+ * NotificationEmailPk.
+ */
 @Setter
 @Getter
 @Embeddable
@@ -24,11 +28,20 @@ public class NotificationEmailPk implements Serializable {
     @Length(max = 100)
     private String email;
 
+    /**
+     * NotificationEmailPk.
+     */
+    public NotificationEmailPk() {}
 
-    public NotificationEmailPk (){}
-
+    /**
+     * NotificationEmailPk.
+     *
+     * @param notificationId notificationId
+     * @param email email
+     */
     public NotificationEmailPk(UUID notificationId, String email) {
         this.notificationId = notificationId;
         this.email = email;
     }
+
 }

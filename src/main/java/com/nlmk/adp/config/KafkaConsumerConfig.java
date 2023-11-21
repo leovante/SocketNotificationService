@@ -1,7 +1,8 @@
 package com.nlmk.adp.config;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
-import com.nlmk.adp.services.NotificationService;
+import javax.validation.ConstraintViolationException;
+import java.util.HashMap;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,8 +20,8 @@ import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
+import com.nlmk.adp.dto.DbUserNotificationVer0;
+import com.nlmk.adp.services.NotificationService;
 
 /**
  * Конфигурация получения собщений по кафка.

@@ -1,6 +1,8 @@
-package com.nlmk.adp.services.interceptor_websocket;
+package com.nlmk.adp.services.interceptor.websocket;
 
-import com.nlmk.adp.services.SecurityService;
+import java.util.Map;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,11 @@ import org.springframework.session.MapSession;
 import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import com.nlmk.adp.services.SecurityService;
 
-import static java.util.Optional.ofNullable;
-
+/**
+ * UserInterceptor.
+ */
 @Slf4j
 @Component
 public class UserInterceptor extends ChannelInterceptorAdapter {
@@ -33,12 +36,12 @@ public class UserInterceptor extends ChannelInterceptorAdapter {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        switch (ofNullable(accessor)
+        switch (Optional.ofNullable(accessor)
                 .map(acc -> acc.getCommand())
                 .orElse(StompCommand.ERROR)) {
             case CONNECT -> {
-                final String token = accessor.getFirstNativeHeader("PASSWORD_HEADER");//получить токен
-                //добавить валидацию токена
+                final String token = accessor.getFirstNativeHeader("PASSWORD_HEADER"); // получить токен
+                // добавить валидацию токена
                 final KeycloakAuthenticationToken user = authService.getAuthenticatedOrFail(token);
 
                 accessor.setUser(user);
@@ -54,7 +57,11 @@ public class UserInterceptor extends ChannelInterceptorAdapter {
             case ERROR -> {
                 log.info("stomp command not specified");
             }
+            default -> {
+                log.info("default not specified");
+            }
         }
         return message;
     }
+
 }
