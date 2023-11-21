@@ -7,10 +7,10 @@ import java.util.stream.Stream;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 
 /**
@@ -22,7 +22,9 @@ public interface NotificationToDtoMapper {
     /**
      * mapDataToDto.
      *
-     * @param req req
+     * @param req
+     *         req
+     *
      * @return NotificationDto
      */
     @Mapping(target = "header", source = "data.header")
@@ -36,7 +38,9 @@ public interface NotificationToDtoMapper {
     /**
      * mapRolesToDto.
      *
-     * @param data data
+     * @param data
+     *         data
+     *
      * @return List
      */
     default List<RoleDto> mapRolesToDto(RecordData data) {
@@ -52,7 +56,9 @@ public interface NotificationToDtoMapper {
     /**
      * mapEmailsToDto.
      *
-     * @param emails emails
+     * @param emails
+     *         emails
+     *
      * @return List
      */
     default List<UserEmailDto> mapEmailsToDto(List<String> emails) {

@@ -1,6 +1,7 @@
 package com.nlmk.adp.config;
 
 import javax.validation.ConstraintViolationException;
+
 import java.util.HashMap;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.services.NotificationService;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * Конфигурация получения собщений по кафка.
@@ -58,7 +59,9 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
     /**
      * kafkaListenerContainerFactory.
      *
-     * @param messageConsumerFactory messageConsumerFactory
+     * @param messageConsumerFactory
+     *         messageConsumerFactory
+     *
      * @return ConcurrentKafkaListenerContainerFactory
      */
     @SuppressWarnings("UnnecessaryParentheses")

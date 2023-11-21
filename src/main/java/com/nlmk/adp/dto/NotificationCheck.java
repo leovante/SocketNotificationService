@@ -4,6 +4,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import org.springframework.util.CollectionUtils;
 
 import com.nlmk.adp.exception.ErrorMessagesList;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationCheck.
@@ -52,6 +54,7 @@ public @interface NotificationCheck {
      */
     class DbUserNotificationVer0Validator
             implements ConstraintValidator<NotificationCheck, DbUserNotificationVer0> {
+
         private static final String BASE_URL = "nlmk.com";
 
         /**
@@ -84,8 +87,8 @@ public @interface NotificationCheck {
 
             if (!errorList.isEmpty()) {
                 var text = errorList.stream()
-                        .reduce((start, msg) -> start.concat(", ").concat(msg))
-                        .get();
+                                    .reduce((start, msg) -> start.concat(", ").concat(msg))
+                                    .get();
                 return claim(context, text);
             }
             return true;
@@ -94,13 +97,17 @@ public @interface NotificationCheck {
         /**
          * claim.
          *
-         * @param context context
-         * @param message message
+         * @param context
+         *         context
+         * @param message
+         *         message
+         *
          * @return boolean
          */
         private boolean claim(ConstraintValidatorContext context, String message) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(message)
+            context
+                    .buildConstraintViolationWithTemplate(message)
                     .addConstraintViolation();
             return false;
         }
@@ -108,7 +115,9 @@ public @interface NotificationCheck {
         /**
          * isValidUrl.
          *
-         * @param href href
+         * @param href
+         *         href
+         *
          * @return boolean
          */
         private boolean isValidUrl(String href) {
@@ -119,15 +128,18 @@ public @interface NotificationCheck {
                 return false;
             }
             return Optional.ofNullable(url)
-                    .map(uri -> uri.getAuthority().endsWith(BASE_URL))
-                    .orElse(false);
+                           .map(uri -> uri.getAuthority().endsWith(BASE_URL))
+                           .orElse(false);
         }
 
         /**
          * isValidRoles.
          *
-         * @param acceptRoles acceptRoles
-         * @param rejectRoles rejectRoles
+         * @param acceptRoles
+         *         acceptRoles
+         * @param rejectRoles
+         *         rejectRoles
+         *
          * @return boolean
          */
         private boolean isValidRoles(List<String> acceptRoles, List<String> rejectRoles) {
@@ -137,12 +149,14 @@ public @interface NotificationCheck {
         /**
          * initialize.
          *
-         * @param constraintAnnotation annotation instance for a given constraint declaration
+         * @param constraintAnnotation
+         *         annotation instance for a given constraint declaration
          */
         @Override
         public void initialize(NotificationCheck constraintAnnotation) {
             ConstraintValidator.super.initialize(constraintAnnotation);
         }
+
     }
 
 }

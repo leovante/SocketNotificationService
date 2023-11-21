@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.mapper.NotificationFromDtoMapper;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationServiceImpl.
@@ -16,9 +16,13 @@ import com.nlmk.adp.services.mapper.NotificationFromDtoMapper;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationDaoService notificationDaoService;
+
     private final InvalidNotificationsDaoService invalidNotificationsDaoService;
+
     private final SocketMessageSenderService socketMessageSenderService;
+
     private final RemoteNotificationService remoteNotificationService;
+
     private final NotificationFromDtoMapper notificationFromDtoMapper;
 
     @Override

@@ -14,7 +14,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * Конфигурация kafka producer.
@@ -49,7 +49,9 @@ public class KafkaProducerConfig extends KafkaProperties.Producer {
     /**
      * messageKafkaTemplate.
      *
-     * @param producerFactory producerFactory
+     * @param producerFactory
+     *         producerFactory
+     *
      * @return KafkaTemplate
      */
     @Qualifier("messageKafkaProducerTemplate")

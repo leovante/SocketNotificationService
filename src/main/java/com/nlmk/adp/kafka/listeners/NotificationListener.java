@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.dto.NotificationCheck;
 import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * листенер сообщений по кафка.
@@ -33,17 +33,17 @@ public class NotificationListener {
      * handleNotificationMessage.
      *
      * @param message
-     *          message
+     *         message
      * @param topic
-     *          topic
+     *         topic
      * @param partitionId
-     *          partitionId
+     *         partitionId
      * @param offset
-     *          offset
+     *         offset
      * @param timestamp
-     *          timestamp
+     *         timestamp
      * @param timestampType
-     *          timestampType
+     *         timestampType
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.topic.notification-messsage}",
@@ -57,7 +57,7 @@ public class NotificationListener {
                                           @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
                                           @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType) {
         log.info("Receive notification message {}. Partition: {}. Offset: {}. Message: {}",
-                topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
+                 topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
         notificationsService.dispatch(message);
     }
 

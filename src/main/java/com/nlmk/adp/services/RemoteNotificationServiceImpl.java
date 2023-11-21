@@ -1,7 +1,6 @@
 package com.nlmk.adp.services;
 
 import lombok.extern.slf4j.Slf4j;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * RemoteNotificationServiceImpl.
@@ -20,13 +19,16 @@ import com.nlmk.adp.dto.DbUserNotificationVer0;
 public class RemoteNotificationServiceImpl implements RemoteNotificationService {
 
     private final String topic;
+
     private final KafkaTemplate<String, DbUserNotificationVer0> messageKafkaTemplate;
 
     /**
      * RemoteNotificationServiceImpl.
      *
-     * @param messageKafkaTemplate messageKafkaTemplate
-     * @param topic topic
+     * @param messageKafkaTemplate
+     *         messageKafkaTemplate
+     * @param topic
+     *         topic
      */
     public RemoteNotificationServiceImpl(
             @Qualifier("messageKafkaProducerTemplate")
@@ -40,7 +42,8 @@ public class RemoteNotificationServiceImpl implements RemoteNotificationService 
     /**
      * send.
      *
-     * @param body body
+     * @param body
+     *         body
      */
     @Override
     public void send(DbUserNotificationVer0 body) {
@@ -56,7 +59,7 @@ public class RemoteNotificationServiceImpl implements RemoteNotificationService 
                 @Override
                 public void onSuccess(SendResult<String, DbUserNotificationVer0> result) {
                     log.info("Successfully delivered message to {}. Offset: {}, Partition: {}",
-                            topic, result.getRecordMetadata().offset(), result.getRecordMetadata().partition());
+                             topic, result.getRecordMetadata().offset(), result.getRecordMetadata().partition());
                 }
             });
         } catch (RuntimeException ex) {
