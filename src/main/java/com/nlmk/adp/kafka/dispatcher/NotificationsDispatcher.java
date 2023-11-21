@@ -1,6 +1,6 @@
 package com.nlmk.adp.kafka.dispatcher;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationsDispatcher.

@@ -58,9 +58,7 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
     /**
      * kafkaListenerContainerFactory.
      *
-     * @param messageConsumerFactory
-     *          messageConsumerFactory
-     *
+     * @param messageConsumerFactory messageConsumerFactory
      * @return ConcurrentKafkaListenerContainerFactory
      */
     @SuppressWarnings("UnnecessaryParentheses")

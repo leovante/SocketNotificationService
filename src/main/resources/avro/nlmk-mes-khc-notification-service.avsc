@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "DbUserNotificationVer0",
-  "namespace": "com.nlmk.adp.dto",
+  "namespace": "nlmk.l3.mesadp",
   "doc": "Пользовательские уведомления в системе МЕС АДП",
   "fields": [
     {
@@ -172,7 +172,8 @@
                   "ALERT"
                 ]
               },
-              "doc": "Тип уведомления (по умолчанию INFO)"
+              "doc": "Тип уведомления (по умолчанию INFO)",
+              "default": "INFO"
             },
             {
               "name": "acceptRoles",
@@ -191,11 +192,10 @@
               "type": {
                 "type": "array",
                 "items": {
-                  "type": "string",
-                  "logicalType": "uuid"
+                  "type": "string"
                 }
               },
-              "doc": "E-Mail-ы пользователей для адресных уведомлений"
+              "doc": "E-Mail-ы пользователей для идентификации пользователей"
             },
             {
               "name": "rejectRoles",

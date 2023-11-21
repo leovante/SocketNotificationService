@@ -1,7 +1,7 @@
 package com.nlmk.adp.services;
 
-import com.nlmk.adp.dto.DbUserNotificationVer0;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationService.
