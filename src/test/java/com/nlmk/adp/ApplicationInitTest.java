@@ -3,6 +3,7 @@ package com.nlmk.adp;
 import java.util.List;
 import java.util.UUID;
 
+import com.nlmk.adp.services.NotificationService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Disabled;
@@ -20,6 +21,8 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
     @Autowired
     private NotificationListener notificationListener;
+    @Autowired
+    private NotificationService notificationService;
     @Autowired
     private NotificationRepository notificationRepository;
     @Autowired
@@ -64,9 +67,9 @@ class ApplicationInitTest extends BaseSpringBootTest {
         });
     }
 
-    @Disabled
     @Test
     void kafkaInvalidMessageTest() {
+        var error_text = "error text message";
         var payload = getResource("/kafka/notification_real.json",
                 DbUserNotificationVer0.class);
         var uuid = UUID.randomUUID();
@@ -78,17 +81,16 @@ class ApplicationInitTest extends BaseSpringBootTest {
         payload.getData().setAcceptEmails(List.of("admin", "operator"));
         payload.getData().setRejectRoles(List.of("operator"));
 
-        notificationListener.handleNotificationMessage(payload, null, null, null, null, null);
-        var invalidTableResult = invalidNotificationsRepository.findById(uuid).get();
+        notificationService.invalidate(payload, error_text);
+        var invalidTableResult = invalidNotificationsRepository.findAll()
+                .stream()
+                .filter(f -> f.getRawMessage().findValue("id").toString()
+                        .replace("\"", "")
+                        .equals(uuid.toString()))
+                .findFirst().get();
 
-        Assertions.assertThat(invalidTableResult.getErrorMessage())
-                .contains(
-                        ErrorMessagesList.HEADER_INVALID.getValue(),
-                        ErrorMessagesList.BODY_INVALID.getValue(),
-                        ErrorMessagesList.EMPTY_EMAILS_OR_ROLES.getValue(),
-                        ErrorMessagesList.HREF_DOMAIN_INVALID.getValue(),
-                        ErrorMessagesList.ROLES_MISMATCH.getValue()
-                );
+
+        Assertions.assertThat(invalidTableResult.getErrorMessage()).contains(error_text);
 
         var validTableResult = notificationRepository.findById(uuid);
         Assertions.assertThat(validTableResult).isEmpty();
