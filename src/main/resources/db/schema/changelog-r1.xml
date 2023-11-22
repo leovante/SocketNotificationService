@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1.0-create-notification-table" author="Dmitry Temnikov">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="notification"/>
             </not>
@@ -32,7 +32,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1.0-create-notification-roles-table" author="Dmitry Temnikov">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="notification_roles"/>
             </not>
@@ -49,7 +49,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1.0-create-notification-user-success-table" author="Dmitry Temnikov">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="notification_user_success"/>
             </not>
@@ -66,7 +66,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1.0-create-invalid-notifications-table" author="Dmitry Temnikov">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="invalid_notifications"/>
             </not>
