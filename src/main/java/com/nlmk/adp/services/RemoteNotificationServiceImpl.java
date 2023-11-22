@@ -33,7 +33,7 @@ public class RemoteNotificationServiceImpl implements RemoteNotificationService 
     public RemoteNotificationServiceImpl(
             @Qualifier("messageKafkaProducerTemplate")
             KafkaTemplate<String, DbUserNotificationVer0> messageKafkaTemplate,
-            @Value("${spring.kafka.consumer.topic.notification-messsage}")
+            @Value("${spring.kafka.producer.topic.notification-messsage}")
             String topic) {
         this.messageKafkaTemplate = messageKafkaTemplate;
         this.topic = topic;

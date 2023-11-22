@@ -25,6 +25,7 @@ public interface NotificationToDaoMapper {
      * @param dto dto
      * @return NotificationEntity
      */
+    @Mapping(target = "id", source = "uuid")
     @Mapping(target = "kafkaDt", source = "kafkaDt")
     @Mapping(target = "notificationRolesEntities", expression = "java(mapRolesToEntity(dto))")
     @Mapping(target = "notificationUserSuccessEntities", expression = "java(mapEmailsToEntity(dto))")
@@ -42,6 +43,7 @@ public interface NotificationToDaoMapper {
                     var entity = new NotificationRolesEntity();
                     var role = new NotificationRolesPk();
                     role.setRole(dto.role());
+                    role.setNotificationId(notificationDto.uuid());
 
                     entity.setPrimaryKey(role);
                     entity.setRoleType(dto.roleType());
@@ -62,6 +64,7 @@ public interface NotificationToDaoMapper {
                     var entity = new NotificationUserSuccessEntity();
                     var emailPk = new NotificationEmailPk();
                     emailPk.setEmail(dto.email());
+                    emailPk.setNotificationId(notificationDto.uuid());
 
                     entity.setPrimaryKey(emailPk);
                     return entity;

@@ -1,6 +1,9 @@
 package com.nlmk.adp.services.mapper;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +30,7 @@ public interface NotificationToDtoMapper {
      *
      * @return NotificationDto
      */
+    @Mapping(target = "uuid", source = "pk.id")
     @Mapping(target = "header", source = "data.header")
     @Mapping(target = "body", source = "data.body")
     @Mapping(target = "href", source = "data.href")
@@ -44,8 +48,8 @@ public interface NotificationToDtoMapper {
      * @return List
      */
     default List<RoleDto> mapRolesToDto(RecordData data) {
-        var accRoles = data.getAcceptRoles();
-        var rejRoles = data.getRejectRoles();
+        var accRoles = Optional.ofNullable(data.getAcceptRoles()).orElse(Collections.emptyList());
+        var rejRoles = Optional.ofNullable(data.getRejectRoles()).orElse(Collections.emptyList());
 
         return Stream.concat(
                 accRoles.stream().map(i -> new RoleDto(i, RoleStatus.ACCEPT.toString())),
@@ -63,6 +67,16 @@ public interface NotificationToDtoMapper {
      */
     default List<UserEmailDto> mapEmailsToDto(List<String> emails) {
         return emails.stream().map(i -> new UserEmailDto(i, null)).collect(Collectors.toList());
+    }
+
+    /**
+     * stringToUuid.
+     *
+     * @param uuid uuid
+     * @return UUID
+     */
+    default UUID stringToUuid(String uuid) {
+        return UUID.fromString(uuid);
     }
 
 }

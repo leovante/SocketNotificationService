@@ -1,4 +1,4 @@
-package com.nlmk.adp.services;
+package com.nlmk.adp.db.dao;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -25,7 +25,7 @@ import com.nlmk.adp.services.NotificationService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
-public class TestController {
+public class MaintainController {
 
     private final NotificationService notificationService;
 

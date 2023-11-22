@@ -71,8 +71,8 @@ public @interface NotificationCheck {
             if (payload.getBody() == null) {
                 errorList.add(ErrorMessagesList.BODY_INVALID.getValue());
             }
-            var emails = payload.getAcceptEmails();
-            var acceptRoles = payload.getAcceptRoles();
+            var emails = Optional.ofNullable(payload.getAcceptEmails()).orElse(List.of());
+            var acceptRoles = Optional.ofNullable(payload.getAcceptRoles()).orElse(List.of());
             if (CollectionUtils.isEmpty(emails) || CollectionUtils.isEmpty(acceptRoles)) {
                 errorList.add(ErrorMessagesList.EMPTY_EMAILS_OR_ROLES.getValue());
             }
@@ -80,7 +80,7 @@ public @interface NotificationCheck {
             if (!isValidUrl(href)) {
                 errorList.add(ErrorMessagesList.HREF_DOMAIN_INVALID.getValue());
             }
-            var rejectRoles = payload.getRejectRoles();
+            var rejectRoles = Optional.ofNullable(payload.getRejectRoles()).orElse(List.of());
             if (!isValidRoles(acceptRoles, rejectRoles)) {
                 errorList.add(ErrorMessagesList.ROLES_MISMATCH.getValue());
             }

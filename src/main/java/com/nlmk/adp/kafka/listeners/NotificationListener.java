@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -23,7 +22,6 @@ import nlmk.l3.mesadp.DbUserNotificationVer0;
 @Slf4j
 @Service
 @AllArgsConstructor
-@ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 @Validated
 public class NotificationListener {
 

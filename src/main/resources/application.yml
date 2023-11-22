@@ -44,9 +44,9 @@ spring:
       nsi:
         expireAfterWrite: 60  # в минутах
   kafka:
-    topic:
-      notification-messsage: ${NLMK_MES_KAFKA_MESSAGE:test}
     consumer:
+      topic:
+        notification-messsage: ${NLMK_MES_KAFKA_MESSAGE}
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
       auto-offset-reset: ${KAFKA_OFFSET_RESET:latest}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -61,6 +61,8 @@ spring:
         key-store-location: file:${KAFKA_SSL_KEYSTORE}
         trust-store-location: file:${KAFKA_SSL_TRUSTSTORE}
     producer:
+      topic:
+        notification-messsage: ${NLMK_MES_KAFKA_MESSAGE}
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
@@ -112,7 +114,7 @@ management:
     git:
       mode: "full"
 sentry:
-  dsn: ${SENTRY_DSN}
+  dsn: ${SENTRY_DSN:}
   environment: ${SENTRY_ENVIRONMENT}
 opentracing:
   jaeger:

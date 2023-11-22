@@ -5,15 +5,17 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 /**
  * NotificationRolesPk.
  */
-@Data
+@Setter
+@Getter
 @Embeddable
 @ToString(exclude = "notificationId")
 public class NotificationRolesPk implements Serializable {

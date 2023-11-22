@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +30,6 @@ import nlmk.l3.mesadp.DbUserNotificationVer0;
 @Configuration
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "spring.kafka.consumer")
-@ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 public class KafkaConsumerConfig extends KafkaProperties.Consumer {
 
     private final KafkaProperties common;

@@ -2,10 +2,12 @@ package com.nlmk.adp.kafka.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * NotificationDto.
  *
+ * @param uuid uuid
  * @param createdAt createdAt
  * @param updatedAt updatedAt
  * @param expiredAt expiredAt
@@ -18,6 +20,7 @@ import java.util.List;
  */
 public record NotificationDto(
 
+        UUID uuid,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,
         OffsetDateTime expiredAt,
