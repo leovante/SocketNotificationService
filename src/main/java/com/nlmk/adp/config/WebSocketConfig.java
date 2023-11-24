@@ -5,6 +5,8 @@ import com.nlmk.adp.services.interceptor_websocket.HttpHandshakeInterceptor;
 import com.nlmk.adp.services.interceptor_websocket.UserInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
@@ -25,6 +27,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebSocketMessageBroker
+@Order(Ordered.HIGHEST_PRECEDENCE + 50)
 public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> /*implements WebSocketMessageBrokerConfigurer*/ {
 
     @Autowired
@@ -39,8 +42,6 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");
-        config.setUserDestinationPrefix("/user");
     }
 
     @Override
@@ -61,8 +62,9 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
                 })*/
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
+                .setWebSocketEnabled(false)
+                .setSessionCookieNeeded(false)
         ;
-//        stompEndpointRegistry.addEndpoint("/hello");
     }
 
     @Override
