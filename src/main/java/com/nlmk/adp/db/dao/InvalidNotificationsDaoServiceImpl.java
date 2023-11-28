@@ -1,6 +1,6 @@
 package com.nlmk.adp.db.dao;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
@@ -22,15 +22,18 @@ public class InvalidNotificationsDaoServiceImpl implements InvalidNotificationsD
     /**
      * save.
      *
-     * @param msg msg
-     * @param reason reason
+     * @param msg
+     *         msg
+     * @param reason
+     *         reason
+     *
      * @return InvalidNotificationsEntity
      */
     @Override
     @Transactional
     public InvalidNotificationsEntity save(JsonNode msg, String reason) {
         var entity = new InvalidNotificationsEntity();
-        entity.setCreatedAt(OffsetDateTime.now());
+        entity.setCreatedAt(Instant.now());
         entity.setRawMessage(msg);
         entity.setErrorMessage(reason);
         return repository.save(entity);

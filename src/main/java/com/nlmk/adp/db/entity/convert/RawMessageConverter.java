@@ -1,9 +1,8 @@
 package com.nlmk.adp.db.entity.convert;
 
-import javax.persistence.AttributeConverter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.AttributeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,9 @@ public class RawMessageConverter implements AttributeConverter<JsonNode, String>
     /**
      * convertToDatabaseColumn.
      *
-     * @param attribute  the entity attribute value to be converted
+     * @param attribute
+     *         the entity attribute value to be converted
+     *
      * @return String
      */
     @SneakyThrows
@@ -36,8 +37,9 @@ public class RawMessageConverter implements AttributeConverter<JsonNode, String>
     /**
      * convertToEntityAttribute.
      *
-     * @param dbData  the data from the database column to be
-     *                converted
+     * @param dbData
+     *         the data from the database column to be converted
+     *
      * @return JsonNode
      */
     @SneakyThrows

@@ -12,7 +12,6 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.session.Session;
 import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
-import org.springframework.session.web.socket.server.SessionRepositoryMessageInterceptor;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -29,10 +28,13 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private SessionRepositoryMessageInterceptor sessionRepositoryMessageInterceptor;
+
+    //    @Autowired
+    //    private SessionRepositoryMessageInterceptor sessionRepositoryMessageInterceptor;
+
     @Autowired
     private HttpHandshakeInterceptor handshakeInterceptor;
+
     @Autowired
     private UserInterceptor userInterceptor;
 
@@ -48,7 +50,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
         stompEndpointRegistry
                 .addEndpoint("/ws/websocket")
                 .addInterceptors(handshakeInterceptor)
-                .addInterceptors(sessionRepositoryMessageInterceptor)
+                //                .addInterceptors(sessionRepositoryMessageInterceptor)
                 // попытка создать юзера для метода simpUserRegistry
                 /* .setHandshakeHandler(new DefaultHandshakeHandler(){
                     @Override
@@ -81,7 +83,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.setInterceptors(userInterceptor);
+        registration.interceptors(userInterceptor);
     }
 
 }

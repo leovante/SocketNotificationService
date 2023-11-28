@@ -1,7 +1,6 @@
 package com.nlmk.adp.kafka.listeners;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -32,12 +31,6 @@ public class NotificationListener {
      *
      * @param message
      *         message
-     * @param topic
-     *         topic
-     * @param partitionId
-     *         partitionId
-     * @param offset
-     *         offset
      * @param timestamp
      *         timestamp
      * @param timestampType
@@ -49,13 +42,9 @@ public class NotificationListener {
             autoStartup = "true",
             containerFactory = "messageConsumerContainerFactory")
     public void handleNotificationMessage(@Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
-                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-                                          @Header(KafkaHeaders.RECEIVED_PARTITION_ID) String partitionId,
-                                          @Header(KafkaHeaders.OFFSET) String offset,
                                           @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
                                           @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType) {
-        log.info("Receive notification message {}. Partition: {}. Offset: {}. Message: {}",
-                 topic, partitionId, offset, ObjectMapperHelper.writeValueAsString(message));
+        log.info("Receive notification message {}", ObjectMapperHelper.writeValueAsString(message));
         notificationsService.dispatch(message);
     }
 

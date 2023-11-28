@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -21,7 +20,6 @@ import nlmk.l3.mesadp.DbUserNotificationVer0;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "spring.kafka.producer")
 public class KafkaProducerConfig extends KafkaProperties.Producer {
 
     private final KafkaProperties common;
@@ -34,9 +32,7 @@ public class KafkaProducerConfig extends KafkaProperties.Producer {
     @Qualifier("messageProducerFactory")
     @Bean
     public ProducerFactory<String, DbUserNotificationVer0> messageProducerFactory() {
-        final var conf = new HashMap<>(
-                this.common.buildProducerProperties()
-        );
+        final var conf = new HashMap<>(this.common.buildProducerProperties());
         conf.putAll(this.buildProperties());
         DefaultKafkaProducerFactory<String, DbUserNotificationVer0> producerFactory =
                 new DefaultKafkaProducerFactory<>(conf);

@@ -1,10 +1,10 @@
 package com.nlmk.adp.db.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,8 +37,10 @@ public class NotificationRolesPk implements Serializable {
     /**
      * NotificationRolesPk.
      *
-     * @param notificationId notificationId
-     * @param role role
+     * @param notificationId
+     *         notificationId
+     * @param role
+     *         role
      */
     public NotificationRolesPk(UUID notificationId, String role) {
         this.notificationId = notificationId;

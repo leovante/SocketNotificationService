@@ -13,13 +13,14 @@ import org.mapstruct.Mapping;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
+import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 
 /**
  * NotificationToDtoMapper.
  */
-@Mapper(componentModel = "spring", uses = {DateMapper.class})
+@Mapper(config = SpringMapperConfig.class, uses = {DateMapper.class})
 public interface NotificationToDtoMapper {
 
     /**
@@ -37,6 +38,9 @@ public interface NotificationToDtoMapper {
     @Mapping(target = "roles", expression = "java(mapRolesToDto(req.getData()))")
     @Mapping(target = "emails", expression = "java(mapEmailsToDto(req.getData().getAcceptEmails()))")
     @Mapping(target = "kafkaDt", source = "metadata.kafkaTimestamp")
+    @Mapping(target = "createdAt", source = "metadata.kafkaTimestamp")
+    @Mapping(target = "updatedAt", source = "metadata.kafkaTimestamp")
+    @Mapping(target = "expiredAt", source = "metadata.kafkaTimestamp")
     NotificationDto mapDataToDto(DbUserNotificationVer0 req);
 
     /**
@@ -72,7 +76,9 @@ public interface NotificationToDtoMapper {
     /**
      * stringToUuid.
      *
-     * @param uuid uuid
+     * @param uuid
+     *         uuid
+     *
      * @return UUID
      */
     default UUID stringToUuid(String uuid) {
