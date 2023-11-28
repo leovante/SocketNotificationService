@@ -9,12 +9,13 @@ import org.mapstruct.Mapping;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
+import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationFromDtoMapper.
  */
-@Mapper(componentModel = "spring", uses = {DateMapper.class})
+@Mapper(config = SpringMapperConfig.class, uses = {DateMapper.class})
 public interface NotificationFromDtoMapper {
 
     /**
@@ -35,6 +36,10 @@ public interface NotificationFromDtoMapper {
     @Mapping(target = "data.acceptEmails",
              expression = "java(mapEmailsFromDto(notificationDto))")
     @Mapping(target = "metadata.kafkaTimestamp", source = "kafkaDt")
+    @Mapping(target = "ts", ignore = true)
+    @Mapping(target = "op", ignore = true)
+    @Mapping(target = "pk", ignore = true)
+    @Mapping(target = "sys", ignore = true)
     DbUserNotificationVer0 mapDataFromDto(NotificationDto notificationDto);
 
     /**

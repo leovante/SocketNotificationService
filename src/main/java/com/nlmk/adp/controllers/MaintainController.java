@@ -1,8 +1,7 @@
 package com.nlmk.adp.controllers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +43,9 @@ public class MaintainController {
     /**
      * postNotification.
      *
-     * @param payload payload
+     * @param payload
+     *         payload
+     *
      * @return ResponseEntity
      */
     @PostMapping("/notification")

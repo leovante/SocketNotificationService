@@ -3,40 +3,42 @@ package com.nlmk.adp;
 import java.util.List;
 import java.util.UUID;
 
-import com.nlmk.adp.services.NotificationService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nlmk.adp.exception.ErrorMessagesList;
 import com.nlmk.adp.db.repository.InvalidNotificationsRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.kafka.listeners.NotificationListener;
+import com.nlmk.adp.services.NotificationService;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 class ApplicationInitTest extends BaseSpringBootTest {
 
     @Autowired
     private NotificationListener notificationListener;
+
     @Autowired
     private NotificationService notificationService;
+
     @Autowired
     private NotificationRepository notificationRepository;
+
     @Autowired
     private InvalidNotificationsRepository invalidNotificationsRepository;
 
     @Test
     @Transactional
     void kafkaValidMessageTest() {
-        var payload = getResource("/kafka/notification_real.json",
+        var payload = getResource(
+                "/kafka/notification_real.json",
                 DbUserNotificationVer0.class);
         var uuid = UUID.randomUUID();
         payload.getPk().setId(uuid.toString());
 
-        notificationListener.handleNotificationMessage(payload, null, null, null, null, null);
+        notificationListener.handleNotificationMessage(payload, null, null);
         var result = notificationRepository.findById(uuid).get();
 
         SoftAssertions.assertSoftly(it -> {
@@ -50,19 +52,19 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
             var rolesResult = result.getNotificationRolesEntities().stream().toList();
             it.assertThat(rolesResult)
-                    .extracting("primaryKey.notificationId")
-                    .contains(uuid);
+              .extracting("primaryKey.notificationId")
+              .contains(uuid);
             it.assertThat(rolesResult)
-                    .extracting("primaryKey.role")
-                    .contains(payload.getData().getAcceptRoles().get(0));
+              .extracting("primaryKey.role")
+              .contains(payload.getData().getAcceptRoles().get(0));
 
             var userResult = result.getNotificationUserSuccessEntities().stream().toList();
             it.assertThat(rolesResult)
-                    .extracting("primaryKey.notificationId")
-                    .contains(uuid);
+              .extracting("primaryKey.notificationId")
+              .contains(uuid);
             it.assertThat(userResult)
-                    .extracting("primaryKey.email")
-                    .isEqualTo(payload.getData().getAcceptEmails());
+              .extracting("primaryKey.email")
+              .isEqualTo(payload.getData().getAcceptEmails());
             it.assertThat(userResult.get(0).getReadAt()).isNull();
         });
     }
@@ -70,7 +72,8 @@ class ApplicationInitTest extends BaseSpringBootTest {
     @Test
     void kafkaInvalidMessageTest() {
         var error_text = "error text message";
-        var payload = getResource("/kafka/notification_real.json",
+        var payload = getResource(
+                "/kafka/notification_real.json",
                 DbUserNotificationVer0.class);
         var uuid = UUID.randomUUID();
         payload.getPk().setId(uuid.toString());
@@ -83,12 +86,11 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
         notificationService.invalidate(payload, error_text);
         var invalidTableResult = invalidNotificationsRepository.findAll()
-                .stream()
-                .filter(f -> f.getRawMessage().findValue("id").toString()
-                        .replace("\"", "")
-                        .equals(uuid.toString()))
-                .findFirst().get();
-
+                                                               .stream()
+                                                               .filter(f -> f.getRawMessage().findValue("id").toString()
+                                                                             .replace("\"", "")
+                                                                             .equals(uuid.toString()))
+                                                               .findFirst().get();
 
         Assertions.assertThat(invalidTableResult.getErrorMessage()).contains(error_text);
 

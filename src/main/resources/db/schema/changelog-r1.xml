@@ -21,11 +21,11 @@
             </column>
             <column name="expired_at" type="TIMESTAMP" remarks="Дата завершения">
             </column>
-            <column name="body" type="VARCHAR(100)" remarks="Сообщение уведомления">
+            <column name="body" type="VARCHAR(512)" remarks="Сообщение уведомления">
             </column>
-            <column name="header" type="VARCHAR(100)" remarks="Заголовок уведомления">
+            <column name="header" type="VARCHAR(512)" remarks="Заголовок уведомления">
             </column>
-            <column name="href" type="VARCHAR(100)" remarks="Ссылка">
+            <column name="href" type="VARCHAR(512)" remarks="Ссылка">
             </column>
             <column name="kafka_dt" type="TIMESTAMP" remarks="Дата создания из kafka">
             </column>

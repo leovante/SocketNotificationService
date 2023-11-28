@@ -1,33 +1,39 @@
 package com.nlmk.adp.services.mapper;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 import org.mapstruct.Mapper;
+
+import com.nlmk.adp.util.SpringMapperConfig;
 
 /**
  * DateMapper.
  */
-@Mapper
+@Mapper(config = SpringMapperConfig.class)
 public abstract class DateMapper {
 
     /**
      * mapStringTimestampToOffsetDateTime.
      *
-     * @param timestamp timestamp
+     * @param timestamp
+     *         timestamp
+     *
      * @return OffsetDateTime
      */
-    public OffsetDateTime mapStringTimestampToOffsetDateTime(String timestamp) {
-        return OffsetDateTime.now();
+    public Instant mapStringTimestampToOffsetDateTime(String timestamp) {
+        return Instant.now();
     }
 
     /**
      * mapOffsetDateTimeToStringTimestamp.
      *
-     * @param timestamp timestamp
+     * @param timestamp
+     *         timestamp
+     *
      * @return String
      */
-    public String mapOffsetDateTimeToStringTimestamp(OffsetDateTime timestamp) {
-        return OffsetDateTime.now().toString();
+    public String mapOffsetDateTimeToStringTimestamp(Instant timestamp) {
+        return Instant.now().toString();
     }
 
 }

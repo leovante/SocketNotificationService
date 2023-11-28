@@ -1,14 +1,14 @@
 package com.nlmk.adp.db.entity;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
-import java.util.UUID;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
@@ -19,6 +19,7 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @Entity
 @Table(name = "notification_roles")
+@NoArgsConstructor
 public class NotificationRolesEntity {
 
     @EmbeddedId
@@ -28,32 +29,15 @@ public class NotificationRolesEntity {
     @Length(max = 100)
     private String roleType;
 
-    @MapsId(value = "id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId(value = "notificationId")
     private NotificationEntity notification;
-
-    /**
-     * NotificationRolesEntity.
-     */
-    public NotificationRolesEntity() {
-    }
-
-    /**
-     * NotificationRolesEntity.
-     *
-     * @param notificationId notificationId
-     * @param role role
-     * @param roleType roleType
-     */
-    public NotificationRolesEntity(UUID notificationId, String role, String roleType) {
-        this.primaryKey = new NotificationRolesPk(notificationId, role);
-        this.roleType = roleType;
-    }
 
     /**
      * setNotification.
      *
-     * @param notification notification
+     * @param notification
+     *         notification
      */
     public void setNotification(NotificationEntity notification) {
         this.notification = notification;

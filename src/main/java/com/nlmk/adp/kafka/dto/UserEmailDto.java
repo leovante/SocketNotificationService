@@ -1,9 +1,9 @@
 package com.nlmk.adp.kafka.dto;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public record UserEmailDto(
         String email,
-        OffsetDateTime readAt
+        Instant readAt
 ) {
 }

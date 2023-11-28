@@ -1,5 +1,6 @@
 package com.nlmk.adp.config;
 
+import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +28,9 @@ public class SpringHttpSessionConfig {
      */
     @Bean
     public SessionRepository<MapSession> sessionRepository() {
-        var sessionRepository =  new MapSessionRepository(new ConcurrentHashMap<>());
+        var sessionRepository = new MapSessionRepository(new ConcurrentHashMap<>());
         ((MapSessionRepository) sessionRepository)
-                .setDefaultMaxInactiveInterval(maxInactiveIntervalInSeconds);
+                .setDefaultMaxInactiveInterval(Duration.ofSeconds(maxInactiveIntervalInSeconds));
         return sessionRepository;
     }
 

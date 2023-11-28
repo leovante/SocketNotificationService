@@ -1,9 +1,9 @@
 package com.nlmk.adp.db.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.Calendar;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,15 +1,16 @@
 package com.nlmk.adp.db.entity;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
-import java.time.OffsetDateTime;
-import java.util.UUID;
+import java.time.Instant;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -19,40 +20,24 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "notification_user_success")
+@NoArgsConstructor
 public class NotificationUserSuccessEntity {
 
     @EmbeddedId
     private NotificationEmailPk primaryKey;
 
     @Column(name = "read_at")
-    private OffsetDateTime readAt;
+    private Instant readAt;
 
-    @MapsId(value = "id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId(value = "notificationId")
     private NotificationEntity notification;
-
-    /**
-     * NotificationUserSuccessEntity.
-     */
-    public NotificationUserSuccessEntity() {
-    }
-
-    /**
-     * NotificationUserSuccessEntity.
-     *
-     * @param  notificationId notificationId
-     * @param  email email
-     * @param  readAt readAt
-     */
-    public NotificationUserSuccessEntity(UUID notificationId, String email, OffsetDateTime readAt) {
-        this.primaryKey = new NotificationEmailPk(notificationId, email);
-        this.readAt = readAt;
-    }
 
     /**
      * setNotification.
      *
-     * @param notification notification
+     * @param notification
+     *         notification
      */
     public void setNotification(NotificationEntity notification) {
         this.notification = notification;
