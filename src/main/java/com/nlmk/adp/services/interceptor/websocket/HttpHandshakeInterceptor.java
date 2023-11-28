@@ -11,6 +11,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.session.MapSession;
+import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
@@ -31,27 +32,24 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
     private SessionRepository<MapSession> repository;
 
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+    public boolean beforeHandshake(ServerHttpRequest request,
+                                   ServerHttpResponse response,
+                                   WebSocketHandler wsHandler,
                                    Map attributes) {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
 
-            var context = SecurityContextHolder.getContext();
+//            var ctx2 = (KeycloakSecurityContext) servletRequest.getServletRequest().getAttribute(KeycloakSecurityContext.class.getName());
+//            var token = ctx2.getToken();
 
-            //      var ctx2 = (KeycloakSecurityContext) servletRequest.getServletRequest()
-            //                       .getAttribute(KeycloakSecurityContext.class.getName());
-            // var token = ctx2.getToken();
+/*            HttpSession session = servletRequest.getServletRequest().getSession();
 
-            HttpSession session = servletRequest.getServletRequest().getSession();
-
-            Optional.ofNullable(attributes.get(SPRING_SESSION_ID_ATTR_NAME))
+            ofNullable(attributes.get(SPRING_SESSION_ID_ATTR_NAME))
                     .orElseGet(() -> attributes.put(SPRING_SESSION_ID_ATTR_NAME, session.getId()));
-            Optional.ofNullable(attributes.get(CURRENT_SESSION))
-                    .orElseGet(() -> attributes.put(CURRENT_SESSION, session.getId()));
+            ofNullable(attributes.get(CURRENT_SESSION))
+                    .orElseGet(() -> attributes.put(CURRENT_SESSION, session.getId()));*/
 
-            repository.save(new MapSession(session.getId()));
-            log.debug("websocket session established");
-
+            log.debug("beforeHandshake session established");
         }
         return true;
     }

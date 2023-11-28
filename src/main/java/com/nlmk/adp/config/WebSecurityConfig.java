@@ -1,20 +1,27 @@
 package com.nlmk.adp.config;
 
-import org.springframework.context.annotation.Bean;
+import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 /**
- * Конфигурация для Spring Security.
+ * Конфигурация для PreAuthorize.
  */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
+@ConditionalOnProperty(value = "keycloak.enabled", havingValue = "true")
+public class WebSecurityConfig /*extends AbstractSecurityWebSocketMessageBrokerConfigurer*/ {
+
+    // spring boot ver.4 or above
+    /*protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        messages
+                .simpDestMatchers("/topic/**").denyAll()
+                .simpDestMatchers("/**").hasRole("ADMIN");
+    }*/
 
     /**
      * 123.
