@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
@@ -16,10 +18,14 @@ import org.springframework.session.Session;
 import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
 import org.springframework.session.web.socket.server.SessionRepositoryMessageInterceptor;
 import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -48,22 +54,22 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
     protected void configureStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
         stompEndpointRegistry
                 .addEndpoint("/ws/websocket")
-                .addInterceptors(handshakeInterceptor)
-                .addInterceptors(sessionRepositoryMessageInterceptor)
+//                .addInterceptors(handshakeInterceptor)
+//                .addInterceptors(sessionRepositoryMessageInterceptor)
                 /*.setHandshakeHandler(new DefaultHandshakeHandler(){//попытка создать юзера для метода simpUserRegistry
                     @Override
                     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
                         if (request instanceof ServletServerHttpRequest r) {
                             var session = r.getServletRequest().getSession(false);
-                            return session == null ? null : new StompPrincipal(session.getId());
+                            return session == null ? null : null *//*new StompPrincipal(session.getId())*//*;
                         }
                         return super.determineUser(request, wsHandler, attributes);
                     }
                 })*/
                 .setAllowedOriginPatterns("*")
-                .withSockJS()
-                .setWebSocketEnabled(false)
-                .setSessionCookieNeeded(false)
+//                .withSockJS()
+//                .setWebSocketEnabled(false)
+//                .setSessionCookieNeeded(false)
         ;
     }
 
@@ -80,7 +86,7 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.setInterceptors(userInterceptor);
+        registration.interceptors(userInterceptor);
     }
 
 }

@@ -10,9 +10,16 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
  * Конфигурация для PreAuthorize.
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true,
-        securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 @ConditionalOnProperty(value = "keycloak.enabled", havingValue = "true")
-public class WebSecurityConfig {
+public class WebSecurityConfig /*extends AbstractSecurityWebSocketMessageBrokerConfigurer*/ {
+
+    // spring boot ver.4 or above
+    /*protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        messages
+                .simpDestMatchers("/topic/**").denyAll()
+                .simpDestMatchers("/**").hasRole("ADMIN");
+    }*/
+
 }
