@@ -46,7 +46,7 @@ class ApplicationInitTest extends BaseSpringBootTest {
             it.assertThat(result.getBody()).isEqualTo(payload.getData().getBody());
             it.assertThat(result.getHeader()).isEqualTo(payload.getData().getHeader());
             it.assertThat(result.getCreatedAt()).isNotNull();
-            it.assertThat(result.getUpdatedAt()).isNull();
+            it.assertThat(result.getUpdatedAt()).isNotNull();
             it.assertThat(result.getExpiredAt()).isNotNull();
             it.assertThat(result.getKafkaDt()).isNotNull();
 

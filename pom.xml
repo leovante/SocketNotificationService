@@ -92,13 +92,13 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-wiremock</artifactId>
-            <version>3.0.4</version>
+            <version>4.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
+            <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>2.27.2</version>
+            <version>3.3.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
