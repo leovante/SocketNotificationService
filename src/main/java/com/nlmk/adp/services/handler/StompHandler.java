@@ -1,5 +1,8 @@
 package com.nlmk.adp.services.handler;
 
+import java.security.Principal;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -10,26 +13,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.security.Principal;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
-
+/**
+ * 123.
+ */
 @Slf4j
 @Component
 public class StompHandler {
 
     private final SessionRepository<MapSession> repository;
+
     private final SimpMessageSendingOperations messagingTemplate;
 
     @Value("${websocket.topic.start:/topic/hello}")
-    private String START_TOPIC;
+    private String startTopic;
 
     /**
      * StompHandler.
      *
-     * @param messagingTemplate messagingTemplate
-     * @param repository        repository
+     * @param messagingTemplate
+     *         messagingTemplate
+     * @param repository
+     *         repository
      */
     public StompHandler(SimpMessageSendingOperations messagingTemplate,
                         SessionRepository<MapSession> repository) {
@@ -41,7 +45,8 @@ public class StompHandler {
     /**
      * ConnectEvent.
      *
-     * @param <S> S
+     * @param <S>
+     *         S
      */
     @Component
     class ConnectEvent<S> implements ApplicationListener<SessionConnectEvent> {
@@ -49,8 +54,8 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionConnectEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                    .map(Principal::getName)
-                    .orElse(null);
+                                .map(Principal::getName)
+                                .orElse(null);
 
             if (id == null) {
                 log.info("No user connected event");
@@ -64,7 +69,7 @@ public class StompHandler {
 
             messagingTemplate.convertAndSendToUser(
                     event.getUser().getName(),
-                    START_TOPIC,
+                    startTopic,
                     "Save session for user: " + event.getUser().getName());
 
             log.debug("stomp session established");
@@ -75,7 +80,8 @@ public class StompHandler {
     /**
      * DisconnectEvent.
      *
-     * @param <S> S
+     * @param <S>
+     *         S
      */
     @Component
     class DisconnectEvent<S> implements ApplicationListener<SessionDisconnectEvent> {
@@ -83,18 +89,21 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionDisconnectEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                    .map(Principal::getName)
-                    .orElse("");
+                                .map(Principal::getName)
+                                .orElse("");
 
-            ofNullable(repository.findById(id)).ifPresent(user -> {
-                        repository.deleteById(user.getId());
+            Optional
+                    .ofNullable(repository.findById(id))
+                    .ifPresent(
+                            user -> {
+                                repository.deleteById(user.getId());
 
-                        messagingTemplate.convertAndSendToUser(
-                                event.getUser().getName(),
-                                START_TOPIC,
-                                "Clear session for user: " + event.getUser().getName());
-                    }
-            );
+                                messagingTemplate.convertAndSendToUser(
+                                        event.getUser().getName(),
+                                        startTopic,
+                                        "Clear session for user: " + event.getUser().getName());
+                            }
+                    );
 
             log.debug("stomp session destroyed");
         }

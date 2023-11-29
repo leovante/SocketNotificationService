@@ -5,7 +5,7 @@ import java.security.Principal;
 import lombok.AllArgsConstructor;
 
 /**
- * StompPrincipal
+ * StompPrincipal.
  */
 @AllArgsConstructor
 public class StompPrincipal implements Principal {

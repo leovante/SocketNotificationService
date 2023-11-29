@@ -23,12 +23,12 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     private final SessionRepository<MapSession> sessionRepository;
 
     @Value("${websocket.topic.start:/topic/hello}")
-    private String START_TOPIC;
+    private String startTopic;
 
     @Override
     public void send(String msg) {
         var users = simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains(START_TOPIC))
+                .findSubscriptions(i -> i.getDestination().contains(startTopic))
                 .stream()
                 .map(SimpSubscription::getSession)
                 .map(SimpSession::getUser)
@@ -37,7 +37,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
                 .toList();
 
         users.forEach(user ->
-                template.convertAndSendToUser(user, START_TOPIC, msg)
+                template.convertAndSendToUser(user, startTopic, msg)
         );
     }
 

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * SimpleStompAccount
+ * SimpleStompAccount.
  */
 @Setter
 @Getter

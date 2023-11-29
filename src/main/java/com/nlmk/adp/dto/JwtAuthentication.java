@@ -1,15 +1,15 @@
 package com.nlmk.adp.dto;
 
+import java.util.Collection;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-
 /**
- * JwtAuthentication
+ * JwtAuthentication.
  */
 @Setter
 @Getter
@@ -22,12 +22,12 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
 
     private Collection<GrantedAuthority> authorities;
 
-
     /**
      * Creates a token with the supplied array of authorities.
      *
-     * @param authorities the collection of <tt>GrantedAuthority</tt>s for the principal
-     *                    represented by this authentication object.
+     * @param authorities
+     *         the collection of <tt>GrantedAuthority</tt>s for the principal represented by this authentication
+     *         object.
      */
     public JwtAuthentication(Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
