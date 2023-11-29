@@ -1,28 +1,21 @@
 package com.nlmk.adp.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
-import com.nlmk.adp.dto.JwtAuthentication;
-import com.nlmk.adp.dto.KeyckloakUserDto;
-import lombok.RequiredArgsConstructor;
+import com.nlmk.adp.config.ObjectMapperHelper;
+import com.nlmk.adp.dto.*;
 import lombok.SneakyThrows;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
 public class AuthService implements AuthenticationManager {
-
-    private final ObjectMapper mapper;
 
     @Override
     @SneakyThrows
@@ -38,15 +31,21 @@ public class AuthService implements AuthenticationManager {
     }
 
     @SneakyThrows
-    private KeycloakAuthenticationToken createUserOrFail(JWT jwt) {
-        KeyckloakUserDto user = mapper.readValue(((SignedJWT) jwt).getPayload().toString(), KeyckloakUserDto.class);
+    private StompAuthenticationToken createUserOrFail(JWT jwt) {
+        KeyckloakUserDto user = ObjectMapperHelper.getObjectMapper()
+                .readValue(((SignedJWT) jwt).getPayload().toString(), KeyckloakUserDto.class);
         Set<String> roles = user.getResource_access().getAccount().getRoles();
 
-        return new KeycloakAuthenticationToken(
-                new SimpleKeycloakAccount(new KeycloakPrincipal<>(user.getEmail(), null),
-                        roles,
-                        null),
-                false);
+        if (user.getEmail() == null) {
+            throw new OAuth2AuthenticationException("Access Denied. No user email found");
+        }
+
+        return new StompAuthenticationToken(
+                null,
+                new SimpleStompAccount(
+                        new StompPrincipal(user.getEmail()),
+                        roles)
+        );
     }
 
 }

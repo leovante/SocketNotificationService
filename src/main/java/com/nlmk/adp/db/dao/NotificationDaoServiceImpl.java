@@ -36,15 +36,12 @@ public class NotificationDaoServiceImpl implements NotificationDaoService {
         entity.setCreatedAt(Instant.now());
         entity.setExpiredAt(Instant.now().plus(1, ChronoUnit.DAYS));
 
+        var roles = entity.getNotificationRolesEntities();
+        var emails = entity.getNotificationUserSuccessEntities();
+        roles.forEach(i -> i.setNotification(entity));
+        emails.forEach(i -> i.setNotification(entity));
+
         var snapshot = notificationRepository.save(entity);
-
-        var roles = snapshot.getNotificationRolesEntities();
-        var emails = snapshot.getNotificationUserSuccessEntities();
-        roles.forEach(i -> i.setNotification(snapshot));
-        emails.forEach(i -> i.setNotification(snapshot));
-
-        notificationRoleRepository.saveAll(roles);
-        notificationEmailRepository.saveAll(emails);
 
         return snapshot;
     }

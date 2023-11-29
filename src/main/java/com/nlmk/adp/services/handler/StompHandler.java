@@ -1,8 +1,7 @@
 package com.nlmk.adp.services.handler;
 
-import java.util.Optional;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.session.MapSession;
@@ -23,11 +22,14 @@ public class StompHandler {
     private final SessionRepository<MapSession> repository;
     private final SimpMessageSendingOperations messagingTemplate;
 
+    @Value("${websocket.topic.start:/topic/hello}")
+    private String START_TOPIC;
+
     /**
      * StompHandler.
      *
      * @param messagingTemplate messagingTemplate
-     * @param repository repository
+     * @param repository        repository
      */
     public StompHandler(SimpMessageSendingOperations messagingTemplate,
                         SessionRepository<MapSession> repository) {
@@ -51,12 +53,19 @@ public class StompHandler {
                     .orElse(null);
 
             if (id == null) {
+                log.info("No user connected event");
                 return;
             }
 
             var session = new MapSession(id);
             session.setAttribute("user", event.getUser());
+
             repository.save(session);
+
+            messagingTemplate.convertAndSendToUser(
+                    event.getUser().getName(),
+                    START_TOPIC,
+                    "Save session for user: " + event.getUser().getName());
 
             log.debug("stomp session established");
         }
@@ -77,9 +86,16 @@ public class StompHandler {
                     .map(Principal::getName)
                     .orElse("");
 
-            ofNullable(repository.findById(id)).ifPresent(user ->
-                    repository.deleteById(user.getId())
+            ofNullable(repository.findById(id)).ifPresent(user -> {
+                        repository.deleteById(user.getId());
+
+                        messagingTemplate.convertAndSendToUser(
+                                event.getUser().getName(),
+                                START_TOPIC,
+                                "Clear session for user: " + event.getUser().getName());
+                    }
             );
+
             log.debug("stomp session destroyed");
         }
 

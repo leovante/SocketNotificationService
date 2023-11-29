@@ -1,13 +1,16 @@
 package com.nlmk.adp.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-
+/**
+ * JwtAuthentication
+ */
 @Setter
 @Getter
 @Accessors
