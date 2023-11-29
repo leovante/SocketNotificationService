@@ -2,8 +2,10 @@ package com.nlmk.adp.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
 import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
 import com.nlmk.adp.db.dao.NotificationDaoService;
@@ -20,11 +22,14 @@ import nlmk.l3.mesadp.DbUserNotificationVer0;
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
+    @Value("${spring.kafka.producer.topic.notification-messsage}")
+    private String topic;
+
+    private final KafkaHttpProxyProducer kafkaHttpProxyProducer;
     private final NotificationDaoService notificationDaoService;
     private final NotificationRepository notificationRepository;
     private final InvalidNotificationsDaoService invalidNotificationsDaoService;
     private final SocketMessageSenderService socketMessageSenderService;
-    private final RemoteNotificationService remoteNotificationService;
     private final NotificationFromDtoMapper notificationFromDtoMapper;
 
     @Override
@@ -42,7 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendToKafka(NotificationDto body) {
         var snapshot = notificationFromDtoMapper.mapDataFromDto(body);
-        remoteNotificationService.send(snapshot);
+        kafkaHttpProxyProducer.send(topic, snapshot);
     }
 
     @Override

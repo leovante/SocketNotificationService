@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.nlmk.adp.dto.JwtAuthentication;
 import com.nlmk.adp.dto.StompAuthenticationToken;
-import com.nlmk.adp.services.AuthService;
 
 /**
  * 123.
@@ -28,8 +27,6 @@ import com.nlmk.adp.services.AuthService;
 @Component
 @RequiredArgsConstructor
 public class UserInterceptor implements ChannelInterceptor {
-
-    private final AuthService authService;
 
     @Value("${websocket.topic.start:/topic/hello}")
     private String startTopic;
@@ -49,7 +46,7 @@ public class UserInterceptor implements ChannelInterceptor {
                         .map(m -> {
                             var auth = new JwtAuthentication(null);
                             auth.setCredentialsToken(token);
-                            return authService.authenticate(auth);
+                            return null; // туду.
                         })
                         .orElseThrow(() -> new OAuth2AuthenticationException("AccessDenied"));
 

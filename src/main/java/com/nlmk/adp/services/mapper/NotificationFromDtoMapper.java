@@ -36,8 +36,8 @@ public interface NotificationFromDtoMapper {
     @Mapping(target = "data.acceptEmails",
              expression = "java(mapEmailsFromDto(notificationDto))")
     @Mapping(target = "metadata.kafkaTimestamp", source = "kafkaDt")
-    @Mapping(target = "ts", ignore = true)
-    @Mapping(target = "op", ignore = true)
+    @Mapping(target = "ts", source = "kafkaDt")
+    @Mapping(target = "op", constant = "I")
     @Mapping(target = "pk", ignore = true)
     @Mapping(target = "sys", ignore = true)
     DbUserNotificationVer0 mapDataFromDto(NotificationDto notificationDto);
