@@ -34,7 +34,7 @@ public class MaintainController {
      * @return Authentication
      */
     @GetMapping("/test")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('super-user')")
     public Authentication test() {
         SecurityContext context = SecurityContextHolder.getContext();
         return context.getAuthentication();
@@ -49,7 +49,7 @@ public class MaintainController {
      * @return ResponseEntity
      */
     @PostMapping("/notification")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('super-user')")
     public ResponseEntity<String> postNotification(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {
