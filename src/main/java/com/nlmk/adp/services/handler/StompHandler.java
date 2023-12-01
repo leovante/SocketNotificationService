@@ -3,50 +3,33 @@ package com.nlmk.adp.services.handler;
 import java.security.Principal;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.session.MapSession;
-import org.springframework.session.SessionRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 /**
- * 123.
+ * StompHandler.
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class StompHandler {
 
-    private final SessionRepository<MapSession> repository;
-
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Value("${websocket.topic.start:/topic/hello}")
     private String startTopic;
 
     /**
-     * StompHandler.
-     *
-     * @param messagingTemplate
-     *         messagingTemplate
-     * @param repository
-     *         repository
-     */
-    public StompHandler(SimpMessageSendingOperations messagingTemplate,
-                        SessionRepository<MapSession> repository) {
-        super();
-        this.repository = repository;
-        this.messagingTemplate = messagingTemplate;
-    }
-
-    /**
      * ConnectEvent.
      *
-     * @param <S>
-     *         S
+     * @param <S> S
      */
     @Component
     class ConnectEvent<S> implements ApplicationListener<SessionConnectEvent> {
@@ -54,25 +37,48 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionConnectEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                                .map(Principal::getName)
-                                .orElse(null);
+                    .map(Principal::getName)
+                    .orElse(null);
 
             if (id == null) {
-                log.info("No user connected event");
+                log.info("No user event to connect");
                 return;
             }
 
-            var session = new MapSession(id);
-            session.setAttribute("user", event.getUser());
+            messagingTemplate.convertAndSend(
+                    startTopic,
+                    "Connect session for user: " + event.getUser().getName());
 
-            repository.save(session);
+            log.info("stomp session connected");
+        }
+
+    }
+
+    /**
+     * SubscribeEvent.
+     *
+     * @param <S> S
+     */
+    @Component
+    class SubscribeEvent<S> implements ApplicationListener<SessionSubscribeEvent> {
+
+        @Override
+        public void onApplicationEvent(SessionSubscribeEvent event) {
+            String id = Optional.ofNullable(event.getUser())
+                    .map(Principal::getName)
+                    .orElse(null);
+
+            if (id == null) {
+                log.info("No user event to subscribe");
+                return;
+            }
 
             messagingTemplate.convertAndSendToUser(
                     event.getUser().getName(),
                     startTopic,
-                    "Save session for user: " + event.getUser().getName());
+                    "Subscribe for user: " + event.getUser().getName());
 
-            log.debug("stomp session established");
+            log.info("Subscribe user {}", event.getUser().getName());
         }
 
     }
@@ -80,8 +86,7 @@ public class StompHandler {
     /**
      * DisconnectEvent.
      *
-     * @param <S>
-     *         S
+     * @param <S> S
      */
     @Component
     class DisconnectEvent<S> implements ApplicationListener<SessionDisconnectEvent> {
@@ -89,23 +94,20 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionDisconnectEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                                .map(Principal::getName)
-                                .orElse("");
+                    .map(Principal::getName)
+                    .orElse("");
 
-            Optional
-                    .ofNullable(repository.findById(id))
-                    .ifPresent(
-                            user -> {
-                                repository.deleteById(user.getId());
+            if (id == null) {
+                log.info("No user event to disconnect");
+                return;
+            }
 
-                                messagingTemplate.convertAndSendToUser(
-                                        event.getUser().getName(),
-                                        startTopic,
-                                        "Clear session for user: " + event.getUser().getName());
-                            }
-                    );
+            messagingTemplate.convertAndSendToUser(
+                    event.getUser().getName(),
+                    startTopic,
+                    "Disconnect session for user: " + event.getUser().getName());
 
-            log.debug("stomp session destroyed");
+            log.info("stomp session disconnected");
         }
 
     }

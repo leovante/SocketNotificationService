@@ -57,4 +57,21 @@ public class MaintainController {
         return new ResponseEntity<>("\"Success\"", HttpStatus.OK);
     }
 
+    /**
+     * postNotification.
+     *
+     * @param payload
+     *         payload
+     *
+     * @return ResponseEntity
+     */
+    @PostMapping("/v2/notification")
+    @PreAuthorize("hasRole('super-user')")
+    public ResponseEntity<String> postNotificationV2(
+            @RequestBody @NotNull @Valid final NotificationDto payload
+    ) {
+        notificationService.sendV2(payload);
+        return new ResponseEntity<>("\"Success\"", HttpStatus.OK);
+    }
+
 }

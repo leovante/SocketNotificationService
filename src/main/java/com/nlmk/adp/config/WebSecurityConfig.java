@@ -42,6 +42,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf().disable()
                 .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 ->
                                               jwtConfigurer(oauth2)

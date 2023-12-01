@@ -2,6 +2,7 @@ package com.nlmk.adp.dto;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,25 +20,15 @@ public class KeyckloakUserDto {
 
     private String email;
 
-    private ResourceAccess resourceAccess;
+    @JsonProperty("realm_access")
+    private RealmAccess realmAccess;
 
     /**
      * 123.
      */
     @Data
     @Getter
-    public static class ResourceAccess {
-
-        private Account account;
-
-    }
-
-    /**
-     * 123.
-     */
-    @Data
-    @Getter
-    public static class Account {
+    public static class RealmAccess {
 
         private Set<String> roles;
 

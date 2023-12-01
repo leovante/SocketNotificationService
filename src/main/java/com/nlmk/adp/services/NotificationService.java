@@ -16,6 +16,13 @@ public interface NotificationService {
     void send(NotificationDto body);
 
     /**
+     * sendV2.
+     *
+     * @param body body
+     */
+    void sendV2(NotificationDto body);
+
+    /**
      * sendToKafka.
      *
      * @param body body

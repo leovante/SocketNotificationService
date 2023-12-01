@@ -45,6 +45,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void sendV2(NotificationDto body) {
+        socketMessageSenderService.send(body.href());
+    }
+
+    @Override
     public void sendToKafka(NotificationDto body) {
         var snapshot = notificationFromDtoMapper.mapDataFromDto(body);
         kafkaHttpProxyProducer.send(topic, snapshot);
