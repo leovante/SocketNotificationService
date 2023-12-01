@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import com.nlmk.adp.dto.JwtAuthentication;
 import com.nlmk.adp.dto.StompAuthenticationToken;
-import com.nlmk.adp.services.AuthService;
+import com.nlmk.adp.services.component.AuthJwt;
 
 /**
  * UserInterceptor.
@@ -32,7 +32,7 @@ import com.nlmk.adp.services.AuthService;
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class UserInterceptor implements ChannelInterceptor {
 
-    private final AuthService authService;
+    private final AuthJwt authService;
     @Value("${websocket.topic.start:/topic/hello}")
     private String startTopic;
 

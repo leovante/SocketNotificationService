@@ -1,4 +1,4 @@
-package com.nlmk.adp.services;
+package com.nlmk.adp.services.component;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ import com.nlmk.adp.dto.StompPrincipal;
  * AuthService.
  */
 @Component
-public class AuthService implements AuthenticationManager {
+public class AuthJwt implements AuthenticationManager {
 
     /**
      * authenticate.

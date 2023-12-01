@@ -28,7 +28,7 @@ import com.nlmk.adp.services.handler.UserInterceptor;
  */
 @Configuration
 @EnableWebSocketMessageBroker
-@Order(Ordered.HIGHEST_PRECEDENCE + 50)
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<Session> {
 
     @Autowired

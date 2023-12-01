@@ -1,43 +1,40 @@
 package com.nlmk.adp.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.user.SimpSession;
-import org.springframework.messaging.simp.user.SimpSubscription;
-import org.springframework.messaging.simp.user.SimpUser;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
-import org.springframework.session.MapSession;
-import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
+
+import com.nlmk.adp.services.component.ActiveUserStore;
 
 /**
  * SocketMessageSenderImpl.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SocketMessageSenderServiceImpl implements SocketMessageSenderService {
 
-    private final SimpMessagingTemplate template;
-    private final SimpUserRegistry simpUserRegistry;
-    private final SessionRepository<MapSession> sessionRepository;
-
     @Value("${websocket.topic.start:/topic/hello}")
     private String startTopic;
 
+    private final SimpMessagingTemplate template;
+
+    private final ActiveUserStore activeUserStore;
+
+    /**
+     * send.
+     *
+     * @param msg msg
+     */
     @Override
     public void send(String msg) {
-        var users = simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains(startTopic))
-                .stream()
-                .map(SimpSubscription::getSession)
-                .map(SimpSession::getUser)
-                .map(SimpUser::getName)
-                .distinct()
-                .toList();
+        log.info("Send for users message: {}, topic: {}", msg, startTopic);
 
-        users.forEach(user ->
-                template.convertAndSendToUser(user, startTopic, msg)
+        activeUserStore.getUsers().forEach(user -> {
+                    template.convertAndSendToUser(user.getUser().getName(), startTopic, msg);
+                }
         );
     }
 
