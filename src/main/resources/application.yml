@@ -133,6 +133,7 @@ locale:
   country: RU
 
 kafka-rest-proxy:
+  enable: false
   url: ${KAFKA_REST_SERVER:https://kafka-rest-000-1.dp.nlmk.com}
   username: ${KAFKA_REST_USER:test_user}
   password: ${KAFKA_REST_PASSWORD:test_user_test}

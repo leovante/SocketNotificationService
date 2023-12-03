@@ -26,10 +26,15 @@ public class NotificationServiceImpl implements NotificationService {
     private String topic;
 
     private final KafkaHttpProxyProducer kafkaHttpProxyProducer;
+
     private final NotificationDaoService notificationDaoService;
+
     private final NotificationRepository notificationRepository;
+
     private final InvalidNotificationsDaoService invalidNotificationsDaoService;
+
     private final SocketMessageSenderService socketMessageSenderService;
+
     private final NotificationFromDtoMapper notificationFromDtoMapper;
 
     @Override
@@ -52,7 +57,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendToKafka(NotificationDto body) {
         var snapshot = notificationFromDtoMapper.mapDataFromDto(body);
-        kafkaHttpProxyProducer.send(topic, snapshot);
+        var response = kafkaHttpProxyProducer.send(topic, snapshot).block();
+        log.info("Sent, result: {}", response);
     }
 
     @Override
