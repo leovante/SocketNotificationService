@@ -81,7 +81,7 @@ spring:
     properties:
       spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
       spring.deserializer.value.delegate.class: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL:https://schema-registry-000-1.dp.nlmk.com}
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
       specific.avro.reader: true
 
 keycloak:
