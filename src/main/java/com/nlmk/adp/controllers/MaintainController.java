@@ -1,5 +1,6 @@
 package com.nlmk.adp.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,13 @@ import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.NotificationService;
 
 /**
- * Временный тестовый контроллер.
+ * Служебное API.
  */
+@Tag(name = "Служебное API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/maintain")
+@PreAuthorize("hasRole('super-user')")
 public class MaintainController {
 
     private final NotificationService notificationService;
@@ -33,8 +36,7 @@ public class MaintainController {
      *
      * @return Authentication
      */
-    @GetMapping("/test")
-    @PreAuthorize("hasRole('super-user')")
+    @GetMapping("/self-test")
     public Authentication test() {
         SecurityContext context = SecurityContextHolder.getContext();
         return context.getAuthentication();
@@ -48,8 +50,7 @@ public class MaintainController {
      *
      * @return ResponseEntity
      */
-    @PostMapping("/notification")
-    @PreAuthorize("hasRole('super-user')")
+    @PostMapping("/notification-with-kafka")
     public ResponseEntity<String> postNotification(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {
@@ -65,8 +66,7 @@ public class MaintainController {
      *
      * @return ResponseEntity
      */
-    @PostMapping("/v2/notification")
-    @PreAuthorize("hasRole('super-user')")
+    @PostMapping("/notification-broadcast")
     public ResponseEntity<String> postNotificationV2(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {

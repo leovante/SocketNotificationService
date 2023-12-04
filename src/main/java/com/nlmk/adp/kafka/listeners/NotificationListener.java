@@ -37,13 +37,13 @@ public class NotificationListener {
      *         timestampType
      */
     @KafkaListener(
-            topics = "${spring.kafka.consumer.topic.notification-messsage}",
-            groupId = "${spring.kafka.consumer.group-id}",
-            autoStartup = "true",
-            containerFactory = "messageConsumerContainerFactory")
-    public void handleNotificationMessage(@Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
-                                          @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
-                                          @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType) {
+            topics = "${spring.kafka.consumer.topic.notification-messsage}"
+    )
+    public void handleNotificationMessage(
+            @Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
+            @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
+            @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType
+    ) {
         log.info("Receive notification message {}", ObjectMapperHelper.writeValueAsString(message));
         notificationsService.dispatch(message);
     }

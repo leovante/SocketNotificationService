@@ -1,7 +1,6 @@
 package com.nlmk.adp.services;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationService.
@@ -35,6 +34,6 @@ public interface NotificationService {
      * @param body body
      * @param reason reason
      */
-    void invalidate(DbUserNotificationVer0 body, String reason);
+    void invalidate(Object body, String reason);
 
 }

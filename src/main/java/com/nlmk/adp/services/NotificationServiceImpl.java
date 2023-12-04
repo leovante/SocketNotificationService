@@ -12,7 +12,6 @@ import com.nlmk.adp.db.dao.NotificationDaoService;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.mapper.NotificationFromDtoMapper;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationServiceImpl.
@@ -62,7 +61,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void invalidate(DbUserNotificationVer0 body, String reason) {
+    public void invalidate(Object body, String reason) {
         var snapshot = ObjectMapperHelper.getObjectMapper().valueToTree(body);
         invalidNotificationsDaoService.save(snapshot, reason);
     }
