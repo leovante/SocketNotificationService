@@ -22,7 +22,7 @@
     "header": "Прибывающий поезд",
     "body": "Поезд 238194958 прибыл на станцию 298519851",
     "href": "http://nlmk.com/dischargeVehiclesV2#?mode=KHC",
-    "type": "ALERT",
+    "type": "INFO",
     "acceptRoles": ["admin"],
     "acceptEmails": [
       "makarenko.a.a.@nlmk.com"
