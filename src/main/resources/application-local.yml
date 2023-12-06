@@ -50,22 +50,6 @@ spring:
         expireAfterWrite: 60  # в минутах
   kafka:
     enabled: true
-    consumer:
-      topic:
-        notification-messsage: ${NLMK_MES_NOTIFICATION_TOPIC:notifications-topic}
-      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-      auto-offset-reset: ${KAFKA_OFFSET_RESET:latest}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: ${KAFKA_GROUP_ID:notification-local}
-      security:
-        protocol: ${KAFKA_SECURITY_PROTOCOL}
-      ssl:
-        key-password: ${KAFKA_SSL_KEY_PASSWORD}
-        key-store-password: ${KAFKA_SSL_KEYSTORE_PASSWORD}
-        trust-store-password: ${KAFKA_SSL_TRUSTSTORE_PASSWORD}
-        key-store-location: file:${KAFKA_SSL_KEYSTORE}
-        trust-store-location: file:${KAFKA_SSL_TRUSTSTORE}
 
 keycloak:
   enabled: true

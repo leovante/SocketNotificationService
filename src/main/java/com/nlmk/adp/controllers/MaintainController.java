@@ -1,5 +1,7 @@
 package com.nlmk.adp.controllers;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,6 +75,21 @@ public class MaintainController {
     ) {
         notificationService.sendV2(payload);
         return new ResponseEntity<>("\"Success\"", HttpStatus.OK);
+    }
+
+    /**
+     * postNotification.
+     *
+     * @param id
+     *         id.
+     *
+     * @return ResponseEntity
+     */
+    @GetMapping("/notification/{id}")
+    public NotificationDto getNotification(
+            @PathVariable("id") UUID id
+    ) {
+        return notificationService.getById(id);
     }
 
 }

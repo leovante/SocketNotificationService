@@ -1,7 +1,6 @@
 package com.nlmk.adp.db.dao;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,17 +32,20 @@ public class NotificationDaoServiceImpl implements NotificationDaoService {
     @Transactional
     public NotificationEntity save(NotificationDto model) {
         var entity = notificationDaoMapper.mapDtoToEntity(model);
-        entity.setCreatedAt(Instant.now());
-        entity.setExpiredAt(Instant.now().plus(1, ChronoUnit.DAYS));
 
         var roles = entity.getNotificationRolesEntities();
         var emails = entity.getNotificationUserSuccessEntities();
         roles.forEach(i -> i.setNotification(entity));
         emails.forEach(i -> i.setNotification(entity));
 
-        var snapshot = notificationRepository.save(entity);
+        return notificationRepository.save(entity);
+    }
 
-        return snapshot;
+    @Override
+    @Transactional
+    public NotificationDto getById(UUID id) {
+        var entity = notificationRepository.findById(id).orElseThrow();
+        return notificationDaoMapper.mapToDto(entity);
     }
 
 }

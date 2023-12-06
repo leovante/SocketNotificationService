@@ -4,25 +4,27 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
-import org.springframework.util.CollectionUtils;
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 
-import com.nlmk.adp.exception.ErrorMessagesList;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
+import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.kafka.dto.RoleDto;
+import com.nlmk.adp.kafka.dto.UserEmailDto;
+import com.nlmk.adp.services.mapper.NotificationRoleType;
 
 /**
  * NotificationCheck.
  */
-@Target(ElementType.PARAMETER)
+@Target({ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = NotificationCheck.DbUserNotificationVer0Validator.class)
 public @interface NotificationCheck {
@@ -52,37 +54,36 @@ public @interface NotificationCheck {
      * DbUserNotificationVer0Validator.
      */
     class DbUserNotificationVer0Validator
-            implements ConstraintValidator<NotificationCheck, DbUserNotificationVer0> {
+            implements ConstraintValidator<NotificationCheck, NotificationDto> {
 
-        private static final String BASE_URL = "nlmk.com";
+        private final EmailValidator emailValidator = new EmailValidator();
 
         /**
          * isValid.
          */
         @Override
-        public boolean isValid(DbUserNotificationVer0 request, ConstraintValidatorContext context) {
+        public boolean isValid(NotificationDto dto, ConstraintValidatorContext context) {
             List<String> errorList = new ArrayList();
-            var payload = request.getData();
 
-            if (payload.getHeader() == null) {
-                errorList.add(ErrorMessagesList.HEADER_INVALID.getValue());
-            }
-            if (payload.getBody() == null) {
-                errorList.add(ErrorMessagesList.BODY_INVALID.getValue());
-            }
-            var emails = Optional.ofNullable(payload.getAcceptEmails()).orElse(List.of());
-            var acceptRoles = Optional.ofNullable(payload.getAcceptRoles()).orElse(List.of());
-            if (CollectionUtils.isEmpty(emails) || CollectionUtils.isEmpty(acceptRoles)) {
-                errorList.add(ErrorMessagesList.EMPTY_EMAILS_OR_ROLES.getValue());
-            }
-            var href = payload.getHref();
-            if (!isValidUrl(href)) {
-                errorList.add(ErrorMessagesList.HREF_DOMAIN_INVALID.getValue());
-            }
-            var rejectRoles = Optional.ofNullable(payload.getRejectRoles()).orElse(List.of());
-            if (!isValidRoles(acceptRoles, rejectRoles)) {
-                errorList.add(ErrorMessagesList.ROLES_MISMATCH.getValue());
-            }
+            validateHeader(dto, errorList);
+            validateBody(dto, errorList);
+            validateHref(dto.href(), errorList);
+
+            var emails = Optional.ofNullable(dto.emails()).orElse(List.of()).stream().map(UserEmailDto::email).toList();
+            var roles = Optional.ofNullable(dto.roles()).orElse(List.of()).stream().collect(
+                    Collectors.groupingBy(
+                            RoleDto::roleType,
+                            Collectors.mapping(
+                                    RoleDto::role,
+                                    Collectors.toList())
+                    )
+            );
+            var acceptRoles = roles.getOrDefault(NotificationRoleType.ACCEPT, List.of());
+            var rejectRoles = roles.getOrDefault(NotificationRoleType.REJECT, List.of());
+
+            validateDestinationResolving(emails, acceptRoles, errorList);
+            validateAcceptRejectRoles(acceptRoles, rejectRoles, errorList);
+            validateEmails(emails, errorList);
 
             if (!errorList.isEmpty()) {
                 var text = errorList.stream()
@@ -91,6 +92,57 @@ public @interface NotificationCheck {
                 return claim(context, text);
             }
             return true;
+        }
+
+        private void validateHref(String href, List<String> errorList) {
+            if (!URI.create(href).getPath().equals(href)) {
+                errorList.add("href should be a path");
+            }
+        }
+
+        private void validateEmails(List<String> emails, List<String> errorList) {
+            var invalidEmails = emails
+                    .stream()
+                    .filter(email -> email.isBlank() || !emailValidator.isValid(email.strip(), null))
+                    .collect(Collectors.joining(", "));
+            if (!invalidEmails.isBlank()) {
+                errorList.add("invalid emails: " + invalidEmails);
+            }
+        }
+
+        private static void validateAcceptRejectRoles(
+                List<String> acceptRoles,
+                List<String> rejectRoles,
+                List<String> errorList
+        ) {
+            var crossedRoles = acceptRoles.stream().filter(rejectRoles::contains)
+                                          .collect(Collectors.joining(", "));
+            if (!crossedRoles.isBlank()) {
+                errorList.add("acceptRoles and rejectRoles should not cross: " + crossedRoles);
+            }
+        }
+
+        private static void validateDestinationResolving(
+                List<String> emails,
+                List<String> acceptRoles,
+                List<String> errorList
+        ) {
+            if (emails.isEmpty() && acceptRoles.isEmpty()) {
+                errorList.add("emails or acceptRoles should not be empty");
+            }
+
+        }
+
+        private static void validateBody(NotificationDto dto, List<String> errorList) {
+            if (dto.body() == null) {
+                errorList.add("body should not be empty");
+            }
+        }
+
+        private static void validateHeader(NotificationDto dto, List<String> errorList) {
+            if (dto.header() == null) {
+                errorList.add("header should not be empty");
+            }
         }
 
         /**
@@ -109,40 +161,6 @@ public @interface NotificationCheck {
                     .buildConstraintViolationWithTemplate(message)
                     .addConstraintViolation();
             return false;
-        }
-
-        /**
-         * isValidUrl.
-         *
-         * @param href
-         *         href
-         *
-         * @return boolean
-         */
-        private boolean isValidUrl(String href) {
-            URL url;
-            try {
-                url = new URL(href);
-            } catch (MalformedURLException e) {
-                return false;
-            }
-            return Optional.ofNullable(url)
-                           .map(uri -> uri.getAuthority().endsWith(BASE_URL))
-                           .orElse(false);
-        }
-
-        /**
-         * isValidRoles.
-         *
-         * @param acceptRoles
-         *         acceptRoles
-         * @param rejectRoles
-         *         rejectRoles
-         *
-         * @return boolean
-         */
-        private boolean isValidRoles(List<String> acceptRoles, List<String> rejectRoles) {
-            return acceptRoles.stream().noneMatch(rejectRoles::contains);
         }
 
         /**

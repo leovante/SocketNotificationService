@@ -1,5 +1,5 @@
 {
-  "ts": "2023-11-17T11:05:10.512229",
+  "ts": "2023-11-17T11:05:10.512122912Z",
   "op": "I",
   "pk": {
     "id": "4291570c-3d74-47b6-92f5-f4246147c98b"
@@ -14,7 +14,7 @@
     "kafkaKey": "639dccd7-6eb1-42c1-a3c3-df649bed4afd",
     "kafkaPartition": 3,
     "kafkaOffset": 983,
-    "kafkaTimestamp": "2023-11-17T11:05:10.514130",
+    "kafkaTimestamp": "2023-11-17T11:05:10.514130131Z",
     "kafkaTopic": "topic_4",
     "kafkaHeaders": null
   },
@@ -25,7 +25,7 @@
     "type": "INFO",
     "acceptRoles": ["admin"],
     "acceptEmails": [
-      "makarenko.a.a.@nlmk.com"
+      "makarenko_aa@nlmk.com"
     ],
     "rejectRoles": null
   }

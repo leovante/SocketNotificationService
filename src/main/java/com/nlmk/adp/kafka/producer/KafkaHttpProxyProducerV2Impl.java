@@ -24,7 +24,7 @@ import com.nlmk.adp.commons.kafka.dto.MessageBatchMapper;
 import com.nlmk.adp.commons.kafka.dto.MessagesBatchDto;
 
 /**
- * 123.
+ * Форк KafkaHttpProxyProducerImpl, необходим из-за проблем с версиями java и spring.
  */
 @Slf4j
 public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
@@ -38,7 +38,7 @@ public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
     private final MessageBatchMapper messageBatchMapper;
 
     /**
-     * 123.
+     * Конструктор.
      */
     public KafkaHttpProxyProducerV2Impl(
             MessageBatchMapper messageBatchMapper,
@@ -64,12 +64,14 @@ public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
     }
 
     /**
-     * 123.
+     * Отправка в топик.
      */
     @Override
-    public <T extends SpecificRecordBase> Mono<KafkaRestProxyResponse> send(String topic,
-                                                                            String key,
-                                                                            List<T> messages) {
+    public <T extends SpecificRecordBase> Mono<KafkaRestProxyResponse> send(
+            String topic,
+            String key,
+            List<T> messages
+    ) {
         return send(
                 topic,
                 () -> CollectionUtils.isEmpty(messages),
@@ -78,10 +80,13 @@ public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
     }
 
     /**
-     * 123.
+     * Отправка в топик.
      */
     @Override
-    public <T extends SpecificRecordBase> Mono<KafkaRestProxyResponse> send(String topic, Map<String, T> messages) {
+    public <T extends SpecificRecordBase> Mono<KafkaRestProxyResponse> send(
+            String topic,
+            Map<String, T> messages
+    ) {
         return send(
                 topic,
                 () -> CollectionUtils.isEmpty(messages),
@@ -89,7 +94,11 @@ public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
         );
     }
 
-    private Mono<KafkaRestProxyResponse> send(String topic, BooleanSupplier isEmpty, Supplier<MessagesBatchDto> map) {
+    private Mono<KafkaRestProxyResponse> send(
+            String topic,
+            BooleanSupplier isEmpty,
+            Supplier<MessagesBatchDto> map
+    ) {
         Objects.requireNonNull(topic, "Topic must be set!");
 
         if (Boolean.TRUE.equals(isEmpty.getAsBoolean())) {

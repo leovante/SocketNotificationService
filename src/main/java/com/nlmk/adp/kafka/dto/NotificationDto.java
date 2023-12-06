@@ -4,37 +4,36 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.lang.Nullable;
+
+import com.nlmk.adp.dto.NotificationCheck;
+
 /**
- * NotificationDto.
+ * Дто с уведомлением.
  *
- * @param uuid
- *         uuid
- * @param createdAt
- *         createdAt
- * @param updatedAt
- *         updatedAt
+ * @param id
+ *         id из кафки, считается глобальным id уведомления.
  * @param expiredAt
  *         expiredAt
- * @param kafkaDt
- *         kafkaDt
+ * @param happenedAt
+ *         время возникновения уведомления.
  * @param body
- *         body
+ *         тело уведомления.
  * @param header
- *         header
+ *         заголовок уведомления.
  * @param href
- *         href
+ *         ссылка, на которую произойдет переход при нажатии на уведомление.
  * @param roles
- *         roles
+ *         список ролей для маршрутизации уведомления.
  * @param emails
- *         emails
+ *         список emails для маршрутизации уведомления.
  */
+@NotificationCheck
 public record NotificationDto(
 
-        UUID uuid,
-        Instant createdAt,
-        Instant updatedAt,
-        Instant expiredAt,
-        Instant kafkaDt,
+        UUID id,
+        @Nullable Instant expiredAt,
+        Instant happenedAt,
         String body,
         String header,
         String href,

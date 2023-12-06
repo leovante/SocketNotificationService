@@ -21,18 +21,11 @@ import com.nlmk.adp.dto.StompAuthenticationToken;
 import com.nlmk.adp.dto.StompPrincipal;
 
 /**
- * AuthService.
+ * Аутентификация для веб сокетов.
  */
 @Component
 public class AuthJwt implements AuthenticationManager {
 
-    /**
-     * authenticate.
-     *
-     * @param authentication authentication
-     * @return Authentication
-     * @throws AuthenticationException AuthenticationException
-     */
     @Override
     @SneakyThrows
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -46,20 +39,16 @@ public class AuthJwt implements AuthenticationManager {
         }
     }
 
-    /**
-     * createUserOrFail.
-     *
-     * @param jwt jwt
-     * @return StompAuthenticationToken
-     */
     @SneakyThrows
     private StompAuthenticationToken createUserOrFail(JWT jwt) {
         KeyckloakUserDto user = ObjectMapperHelper.getObjectMapper()
-                .readValue(((SignedJWT) jwt).getPayload().toString(), KeyckloakUserDto.class);
+                                                  .readValue(
+                                                          ((SignedJWT) jwt).getPayload().toString(),
+                                                          KeyckloakUserDto.class);
         Set<String> roles = user.getRealmAccess().getRoles();
         var authorities = roles.stream()
-                .map(i -> new SimpleGrantedAuthority(String.format("ROLE_%s", i)))
-                .toList();
+                               .map(i -> new SimpleGrantedAuthority(String.format("ROLE_%s", i)))
+                               .toList();
 
         if (user.getEmail() == null) {
             throw new OAuth2AuthenticationException("Access Denied. No user email found");
@@ -69,7 +58,8 @@ public class AuthJwt implements AuthenticationManager {
                 authorities,
                 new SimpleStompAccount(
                         new StompPrincipal(user.getEmail()),
-                        roles)
+                        roles
+                )
         );
     }
 
