@@ -14,13 +14,13 @@ import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
- * NotificationFromDtoMapper.
+ * Служебный маппер для формирования kafka сообщений из дто.
  */
-@Mapper(config = SpringMapperConfig.class, uses = {DateMapper.class})
-public interface NotificationFromDtoMapper {
+@Mapper(config = SpringMapperConfig.class, uses = {KafkaDateMapper.class})
+public interface DtoToKafkaMessageMapper {
 
     /**
-     * mapDataFromDto.
+     * Сообщение с уведомлением.
      *
      * @param notificationDto
      *         notificationDto
@@ -31,19 +31,19 @@ public interface NotificationFromDtoMapper {
     @Mapping(target = "data.body", source = "body")
     @Mapping(target = "data.href", source = "href")
     @Mapping(target = "data.acceptRoles",
-             expression = "java(mapRolesFromDto(notificationDto, com.nlmk.adp.services.mapper.RoleStatus.ACCEPT))")
+             expression = "java(mapRolesFromDto(notificationDto, NotificationRoleType.ACCEPT))")
     @Mapping(target = "data.rejectRoles",
-             expression = "java(mapRolesFromDto(notificationDto, com.nlmk.adp.services.mapper.RoleStatus.REJECT))")
+             expression = "java(mapRolesFromDto(notificationDto, NotificationRoleType.REJECT))")
     @Mapping(target = "data.acceptEmails",
              expression = "java(mapEmailsFromDto(notificationDto))")
     @Mapping(target = "data.type", constant = "INFO")
-    @Mapping(target = "metadata.kafkaTimestamp", source = "kafkaDt")
-    @Mapping(target = "metadata.kafkaKey", source = "uuid")
-    @Mapping(target = "metadata.kafkaTopic", source = "uuid")
-    @Mapping(target = "ts", source = "kafkaDt")
+    @Mapping(target = "metadata.kafkaTimestamp", source = "happenedAt")
+    @Mapping(target = "metadata.kafkaKey", source = "id")
+    @Mapping(target = "metadata.kafkaTopic", source = "id")
+    @Mapping(target = "ts", source = "happenedAt")
     @Mapping(target = "op", constant = "I")
-    @Mapping(target = "pk", source = "uuid")
-    @Mapping(target = "sys", source = "uuid")
+    @Mapping(target = "pk", source = "id")
+    @Mapping(target = "sys", source = "id")
     DbUserNotificationVer0 mapDataFromDto(NotificationDto notificationDto);
 
     /**
@@ -87,10 +87,10 @@ public interface NotificationFromDtoMapper {
      *
      * @return List
      */
-    default List<String> mapRolesFromDto(NotificationDto data, RoleStatus type) {
+    default List<String> mapRolesFromDto(NotificationDto data, NotificationRoleType type) {
         var roles = data.roles();
         return roles.stream()
-                    .filter(i -> i.roleType().equals(type.toString()))
+                    .filter(i -> type == i.roleType())
                     .map(RoleDto::role)
                     .collect(Collectors.toList());
     }

@@ -1,51 +1,44 @@
 package com.nlmk.adp.kafka.listeners;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
-import com.nlmk.adp.dto.NotificationCheck;
-import com.nlmk.adp.kafka.dispatcher.NotificationsDispatcher;
+import com.nlmk.adp.kafka.dispatcher.KafkaListenerDispatcher;
+import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
- * листенер сообщений по кафка.
+ * Листенер сообщений по кафка.
  */
 @Slf4j
 @Service
 @AllArgsConstructor
-@Validated
 public class NotificationListener {
 
-    private final NotificationsDispatcher notificationsService;
+    private final KafkaListenerDispatcher dispatcher;
+
+    private final KafkaMessageToDtoMapper messageToDtoMapper;
 
     /**
-     * handleNotificationMessage.
+     * Слушает новые уведомления.
      *
      * @param message
-     *         message
-     * @param timestamp
-     *         timestamp
-     * @param timestampType
-     *         timestampType
+     *         сообщение.
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.topic.notification-messsage}"
     )
     public void handleNotificationMessage(
-            @Valid @NotificationCheck @Payload DbUserNotificationVer0 message,
-            @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp,
-            @Header(KafkaHeaders.TIMESTAMP_TYPE) String timestampType
+            @Payload DbUserNotificationVer0 message
     ) {
         log.info("Receive notification message {}", ObjectMapperHelper.writeValueAsString(message));
-        notificationsService.dispatch(message);
+        var dto = messageToDtoMapper.mapDataToDto(message);
+        var operation = message.getOp();
+        dispatcher.dispatch(operation, dto);
     }
 
 }

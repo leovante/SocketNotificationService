@@ -7,17 +7,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * NotificationRolesPk.
+ * Составной ид для роли уведомления.
  */
 @Setter
 @Getter
 @Embeddable
 @ToString(exclude = "notificationId")
+@NoArgsConstructor
 public class NotificationRolesPk implements Serializable {
 
     @Column(name = "notification_id")
@@ -27,24 +29,5 @@ public class NotificationRolesPk implements Serializable {
     @Column(name = "role")
     @Length(max = 100)
     private String role;
-
-    /**
-     * NotificationRolesPk.
-     */
-    public NotificationRolesPk() {
-    }
-
-    /**
-     * NotificationRolesPk.
-     *
-     * @param notificationId
-     *         notificationId
-     * @param role
-     *         role
-     */
-    public NotificationRolesPk(UUID notificationId, String role) {
-        this.notificationId = notificationId;
-        this.role = role;
-    }
 
 }

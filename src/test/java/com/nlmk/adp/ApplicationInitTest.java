@@ -38,11 +38,11 @@ class ApplicationInitTest extends BaseSpringBootTest {
         var uuid = UUID.randomUUID();
         payload.getPk().setId(uuid.toString());
 
-        notificationListener.handleNotificationMessage(payload, null, null);
+        notificationListener.handleNotificationMessage(payload);
         var result = notificationRepository.findById(uuid).get();
 
         SoftAssertions.assertSoftly(it -> {
-            it.assertThat(result.getHref()).isEqualTo(payload.getData().getHref());
+            it.assertThat(result.getHref()).isEqualTo("/dischargeVehiclesV2");
             it.assertThat(result.getBody()).isEqualTo(payload.getData().getBody());
             it.assertThat(result.getHeader()).isEqualTo(payload.getData().getHeader());
             it.assertThat(result.getCreatedAt()).isNotNull();

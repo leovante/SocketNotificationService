@@ -1,5 +1,7 @@
 package com.nlmk.adp.services;
 
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +13,7 @@ import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
 import com.nlmk.adp.db.dao.NotificationDaoService;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.kafka.dto.NotificationDto;
-import com.nlmk.adp.services.mapper.NotificationFromDtoMapper;
+import com.nlmk.adp.services.mapper.DtoToKafkaMessageMapper;
 
 /**
  * NotificationServiceImpl.
@@ -34,13 +36,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final SocketMessageSenderService socketMessageSenderService;
 
-    private final NotificationFromDtoMapper notificationFromDtoMapper;
+    private final DtoToKafkaMessageMapper dtoToKafkaMessageMapper;
 
     @Override
     public void send(NotificationDto body) {
-        var existed = notificationRepository.findById(body.uuid());
+        var existed = notificationRepository.findById(body.id());
         if (existed.isPresent()) {
-            log.info("Handled message is presented, uuid: " + body.uuid());
+            log.info("Handled message is presented, uuid: " + body.id());
             return;
         }
 
@@ -55,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendToKafka(NotificationDto body) {
-        var snapshot = notificationFromDtoMapper.mapDataFromDto(body);
+        var snapshot = dtoToKafkaMessageMapper.mapDataFromDto(body);
         var response = kafkaHttpProxyProducer.send(topic, snapshot).block();
         log.info("Sent, result: {}", response);
     }
@@ -64,6 +66,11 @@ public class NotificationServiceImpl implements NotificationService {
     public void invalidate(Object body, String reason) {
         var snapshot = ObjectMapperHelper.getObjectMapper().valueToTree(body);
         invalidNotificationsDaoService.save(snapshot, reason);
+    }
+
+    @Override
+    public NotificationDto getById(UUID id) {
+        return notificationDaoService.getById(id);
     }
 
 }

@@ -10,20 +10,21 @@ import com.nlmk.adp.commons.kafka.dto.MessageBatchMapper;
 import com.nlmk.adp.kafka.producer.KafkaHttpProxyProducerV2Impl;
 
 /**
- * 123.
+ * Копия конфигурации KafkaRestProxyAutoConfiguration. Оригинальная библиотека бинарно несовместима из-за мажорных
+ * различий в версиях spring и java.
  */
 @Configuration
 public class KafkaProducerConfig {
 
     /**
-     * 123.
+     * Клиент для kafka rest.
      *
      * @param messageBatchMapper
-     *         123.
+     *         конвертер.
      * @param kafkaRestProxyConfigurationProperties
-     *         123.
+     *         параметры.
      *
-     * @return 123.
+     * @return клиент.
      */
     @Bean
     @Primary

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.nlmk.adp.db.entity.convert.RawMessageConverter;
@@ -31,6 +33,7 @@ import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "invalid_notifications")
+@EntityListeners(AuditingEntityListener.class)
 public class InvalidNotificationsEntity {
 
     @Id

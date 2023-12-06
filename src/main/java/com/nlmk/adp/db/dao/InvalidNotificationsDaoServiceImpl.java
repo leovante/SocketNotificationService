@@ -1,7 +1,5 @@
 package com.nlmk.adp.db.dao;
 
-import java.time.Instant;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,6 @@ public class InvalidNotificationsDaoServiceImpl implements InvalidNotificationsD
     @Transactional
     public InvalidNotificationsEntity save(JsonNode msg, String reason) {
         var entity = new InvalidNotificationsEntity();
-        entity.setCreatedAt(Instant.now());
         entity.setRawMessage(msg);
         entity.setErrorMessage(reason);
         return repository.save(entity);

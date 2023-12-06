@@ -8,21 +8,24 @@ import org.springframework.security.config.annotation.web.socket.EnableWebSocket
 import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 
 /**
- * EnableWebSocketSecurity.
+ * Конфиг безопасности для веб сокетов.
  */
 @Configuration
 @EnableWebSocketSecurity
 public class WebSocketSecurityConfig {
 
     /**
-     * messageAuthorizationManager.
+     * Auth manager.
      *
-     * @param messages messages.
+     * @param messages
+     *         messages.
+     *
      * @return AuthorizationManager.
      */
     @Bean
     AuthorizationManager<Message<?>> messageAuthorizationManager(
-            MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+            MessageMatcherDelegatingAuthorizationManager.Builder messages
+    ) {
         messages
                 .nullDestMatcher().authenticated()
                 .simpDestMatchers("/ws/**").authenticated()

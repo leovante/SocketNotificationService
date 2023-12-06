@@ -169,9 +169,7 @@
         </module>
 
         <!-- 3.2.3  -->
-        <module name="AvoidStaticImport">
-            <property name="excludes" value="org.springframework.kafka.support.KafkaHeaders.*"/>
-        </module>
+        <module name="AvoidStaticImport"/>
 
         <!-- Checks for Javadoc -->
         <!-- https://checkstyle.sourceforge.io/config_javadoc.html -->

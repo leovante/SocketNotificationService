@@ -12,7 +12,7 @@ import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
 /**
- * ActiveUserStore.
+ * Служебный компонент для хранения вебсокет-сессий.
  */
 @Component
 @RequiredArgsConstructor

@@ -41,7 +41,7 @@
         <java.version>17</java.version>
         <nlmk-mes-checkstyle.version>1.0.0-SNAPSHOT</nlmk-mes-checkstyle.version>
         <!-- Plugins versions -->
-        <jacoco.version>0.8.6</jacoco.version>
+        <jacoco.version>0.8.11</jacoco.version>
         <!-- Dependencies versions -->
         <avro.version>1.11.0</avro.version>
         <kafka.confluent.version>7.4.0</kafka.confluent.version>
