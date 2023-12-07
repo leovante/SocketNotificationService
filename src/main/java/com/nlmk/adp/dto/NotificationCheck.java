@@ -7,13 +7,13 @@ import java.lang.annotation.Target;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
@@ -56,6 +56,8 @@ public @interface NotificationCheck {
     class DbUserNotificationVer0Validator
             implements ConstraintValidator<NotificationCheck, NotificationDto> {
 
+        public static final int DB_VARCHAR_SIZE = 500;
+
         private final EmailValidator emailValidator = new EmailValidator();
 
         /**
@@ -69,8 +71,8 @@ public @interface NotificationCheck {
             validateBody(dto, errorList);
             validateHref(dto.href(), errorList);
 
-            var emails = Optional.ofNullable(dto.emails()).orElse(List.of()).stream().map(UserEmailDto::email).toList();
-            var roles = Optional.ofNullable(dto.roles()).orElse(List.of()).stream().collect(
+            var emails = CollectionUtils.emptyIfNull(dto.emails()).stream().map(UserEmailDto::email).toList();
+            var roles = CollectionUtils.emptyIfNull(dto.roles()).stream().collect(
                     Collectors.groupingBy(
                             RoleDto::roleType,
                             Collectors.mapping(
@@ -95,8 +97,12 @@ public @interface NotificationCheck {
         }
 
         private void validateHref(String href, List<String> errorList) {
-            if (!URI.create(href).getPath().equals(href)) {
+            if (href == null) {
+                errorList.add("href should not be null");
+            } else if (!URI.create(href).getPath().equals(href)) {
                 errorList.add("href should be a path");
+            } else if (href.length() > DB_VARCHAR_SIZE) {
+                errorList.add("href is too long, max size " + DB_VARCHAR_SIZE);
             }
         }
 
@@ -130,18 +136,23 @@ public @interface NotificationCheck {
             if (emails.isEmpty() && acceptRoles.isEmpty()) {
                 errorList.add("emails or acceptRoles should not be empty");
             }
-
         }
 
         private static void validateBody(NotificationDto dto, List<String> errorList) {
             if (dto.body() == null) {
+                errorList.add("body should not be null");
+            } else if (dto.body().isBlank()) {
                 errorList.add("body should not be empty");
+            } else if (dto.body().length() > DB_VARCHAR_SIZE) {
+                errorList.add("body is too long, max size " + DB_VARCHAR_SIZE);
             }
         }
 
         private static void validateHeader(NotificationDto dto, List<String> errorList) {
             if (dto.header() == null) {
-                errorList.add("header should not be empty");
+                errorList.add("header should not be null");
+            } else if (dto.header().length() > DB_VARCHAR_SIZE) {
+                errorList.add("header is too long, max size " + DB_VARCHAR_SIZE);
             }
         }
 

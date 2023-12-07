@@ -6,6 +6,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,14 +24,16 @@ import com.nlmk.adp.dto.StompPrincipal;
 /**
  * Аутентификация для веб сокетов.
  */
+@Slf4j
 @Component
 public class AuthJwt implements AuthenticationManager {
 
     @Override
     @SneakyThrows
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (authentication instanceof JwtAuthentication) {
-            var jwt = JWTParser.parse(((JwtAuthentication) authentication).getCredentialsToken().split("Bearer ")[1]);
+        if (authentication instanceof JwtAuthentication auth) {
+            log.info("auth for new ws user " + auth.getUser());
+            var jwt = JWTParser.parse(auth.getCredentialsToken().split("Bearer ")[1]);
             var userToken = createUserOrFail(jwt);
             userToken.setAuthenticated(true);
             return userToken;

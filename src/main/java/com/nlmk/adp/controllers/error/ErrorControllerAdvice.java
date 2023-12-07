@@ -94,9 +94,13 @@ public class ErrorControllerAdvice {
 
         bindingResult.getAllErrors()
                      .forEach(error -> {
-                         String fieldName = ((FieldError) error).getField();
                          String errorMessage = error.getDefaultMessage();
-                         errors.put(fieldName, errorMessage);
+                         if (error instanceof FieldError) {
+                             String fieldName = ((FieldError) error).getField();
+                             errors.put(fieldName, errorMessage);
+                         } else {
+                             errors.put(error.getObjectName(), errorMessage);
+                         }
                      });
 
         return errors;

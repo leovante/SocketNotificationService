@@ -43,10 +43,6 @@ spring:
           keycloak:
             authorization-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth
             token-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
-  cache:
-    caffeine:
-      nsi:
-        expireAfterWrite: 60  # в минутах
   kafka:
     consumer:
       topic:

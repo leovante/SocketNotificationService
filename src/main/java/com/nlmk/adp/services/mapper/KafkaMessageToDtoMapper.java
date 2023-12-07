@@ -36,14 +36,31 @@ public interface KafkaMessageToDtoMapper {
      * @return dto.
      */
     @Mapping(target = "id", source = "pk.id")
-    @Mapping(target = "header", source = "data.header")
-    @Mapping(target = "body", source = "data.body")
+    @Mapping(target = "header", source = "data.header", qualifiedByName = "strip")
+    @Mapping(target = "body", source = "data.body", qualifiedByName = "strip")
     @Mapping(target = "href", source = "data.href", qualifiedByName = "calcHref")
     @Mapping(target = "roles", expression = "java(mapRolesToDto(req.getData()))")
     @Mapping(target = "emails", expression = "java(mapEmailsToDto(req.getData().getAcceptEmails()))")
     @Mapping(target = "happenedAt", source = "ts")
     @Mapping(target = "expiredAt", source = "ts", qualifiedByName = "calcExpiredAt")
     NotificationDto mapDataToDto(DbUserNotificationVer0 req);
+
+    /**
+     * Чистит строку.
+     *
+     * @param raw
+     *         исходная строка.
+     *
+     * @return очищенная строка.
+     */
+    @Named("strip")
+    default String strip(String raw) {
+        if (raw == null) {
+            return "";
+        } else {
+            return raw.strip();
+        }
+    }
 
     /**
      * Вытаскивает путь для перехода. Фронт ожидает строку вида /qwer1/123.
@@ -86,11 +103,11 @@ public interface KafkaMessageToDtoMapper {
 
         return Stream.concat(
                 accRoles.stream()
-                        .filter(it -> !it.isBlank())
+                        .filter(it -> it != null && !it.isBlank())
                         .filter(it -> !rejRoles.contains(it))
                         .map(i -> new RoleDto(i.strip(), NotificationRoleType.ACCEPT)),
                 rejRoles.stream()
-                        .filter(it -> !it.isBlank())
+                        .filter(it -> it != null && !it.isBlank())
                         .map(i -> new RoleDto(i.strip(), NotificationRoleType.REJECT))
         ).toList();
     }

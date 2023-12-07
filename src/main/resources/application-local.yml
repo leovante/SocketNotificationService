@@ -44,10 +44,6 @@ spring:
           keycloak:
             authorization-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/auth
             token-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/token
-  cache:
-    caffeine:
-      nsi:
-        expireAfterWrite: 60  # в минутах
   kafka:
     enabled: true
 
@@ -65,7 +61,6 @@ springdoc:
     oauth:
       client-id: ${KEYCLOAK_CLIENT_ID:notifications-id}
       client-secret: ${KEYCLOAK_CLIENT_SECRET:1VXjz363YasrBia2LgDZfvEOA0ELxOlu}
-
 
 logging:
   aop-debug-rest: ${AOP_DEBUG_REST:false}
