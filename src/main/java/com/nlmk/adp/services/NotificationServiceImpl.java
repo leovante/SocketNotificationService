@@ -1,5 +1,6 @@
 package com.nlmk.adp.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,11 @@ import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
 import com.nlmk.adp.db.dao.NotificationDaoService;
 import com.nlmk.adp.db.repository.NotificationRepository;
+import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.services.component.AuthJwt;
 import com.nlmk.adp.services.mapper.DtoToKafkaMessageMapper;
+import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
 
 /**
  * NotificationServiceImpl.
@@ -26,6 +30,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${spring.kafka.producer.topic.notification-messsage}")
     private String topic;
 
+    private final AuthJwt authJwt;
+
     private final KafkaHttpProxyProducer kafkaHttpProxyProducer;
 
     private final NotificationDaoService notificationDaoService;
@@ -37,6 +43,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final SocketMessageSenderService socketMessageSenderService;
 
     private final DtoToKafkaMessageMapper dtoToKafkaMessageMapper;
+
+    private final NotificationToDaoMapper notificationToDaoMapper;
 
     @Override
     public void send(NotificationDto body) {
@@ -71,6 +79,16 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public NotificationDto getById(UUID id) {
         return notificationDaoService.getById(id);
+    }
+
+    @Override
+    public List<NotificationBaseDto> getNotificationsByRole(Integer limit) {
+        var keyckloakUserDto = authJwt.getKeyckloakUserDto();
+        var roles = keyckloakUserDto.getRealmAccess().getRoles();
+        return notificationRepository.findAllByUserInfo(roles, limit, keyckloakUserDto.getEmail())
+                                     .stream()
+                                     .map(notificationToDaoMapper::mapToBaseDto)
+                                     .toList();
     }
 
 }

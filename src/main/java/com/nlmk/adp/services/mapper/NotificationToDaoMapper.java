@@ -10,6 +10,7 @@ import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.db.entity.NotificationRolesEntity;
 import com.nlmk.adp.db.entity.NotificationRolesPk;
 import com.nlmk.adp.db.entity.NotificationUserSuccessEntity;
+import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
@@ -38,6 +39,21 @@ public interface NotificationToDaoMapper {
     @Mapping(target = "happenedAt", source = "kafkaDt")
     @Mapping(target = "expiredAt", source = "expiredAt")
     NotificationDto mapToDto(NotificationEntity entity);
+
+    /**
+     * map to dto.
+     *
+     * @param entity
+     *         entity.
+     *
+     * @return NotificationBaseDto.
+     */
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "header", source = "header")
+    @Mapping(target = "body", source = "body")
+    @Mapping(target = "href", source = "href")
+    @Mapping(target = "createdAt", source = "kafkaDt")
+    NotificationBaseDto mapToBaseDto(NotificationEntity entity);
 
     /**
      * role.

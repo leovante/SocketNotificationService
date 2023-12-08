@@ -11,7 +11,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import com.nlmk.adp.config.ObjectMapperHelper;
@@ -64,6 +66,34 @@ public class AuthJwt implements AuthenticationManager {
                         roles
                 )
         );
+    }
+
+    /**
+     * createKeyckloakUserDto.
+     *
+     * @return StompAuthenticationToken
+     */
+    @SneakyThrows
+    public KeyckloakUserDto getKeyckloakUserDto() {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken) {
+            var jwt = JWTParser.parse(((JwtAuthenticationToken) authentication).getToken().getTokenValue());
+            KeyckloakUserDto user = ObjectMapperHelper.getObjectMapper()
+                                                      .readValue(
+                                                              ((SignedJWT) jwt).getPayload().toString(),
+                                                              KeyckloakUserDto.class);
+
+            if (user.getEmail() == null) {
+                throw new OAuth2AuthenticationException("Access Denied. No user email found");
+            }
+
+            return user;
+
+        } else {
+            throw new RuntimeException("Unexpected auth type");
+        }
     }
 
 }
