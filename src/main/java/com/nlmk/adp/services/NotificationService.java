@@ -1,7 +1,9 @@
 package com.nlmk.adp.services;
 
+import java.util.List;
 import java.util.UUID;
 
+import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 
 /**
@@ -52,5 +54,15 @@ public interface NotificationService {
      * @return notif.
      */
     NotificationDto getById(UUID id);
+
+    /**
+     * ByRole.
+     *
+     * @param limit
+     *         limit.
+     *
+     * @return NotificationBaseDto.
+     */
+    List<NotificationBaseDto> getNotificationsByRole(Integer limit);
 
 }
