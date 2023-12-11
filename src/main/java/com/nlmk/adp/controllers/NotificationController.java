@@ -20,7 +20,7 @@ import com.nlmk.adp.services.NotificationService;
 @Tag(name = "API уведомлений")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/notification")
+@RequestMapping("/api/v1/notification")
 public class NotificationController {
 
     private final NotificationService notificationService;
