@@ -42,10 +42,11 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
                              left join notification_user_success nus
                                        on notif.id = nus.notification_id
                                            and nus.email = :useremail
-                    where nus is not null
-                       or (accroles is not null
-                        and rejroles is null) ORDER BY notif.created_at desc limit :limitElem
-                        """,
+                    where nus.email is not null
+                       or (accroles is not null and rejroles is null)
+                    ORDER BY notif.kafka_dt desc
+                    limit :limitElem
+                    """,
             nativeQuery = true
     )
     List<NotificationEntity> findAllByUserInfo(
