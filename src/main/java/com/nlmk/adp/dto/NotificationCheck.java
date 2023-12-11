@@ -8,14 +8,19 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 
+import com.nlmk.adp.db.entity.NotificationEmailPk;
+import com.nlmk.adp.db.entity.NotificationEntity;
+import com.nlmk.adp.db.entity.NotificationRolesPk;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.kafka.dto.UserEmailDto;
@@ -56,7 +61,7 @@ public @interface NotificationCheck {
     class DbUserNotificationVer0Validator
             implements ConstraintValidator<NotificationCheck, NotificationDto> {
 
-        public static final int DB_VARCHAR_SIZE = 500;
+        private static final String VALID_HOST = "nlmk.com";
 
         private final EmailValidator emailValidator = new EmailValidator();
 
@@ -101,29 +106,118 @@ public @interface NotificationCheck {
                 errorList.add("href should not be null");
             } else if (!URI.create(href).getPath().equals(href)) {
                 errorList.add("href should be a path");
-            } else if (href.length() > DB_VARCHAR_SIZE) {
-                errorList.add("href is too long, max size " + DB_VARCHAR_SIZE);
+            } else if (href.length() > NotificationEntity.VARCHAR_FIELD_MAX_SIZE) {
+                errorList.add("href is too long, max size " + NotificationEntity.VARCHAR_FIELD_MAX_SIZE);
             }
         }
 
-        private void validateEmails(List<String> emails, List<String> errorList) {
+        /**
+         * Проверка списка emails.
+         *
+         * @param emails
+         *         список для проверки.
+         * @param errorList
+         *         список ошибок.
+         */
+        public void validateEmails(
+                List<String> emails,
+                List<String> errorList
+        ) {
+            checkEmailValidness(emails, errorList);
+            checkEmailHost(emails, errorList);
+            checkEmailLength(emails, errorList);
+        }
+
+        private static void checkEmailHost(List<String> emails, List<String> errorList) {
             var invalidEmails = emails
                     .stream()
-                    .filter(email -> email.isBlank() || !emailValidator.isValid(email.strip(), null))
-                    .collect(Collectors.joining(", "));
-            if (!invalidEmails.isBlank()) {
+                    .filter(email -> !email.endsWith("@" + VALID_HOST))
+                    .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!invalidEmails.isEmpty()) {
+                errorList.add("invalid email host: " + invalidEmails);
+            }
+        }
+
+        private static void checkEmailLength(List<String> emails, List<String> errorList) {
+            var invalidEmails = emails
+                    .stream()
+                    .filter(email -> email.isEmpty() || email.length() > NotificationEmailPk.VARCHAR_FIELD_MAX_SIZE)
+                    .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!invalidEmails.isEmpty()) {
+                errorList.add("Email is empty or too long: " + invalidEmails);
+            }
+        }
+
+        private void checkEmailValidness(List<String> emails, List<String> errorList) {
+            var invalidEmails = emails
+                    .stream()
+                    .filter(email -> !emailValidator.isValid(email, null))
+                    .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!invalidEmails.isEmpty()) {
                 errorList.add("invalid emails: " + invalidEmails);
             }
         }
 
-        private static void validateAcceptRejectRoles(
+        /**
+         * Check roles.
+         *
+         * @param acceptRoles
+         *         роли.
+         * @param rejectRoles
+         *         роли.
+         * @param errorList
+         *         ошибки.
+         */
+        public void validateAcceptRejectRoles(
+                List<String> acceptRoles,
+                List<String> rejectRoles,
+                List<String> errorList
+        ) {
+            checkRolesCrossing(acceptRoles, rejectRoles, errorList);
+            checkRolesClearing(acceptRoles, rejectRoles, errorList);
+            checkRolesMaxLength(acceptRoles, rejectRoles, errorList);
+        }
+
+        private static void checkRolesMaxLength(
+                List<String> acceptRoles,
+                List<String> rejectRoles,
+                List<String> errorList
+        ) {
+            var tooLongRoles = Stream.of(acceptRoles.stream(), rejectRoles.stream()).flatMap(it -> it)
+                                     .filter(it -> it.length() > NotificationRolesPk.VARCHAR_FIELD_MAX_SIZE)
+                                     .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!tooLongRoles.isEmpty()) {
+                errorList.add("roles are too long: " + tooLongRoles);
+            }
+        }
+
+        private static void checkRolesClearing(
+                List<String> acceptRoles,
+                List<String> rejectRoles,
+                List<String> errorList
+        ) {
+            var notClearedRoles = Stream.of(acceptRoles.stream(), rejectRoles.stream()).flatMap(it -> it)
+                                        .filter(it -> it.strip().length() != it.length())
+                                        .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!notClearedRoles.isEmpty()) {
+                errorList.add("roles is not cleared: " + notClearedRoles);
+            }
+
+            var hasBlankValues = Stream.of(acceptRoles.stream(), rejectRoles.stream()).flatMap(it -> it)
+                                       .anyMatch(StringUtils::isBlank);
+            if (hasBlankValues) {
+                errorList.add("blank values in roles");
+            }
+        }
+
+        private static void checkRolesCrossing(
                 List<String> acceptRoles,
                 List<String> rejectRoles,
                 List<String> errorList
         ) {
             var crossedRoles = acceptRoles.stream().filter(rejectRoles::contains)
-                                          .collect(Collectors.joining(", "));
-            if (!crossedRoles.isBlank()) {
+                                          .map(it -> " " + it + " ").collect(Collectors.joining(", "));
+            if (!crossedRoles.isEmpty()) {
                 errorList.add("acceptRoles and rejectRoles should not cross: " + crossedRoles);
             }
         }
@@ -143,16 +237,12 @@ public @interface NotificationCheck {
                 errorList.add("body should not be null");
             } else if (dto.body().isBlank()) {
                 errorList.add("body should not be empty");
-            } else if (dto.body().length() > DB_VARCHAR_SIZE) {
-                errorList.add("body is too long, max size " + DB_VARCHAR_SIZE);
             }
         }
 
         private static void validateHeader(NotificationDto dto, List<String> errorList) {
             if (dto.header() == null) {
                 errorList.add("header should not be null");
-            } else if (dto.header().length() > DB_VARCHAR_SIZE) {
-                errorList.add("header is too long, max size " + DB_VARCHAR_SIZE);
             }
         }
 

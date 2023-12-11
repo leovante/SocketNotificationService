@@ -22,12 +22,14 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class NotificationRolesPk implements Serializable {
 
+    public static final int VARCHAR_FIELD_MAX_SIZE = 100;
+
     @Column(name = "notification_id")
     @EqualsAndHashCode.Exclude
     private UUID notificationId;
 
     @Column(name = "role")
-    @Length(max = 100)
+    @Length(max = VARCHAR_FIELD_MAX_SIZE)
     private String role;
 
 }

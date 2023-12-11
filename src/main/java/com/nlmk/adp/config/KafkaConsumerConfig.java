@@ -1,6 +1,5 @@
 package com.nlmk.adp.config;
 
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -35,13 +34,13 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
             ConsumerRecord<?, ?> rec, Exception ex
     ) {
         var cause = ex.getCause();
-        if (cause instanceof ConstraintViolationException) {
-            notificationService.invalidate(rec.value(), ex.getCause().getMessage());
-        } else {
-            notificationService.invalidate(
-                    rec.value(),
-                    String.format("%s : %s", cause.getClass().getName(), cause.getMessage())
-            );
+        var recValue = rec.value();
+        log.error("Kafka consuming error", ex);
+        String message = String.format("%s : %s", cause.getClass().getName(), cause.getMessage());
+        try {
+            notificationService.invalidate(recValue, message);
+        } catch (Exception exp) {
+            log.error("Error logging kafka consuming error", exp);
         }
     }
 

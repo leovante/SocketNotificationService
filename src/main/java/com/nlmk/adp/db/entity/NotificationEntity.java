@@ -35,6 +35,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @EntityListeners(AuditingEntityListener.class)
 public class NotificationEntity {
 
+    public static final int VARCHAR_FIELD_MAX_SIZE = 500;
+
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
@@ -43,15 +45,15 @@ public class NotificationEntity {
     private Instant expiredAt;
 
     @Column(name = "body")
-    @Length(max = 500)
+    @Length(max = VARCHAR_FIELD_MAX_SIZE)
     private String body;
 
     @Column(name = "header")
-    @Length(max = 500)
+    @Length(max = VARCHAR_FIELD_MAX_SIZE)
     private String header;
 
     @Column(name = "href")
-    @Length(max = 500)
+    @Length(max = VARCHAR_FIELD_MAX_SIZE)
     private String href;
 
     @Column(name = "kafka_dt")
