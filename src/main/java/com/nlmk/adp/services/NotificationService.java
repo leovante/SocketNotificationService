@@ -1,6 +1,7 @@
 package com.nlmk.adp.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
@@ -64,5 +65,12 @@ public interface NotificationService {
      * @return NotificationBaseDto.
      */
     List<NotificationBaseDto> getBacklogNotificationsForCurrentUser(Integer limit);
+
+    /**
+     * markAllReadedByEmail.
+     *
+     * @param uuids uuids
+     */
+    void markAllReadedByEmail(Set<UUID> uuids);
 
 }

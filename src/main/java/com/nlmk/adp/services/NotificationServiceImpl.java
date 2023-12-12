@@ -1,6 +1,7 @@
 package com.nlmk.adp.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,12 @@ import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
 import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
 import com.nlmk.adp.db.dao.NotificationDaoService;
+import com.nlmk.adp.db.dao.NotificationEmailDaoService;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.component.AuthJwt;
+import com.nlmk.adp.services.component.PrincipalJwt;
 import com.nlmk.adp.services.mapper.DtoToKafkaMessageMapper;
 import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 
@@ -37,6 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationDaoService notificationDaoService;
 
+    private final NotificationEmailDaoService notificationEmailDaoService;
+
     private final NotificationRepository notificationRepository;
 
     private final InvalidNotificationsDaoService invalidNotificationsDaoService;
@@ -48,6 +53,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     private final NotificationToDtoMapper notificationToDtoMapper;
+
+    private final PrincipalJwt principalJwt;
 
     @Override
     public void send(NotificationDto body) {
@@ -92,6 +99,13 @@ public class NotificationServiceImpl implements NotificationService {
                                      .stream()
                                      .map(notificationToDtoMapper::mapToBaseDto)
                                      .toList();
+    }
+
+    @Override
+    public void markAllReadedByEmail(Set<UUID> uuids) {
+        var email = principalJwt.getName();
+        var roles = principalJwt.getRoles();
+        notificationEmailDaoService.markAllReadedByEmail(email, roles, uuids);
     }
 
 }
