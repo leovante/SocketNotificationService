@@ -6,6 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,10 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class StompHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    @Value("${websocket.topic.start:/topic/hello}")
-    private String startTopic;
+    @Value("${websocket.topic.log:/topic/log}")
+    private String logTopic;
 
     /**
      * ConnectEvent.
@@ -46,7 +48,7 @@ public class StompHandler {
             }
 
             messagingTemplate.convertAndSend(
-                    startTopic,
+                    logTopic,
                     "Connect session for user: " + event.getUser().getName());
 
             log.info("stomp session connected");
@@ -73,10 +75,11 @@ public class StompHandler {
                 return;
             }
 
-            messagingTemplate.convertAndSendToUser(
-                    event.getUser().getName(),
-                    startTopic,
-                    "Subscribe for user: " + event.getUser().getName());
+            messagingTemplate.convertAndSend(
+                    logTopic,
+                    String.format("Subscribe for user: %s", event.getUser().getName()));
+
+            applicationEventPublisher.publishEvent(event.getUser());
 
             log.info("Subscribe user {}", event.getUser().getName());
         }
@@ -102,9 +105,8 @@ public class StompHandler {
                 return;
             }
 
-            messagingTemplate.convertAndSendToUser(
-                    event.getUser().getName(),
-                    startTopic,
+            messagingTemplate.convertAndSend(
+                    logTopic,
                     "Disconnect session for user: " + event.getUser().getName());
 
             log.info("stomp session disconnected");

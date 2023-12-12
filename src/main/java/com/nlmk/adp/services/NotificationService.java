@@ -63,6 +63,6 @@ public interface NotificationService {
      *
      * @return NotificationBaseDto.
      */
-    List<NotificationBaseDto> getNotificationsByRole(Integer limit);
+    List<NotificationBaseDto> getBacklogNotificationsForCurrentUser(Integer limit);
 
 }

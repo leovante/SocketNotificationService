@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ActiveUserStore {
 
-    @Value("${websocket.topic.start:/topic/hello}")
+    @Value("${websocket.topic.start:/topic/notification}")
     private String startTopic;
 
     private final SimpUserRegistry simpUserRegistry;
@@ -44,9 +44,9 @@ public class ActiveUserStore {
      *
      * @return List
      */
-    public List<SimpSession> getUsers() {
+    public List<SimpSession> getUsersByTopic(String topic) {
         return simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains(startTopic))
+                .findSubscriptions(i -> i.getDestination().contains(topic))
                 .stream()
                 .map(SimpSubscription::getSession)
                 .collect(Collectors.toList());

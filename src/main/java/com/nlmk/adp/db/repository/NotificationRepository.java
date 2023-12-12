@@ -49,10 +49,58 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
                     """,
             nativeQuery = true
     )
-    List<NotificationEntity> findAllByUserInfo(
+    List<NotificationEntity> findBacklogByUserInfo(
+            @Param("useremail") String useremail,
             @Param("userroles") Set<String> userroles,
-            @Param("limitElem") Integer limitElem,
-            @Param("useremail") String useremail
+            @Param("limitElem") Integer limitElem
+    );
+
+    /**
+     * Для вывода пользователю в вебсокеты.
+     *
+     * @param useremail
+     *         почта.
+     * @param userroles
+     *         роли.
+     * @param limitElem
+     *         лимит для вебсокета.
+     *
+     * @return уведомления.
+     */
+    @Query(
+            value = """
+                    select notif.*
+                    from notification notif
+                             left join notification_roles accroles
+                                       on notif.id = accroles.notification_id
+                                           and accroles.role_type = 'ACCEPT'
+                                           and accroles.role in :userroles
+                             left join notification_roles rejroles
+                                       on notif.id = rejroles.notification_id
+                                           and rejroles.role_type = 'REJECT'
+                                           and rejroles.role in :userroles
+                             left join notification_user_success nusnotread
+                                       on notif.id = nusnotread.notification_id
+                                           and nusnotread.email = :useremail
+                                           and nusnotread.read_at is null
+                             left join notification_user_success nusread
+                                       on notif.id = nusread.notification_id
+                                           and nusread.email = :useremail
+                                           and nusread.read_at is not null
+                    where notif.expired_at > now()
+                      and nusread.email is null
+                      and ((nusnotread.email is not null)
+                        or (accroles is not null
+                            and rejroles is null))
+                    order by notif.kafka_dt desc
+                    limit :limitElem
+                    """,
+            nativeQuery = true
+    )
+    List<NotificationEntity> findActualByUserInfo(
+            @Param("useremail") String useremail,
+            @Param("userroles") Set<String> userroles,
+            @Param("limitElem") Integer limitElem
     );
 
 }

@@ -7,11 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nlmk.adp.db.entity.NotificationEntity;
-import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
-import com.nlmk.adp.db.repository.NotificationRoleRepository;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
+import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 
 /**
  * NotificationDaoServiceImpl.
@@ -20,13 +19,11 @@ import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
 @AllArgsConstructor
 public class NotificationDaoServiceImpl implements NotificationDaoService {
 
+    private final NotificationToDtoMapper notificationDtoMapper;
+
     private final NotificationToDaoMapper notificationDaoMapper;
 
     private final NotificationRepository notificationRepository;
-
-    private final NotificationRoleRepository notificationRoleRepository;
-
-    private final NotificationEmailRepository notificationEmailRepository;
 
     @Override
     @Transactional
@@ -45,7 +42,7 @@ public class NotificationDaoServiceImpl implements NotificationDaoService {
     @Transactional
     public NotificationDto getById(UUID id) {
         var entity = notificationRepository.findById(id).orElseThrow();
-        return notificationDaoMapper.mapToDto(entity);
+        return notificationDtoMapper.mapToDto(entity);
     }
 
 }

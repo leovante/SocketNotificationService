@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
@@ -17,7 +18,7 @@ import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.component.AuthJwt;
 import com.nlmk.adp.services.mapper.DtoToKafkaMessageMapper;
-import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
+import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 
 /**
  * NotificationServiceImpl.
@@ -44,7 +45,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final DtoToKafkaMessageMapper dtoToKafkaMessageMapper;
 
-    private final NotificationToDaoMapper notificationToDaoMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    private final NotificationToDtoMapper notificationToDtoMapper;
 
     @Override
     public void send(NotificationDto body) {
@@ -55,12 +58,12 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         notificationDaoService.save(body);
-        socketMessageSenderService.send(body.href());
+        applicationEventPublisher.publishEvent(body);
     }
 
     @Override
     public void sendV2(NotificationDto body) {
-        socketMessageSenderService.send(body.href());
+        socketMessageSenderService.send(body);
     }
 
     @Override
@@ -82,12 +85,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationBaseDto> getNotificationsByRole(Integer limit) {
+    public List<NotificationBaseDto> getBacklogNotificationsForCurrentUser(Integer limit) {
         var keyckloakUserDto = authJwt.getKeyckloakUserDto();
         var roles = keyckloakUserDto.getRealmAccess().getRoles();
-        return notificationRepository.findAllByUserInfo(roles, limit, keyckloakUserDto.getEmail())
+        return notificationRepository.findBacklogByUserInfo(keyckloakUserDto.getEmail(), roles, limit)
                                      .stream()
-                                     .map(notificationToDaoMapper::mapToBaseDto)
+                                     .map(notificationToDtoMapper::mapToBaseDto)
                                      .toList();
     }
 

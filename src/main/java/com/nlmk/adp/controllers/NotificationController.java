@@ -40,11 +40,11 @@ public class NotificationController {
             summary = "Получение списка уведомлений",
             description = "Позволяет получить список уведомлений согласно ролям и email пользователя из токена"
     )
-    public List<NotificationBaseDto> getNotifications(
+    public List<NotificationBaseDto> getNotificationsBacklog(
             @Parameter(description = "Максимальное количество уведовлений в списке")
             @RequestParam(value = "limit", defaultValue = "1000") Integer limit
     ) {
-        return notificationService.getNotificationsByRole(limit);
+        return notificationService.getBacklogNotificationsForCurrentUser(limit);
     }
 
 }
