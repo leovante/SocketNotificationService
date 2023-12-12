@@ -48,7 +48,7 @@ public interface NotificationToDtoMapper {
     @Mapping(target = "header", source = "header")
     @Mapping(target = "body", source = "body")
     @Mapping(target = "href", source = "href")
-    @Mapping(target = "createdAt", source = "kafkaDt")
+    @Mapping(target = "happenedAt", source = "kafkaDt")
     NotificationBaseDto mapToBaseDto(NotificationEntity entity);
 
     /**

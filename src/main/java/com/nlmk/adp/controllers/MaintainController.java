@@ -1,5 +1,6 @@
 package com.nlmk.adp.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,10 +19,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.NotificationService;
+import nlmk.EnumOp;
+import nlmk.Sys;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
+import nlmk.l3.mesadp.db.user.notification.ver0.NotificationType;
+import nlmk.l3.mesadp.db.user.notification.ver0.PkType;
+import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 
 /**
  * Служебное API.
@@ -67,6 +76,46 @@ public class MaintainController {
     ) {
         notificationService.sendToKafka(payload);
         return "Success";
+    }
+
+    /**
+     * 123.
+     *
+     * @param body
+     *         123.
+     */
+    @SuppressWarnings("ParameterNumber")
+    @Operation(summary = "Отправка любых сообщений в kafka")
+    @PostMapping("/trash-notification")
+    public void sendTrash(
+            @RequestParam @Nullable String ts,
+            @RequestParam @Nullable EnumOp operation,
+            @RequestParam @Nullable String pkTypeId,
+            @RequestParam @Nullable String sysTraceId,
+            @RequestParam @Nullable String header,
+            @RequestParam @Nullable String body,
+            @RequestParam @Nullable String href,
+            @RequestParam @Nullable List<String> acceptRoles,
+            @RequestParam @Nullable List<String> rejectRoles,
+            @RequestParam @Nullable List<String> emails
+    ) {
+        var mes = new DbUserNotificationVer0(
+                ts,
+                operation,
+                new PkType(pkTypeId),
+                new Sys(-1L, sysTraceId),
+                null,
+                new RecordData(
+                        header,
+                        body,
+                        href,
+                        NotificationType.INFO,
+                        acceptRoles == null ? List.of() : acceptRoles,
+                        rejectRoles == null ? List.of() : rejectRoles,
+                        emails == null ? List.of() : emails
+                )
+        );
+        notificationService.sendTrashToKafka(mes);
     }
 
     /**
