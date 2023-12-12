@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import com.nlmk.adp.services.NotificationService;
 @RestController
 @RequestMapping("/api/maintain")
 @PreAuthorize("hasRole('super-user')")
+@CrossOrigin
 public class MaintainController {
 
     private final NotificationService notificationService;
