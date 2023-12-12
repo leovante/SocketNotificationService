@@ -10,8 +10,8 @@ public record NotificationBaseDto(
         @Schema(description = "Id уведомления")
         UUID id,
 
-        @Schema(description = "Дата создания")
-        String createdAt,
+        @Schema(description = "Время возникновения уведомления в системе mes")
+        String happenedAt,
 
         @Schema(description = "Тело уведомления")
         String body,

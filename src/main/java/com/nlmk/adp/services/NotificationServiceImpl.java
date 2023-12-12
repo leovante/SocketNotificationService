@@ -22,6 +22,7 @@ import com.nlmk.adp.services.component.AuthJwt;
 import com.nlmk.adp.services.component.PrincipalJwt;
 import com.nlmk.adp.services.mapper.DtoToKafkaMessageMapper;
 import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationServiceImpl.
@@ -77,6 +78,12 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendToKafka(NotificationDto body) {
         var snapshot = dtoToKafkaMessageMapper.mapDataFromDto(body);
         var response = kafkaHttpProxyProducer.send(topic, snapshot).block();
+        log.info("Sent, result: {}", response);
+    }
+
+    @Override
+    public void sendTrashToKafka(DbUserNotificationVer0 body) {
+        var response = kafkaHttpProxyProducer.send(topic, body).block();
         log.info("Sent, result: {}", response);
     }
 

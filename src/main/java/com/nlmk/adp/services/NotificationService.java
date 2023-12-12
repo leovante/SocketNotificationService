@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 /**
  * NotificationService.
@@ -47,6 +48,14 @@ public interface NotificationService {
     void invalidate(Object body, String reason);
 
     /**
+     * 123.
+     *
+     * @param body
+     *         123.
+     */
+    void sendTrashToKafka(DbUserNotificationVer0 body);
+
+    /**
      * ById.
      *
      * @param id
@@ -69,7 +78,8 @@ public interface NotificationService {
     /**
      * markAllReadedByEmail.
      *
-     * @param uuids uuids
+     * @param uuids
+     *         uuids
      */
     void markAllReadedByEmail(Set<UUID> uuids);
 

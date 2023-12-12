@@ -47,7 +47,7 @@ public class NotificationController {
     )
     public List<NotificationBaseDto> getNotificationsBacklog(
             @Parameter(description = "Максимальное количество уведовлений в списке")
-            @RequestParam(value = "limit", defaultValue = "1000") Integer limit
+            @RequestParam(value = "limit", defaultValue = "1000", required = false) Integer limit
     ) {
         return notificationService.getBacklogNotificationsForCurrentUser(limit);
     }
