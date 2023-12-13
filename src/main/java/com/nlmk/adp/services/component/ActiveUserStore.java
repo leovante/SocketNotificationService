@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
+import com.nlmk.adp.kafka.dto.UserEmailDto;
+
 /**
  * Служебный компонент для хранения вебсокет-сессий.
  */
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ActiveUserStore {
 
-    @Value("${websocket.topic.start:/topic/notification}")
+    @Value("${websocket.topic.start:/user/topic/notification}")
     private String startTopic;
 
     private final SimpUserRegistry simpUserRegistry;
@@ -30,7 +32,7 @@ public class ActiveUserStore {
      */
     public List<String> getUserNames() {
         return simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains(startTopic))
+                .findSubscriptions(i -> i.getDestination().equals(startTopic))
                 .stream()
                 .map(SimpSubscription::getSession)
                 .map(SimpSession::getUser)
@@ -40,7 +42,7 @@ public class ActiveUserStore {
     }
 
     /**
-     * getUsers.
+     * getUsersByTopic.
      *
      * @return List
      */
@@ -49,6 +51,20 @@ public class ActiveUserStore {
                 .findSubscriptions(i -> i.getDestination().contains(topic))
                 .stream()
                 .map(SimpSubscription::getSession)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * getUsersByTopic.
+     *
+     * @return List
+     */
+    public List<SimpSession> getUsersByTopic(String topic, List<UserEmailDto> emails) {
+        return simpUserRegistry
+                .findSubscriptions(i -> i.getDestination().contains(topic))
+                .stream()
+                .map(SimpSubscription::getSession)
+                .filter(i -> emails.stream().map(UserEmailDto::email).toList().contains(i.getUser().getName()))
                 .collect(Collectors.toList());
     }
 

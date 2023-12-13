@@ -55,7 +55,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
         log.info("Send for users message: {}, topic: {}, amount of users: {}",
                  dto, startTopic, activeUserStore.getUserNames().size());
 
-        activeUserStore.getUsersByTopic(startTopic).stream()
+        activeUserStore.getUsersByTopic(startTopic, dto.emails()).stream()
                        .filter(i -> !checkIsMessageWasReadedByUser(dto.id(), i.getUser().getName()))
                        .forEach(usr -> convertAndSendToUser(
                                castDtoToMessage(dto),

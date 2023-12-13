@@ -30,6 +30,7 @@ public class WebSocketSecurityConfig {
                 .nullDestMatcher().authenticated()
                 .simpDestMatchers("/ws/**").authenticated()
                 .simpSubscribeDestMatchers("/topic/**").hasRole("super-user")
+                .simpSubscribeDestMatchers("/user/**").hasRole("super-user")
                 .anyMessage().denyAll();
         return messages.build();
     }

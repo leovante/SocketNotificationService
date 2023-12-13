@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
@@ -14,7 +12,6 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.session.Session;
 import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
 import org.springframework.util.MimeTypeUtils;
@@ -39,7 +36,9 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config
+                .setUserDestinationPrefix("/user")
+                .enableSimpleBroker("/topic");
     }
 
     @Override
@@ -64,18 +63,6 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(userInterceptor);
-    }
-
-    /**
-     * userDestinationResolverImpl.
-     *
-     * @param userRegistry userRegistry
-     * @return UserDestinationResolverImpl
-     */
-    @Bean
-    @Primary
-    public UserDestinationResolverImpl userDestinationResolverImpl(SimpUserRegistry userRegistry) {
-        return new UserDestinationResolverImpl(userRegistry);
     }
 
 }
