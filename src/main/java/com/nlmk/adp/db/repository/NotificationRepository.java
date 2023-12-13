@@ -29,7 +29,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
      */
     @Query(
             value = """
-                    select notif.*
+                    select distinct notif.*
                     from notification notif
                              left join notification_roles accroles
                                        on notif.id = accroles.notification_id
@@ -69,7 +69,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
      */
     @Query(
             value = """
-                    select notif.*
+                    select distinct notif.*
                     from notification notif
                              left join notification_roles accroles
                                        on notif.id = accroles.notification_id

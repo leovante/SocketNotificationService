@@ -50,7 +50,7 @@ public interface NotificationEmailRepository extends JpaRepository<NotificationU
      */
     @Query(
             value = """
-                    select nutsuccess.*
+                    select distinct nutsuccess.*
                     from notification_user_success nutsuccess
                              left join notification_roles accroles
                                        on nutsuccess.notification_id = accroles.notification_id
