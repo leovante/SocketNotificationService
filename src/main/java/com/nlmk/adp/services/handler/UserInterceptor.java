@@ -33,7 +33,7 @@ import com.nlmk.adp.services.component.AuthJwt;
 public class UserInterceptor implements ChannelInterceptor {
 
     private final AuthJwt authService;
-    @Value("${websocket.topic.start:/topic/notification}")
+    @Value("${websocket.topic.start:/user/topic/notification}")
     private String startTopic;
     @Value("${websocket.topic.log:/topic/log}")
     private String logTopic;
