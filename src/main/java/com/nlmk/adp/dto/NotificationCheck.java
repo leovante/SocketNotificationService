@@ -5,8 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.net.URI;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,6 +65,8 @@ public @interface NotificationCheck {
 
         private static final String VALID_HOST = "nlmk.com";
 
+        private static final Pattern PATTERN = Pattern.compile("^\\b\\p{L}{3,}\\b", Pattern.UNICODE_CHARACTER_CLASS);
+
         private final EmailValidator emailValidator = new EmailValidator();
 
         /**
@@ -91,6 +95,7 @@ public @interface NotificationCheck {
             validateDestinationResolving(emails, acceptRoles, errorList);
             validateAcceptRejectRoles(acceptRoles, rejectRoles, errorList);
             validateEmails(emails, errorList);
+            validateDate(dto, errorList);
 
             if (!errorList.isEmpty()) {
                 var text = errorList.stream()
@@ -126,6 +131,23 @@ public @interface NotificationCheck {
             checkEmailValidness(emails, errorList);
             checkEmailHost(emails, errorList);
             checkEmailLength(emails, errorList);
+        }
+
+        /**
+         * Проверка даты.
+         *
+         * @param dto
+         *         список для проверки.
+         * @param errorList
+         *         список ошибок.
+         */
+        public void validateDate(
+                NotificationDto dto,
+                List<String> errorList
+        ) {
+            if (dto.expiredAt() != null && dto.expiredAt().isBefore(Instant.now())) {
+                errorList.add("expireAt date should be after now");
+            }
         }
 
         private static void checkEmailHost(List<String> emails, List<String> errorList) {
@@ -237,12 +259,16 @@ public @interface NotificationCheck {
                 errorList.add("body should not be null");
             } else if (dto.body().isBlank()) {
                 errorList.add("body should not be empty");
+            } else if (!PATTERN.matcher(dto.body()).find()) {
+                errorList.add("body should have at least 3 letter");
             }
         }
 
         private static void validateHeader(NotificationDto dto, List<String> errorList) {
             if (dto.header() == null) {
                 errorList.add("header should not be null");
+            } else if (!PATTERN.matcher(dto.header()).find()) {
+                errorList.add("header should have at least 3 letter");
             }
         }
 

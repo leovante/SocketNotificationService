@@ -104,7 +104,6 @@ public interface KafkaMessageToDtoMapper {
         return Stream.concat(
                 accRoles.stream()
                         .filter(it -> it != null && !it.isBlank())
-                        .filter(it -> !rejRoles.contains(it))
                         .map(i -> new RoleDto(i.strip(), NotificationRoleType.ACCEPT)),
                 rejRoles.stream()
                         .filter(it -> it != null && !it.isBlank())

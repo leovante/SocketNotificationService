@@ -1,5 +1,5 @@
 {
-  "ts": "2123-11-17T11:05:10.512122912Z",
+  "ts": "2023-11-17T11:05:10.512122912Z",
   "op": "I",
   "pk": {
     "id": "4291570c-3d74-47b6-92f5-f4246147c98b"
@@ -19,14 +19,14 @@
     "kafkaHeaders": null
   },
   "data": {
-    "header": "Прибывающий поезд",
-    "body": "Поезд 238194958 прибыл на станцию 298519851",
-    "href": "http://nlmk.com/dischargeVehiclesV2#?mode=KHC",
+    "header": "Пр!",
+    "body": "По!",
+    "href": "test.nlmk1.com",
     "type": "INFO",
     "acceptRoles": ["admin"],
     "acceptEmails": [
       "makarenko_aa@nlmk.com"
     ],
-    "rejectRoles": null
+    "rejectRoles": ["admin"]
   }
 }
