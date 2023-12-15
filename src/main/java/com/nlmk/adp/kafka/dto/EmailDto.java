@@ -12,7 +12,7 @@ import org.springframework.lang.Nullable;
  * @param readAt
  *         дата прочтения.
  */
-public record UserEmailDto(
+public record EmailDto(
         String email,
         @Nullable Instant readAt
 ) {

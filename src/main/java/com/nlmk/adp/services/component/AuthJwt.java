@@ -2,9 +2,11 @@ package com.nlmk.adp.services.component;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +18,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.dto.JwtAuthentication;
 import com.nlmk.adp.dto.KeyckloakUserDto;
 import com.nlmk.adp.dto.SimpleStompAccount;
@@ -28,7 +29,10 @@ import com.nlmk.adp.dto.StompPrincipal;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AuthJwt implements AuthenticationManager {
+
+    private final ObjectMapper objectMapper;
 
     @Override
     @SneakyThrows
@@ -46,8 +50,7 @@ public class AuthJwt implements AuthenticationManager {
 
     @SneakyThrows
     private StompAuthenticationToken createUserOrFail(JWT jwt) {
-        KeyckloakUserDto user = ObjectMapperHelper.getObjectMapper()
-                                                  .readValue(
+        KeyckloakUserDto user = objectMapper.readValue(
                                                           ((SignedJWT) jwt).getPayload().toString(),
                                                           KeyckloakUserDto.class);
         Set<String> roles = user.getRealmAccess().getRoles();
@@ -80,8 +83,7 @@ public class AuthJwt implements AuthenticationManager {
 
         if (authentication instanceof JwtAuthenticationToken) {
             var jwt = JWTParser.parse(((JwtAuthenticationToken) authentication).getToken().getTokenValue());
-            KeyckloakUserDto user = ObjectMapperHelper.getObjectMapper()
-                                                      .readValue(
+            KeyckloakUserDto user = objectMapper.readValue(
                                                               ((SignedJWT) jwt).getPayload().toString(),
                                                               KeyckloakUserDto.class);
 

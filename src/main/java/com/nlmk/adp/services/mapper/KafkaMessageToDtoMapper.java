@@ -12,9 +12,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.UserEmailDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
@@ -120,10 +120,10 @@ public interface KafkaMessageToDtoMapper {
      *
      * @return emails.
      */
-    default List<UserEmailDto> mapEmailsToDto(List<String> emails) {
+    default List<EmailDto> mapEmailsToDto(List<String> emails) {
         return emails.stream()
                      .filter(it -> !it.isBlank())
-                     .map(i -> new UserEmailDto(i, null))
+                     .map(i -> new EmailDto(i, null))
                      .toList();
     }
 

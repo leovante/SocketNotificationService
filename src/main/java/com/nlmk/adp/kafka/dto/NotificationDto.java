@@ -54,7 +54,7 @@ public record NotificationDto(
         List<RoleDto> roles,
 
         @Schema(description = "Список email-идентификаторов пользователей для маршрутизации уведомления.")
-        List<UserEmailDto> emails
+        List<EmailDto> emails
 
 ) {
 }

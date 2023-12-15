@@ -3,6 +3,7 @@ package com.nlmk.adp.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.dto.StompAuthenticationToken;
@@ -30,6 +30,8 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
 
     @Value("${websocket.topic.start:/topic/notification}")
     private String startTopic;
+
+    private final ObjectMapper objectMapper;
 
     private final SimpMessagingTemplate template;
 
@@ -131,8 +133,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
      */
     @SneakyThrows
     private String castDtoToMessage(NotificationDto dto) {
-        return ObjectMapperHelper.getObjectMapper()
-                                 .writeValueAsString(List.of(socketDtoToUserMessageMapper.mapDtoToMessage(dto)));
+        return objectMapper.writeValueAsString(List.of(socketDtoToUserMessageMapper.mapDtoToMessage(dto)));
     }
 
 }

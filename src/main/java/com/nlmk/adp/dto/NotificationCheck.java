@@ -21,9 +21,9 @@ import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import com.nlmk.adp.db.entity.NotificationEmailPk;
 import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.db.entity.NotificationRolesPk;
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.UserEmailDto;
 import com.nlmk.adp.services.mapper.NotificationRoleType;
 
 /**
@@ -76,7 +76,7 @@ public @interface NotificationCheck {
             validateBody(dto, errorList);
             validateHref(dto.href(), errorList);
 
-            var emails = CollectionUtils.emptyIfNull(dto.emails()).stream().map(UserEmailDto::email).toList();
+            var emails = CollectionUtils.emptyIfNull(dto.emails()).stream().map(EmailDto::email).toList();
             var roles = CollectionUtils.emptyIfNull(dto.roles()).stream().collect(
                     Collectors.groupingBy(
                             RoleDto::roleType,

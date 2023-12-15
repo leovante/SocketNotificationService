@@ -9,7 +9,7 @@ import com.nlmk.adp.db.entity.NotificationUserSuccessEntity;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.UserEmailDto;
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 
 /**
@@ -71,6 +71,6 @@ public interface NotificationToDtoMapper {
      */
     @Mapping(target = "email", source = "primaryKey.email")
     @Mapping(target = "readAt", source = "readAt")
-    UserEmailDto mapEmail(NotificationUserSuccessEntity email);
+    EmailDto mapEmail(NotificationUserSuccessEntity email);
 
 }

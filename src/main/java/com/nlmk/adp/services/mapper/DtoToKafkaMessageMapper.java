@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.UserEmailDto;
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
@@ -104,7 +104,7 @@ public interface DtoToKafkaMessageMapper {
      * @return List
      */
     default List<String> mapEmailsFromDto(NotificationDto dto) {
-        return dto.emails().stream().map(UserEmailDto::email).collect(Collectors.toList());
+        return dto.emails().stream().map(EmailDto::email).collect(Collectors.toList());
     }
 
 }

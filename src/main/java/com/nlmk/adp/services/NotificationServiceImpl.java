@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
-import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
 import com.nlmk.adp.db.dao.NotificationDaoService;
 import com.nlmk.adp.db.dao.NotificationEmailDaoService;
@@ -34,6 +34,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("${spring.kafka.producer.topic.notification-messsage}")
     private String topic;
+
+    private final ObjectMapper objectMapper;
 
     private final AuthJwt authJwt;
 
@@ -89,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void invalidate(Object body, String reason) {
-        var snapshot = ObjectMapperHelper.getObjectMapper().valueToTree(body);
+        var snapshot = objectMapper.valueToTree(body);
         invalidNotificationsDaoService.save(snapshot, reason);
     }
 

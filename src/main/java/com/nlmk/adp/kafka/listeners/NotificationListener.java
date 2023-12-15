@@ -6,7 +6,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-import com.nlmk.adp.config.ObjectMapperHelper;
 import com.nlmk.adp.kafka.dispatcher.KafkaListenerDispatcher;
 import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
@@ -35,7 +34,7 @@ public class NotificationListener {
     public void handleNotificationMessage(
             @Payload DbUserNotificationVer0 message
     ) {
-        log.info("Receive notification message {}", ObjectMapperHelper.writeValueAsString(message));
+        log.info("Receive notification message, id: {}", message.getPk().getId());
         var dto = messageToDtoMapper.mapDataToDto(message);
         var operation = message.getOp();
         dispatcher.dispatch(operation, dto);

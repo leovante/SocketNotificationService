@@ -10,9 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,18 +40,6 @@ import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 public class MaintainController {
 
     private final NotificationService notificationService;
-
-    /**
-     * test.
-     *
-     * @return Authentication
-     */
-    @GetMapping("/self-test")
-    @Operation(summary = "Базовая проверка работы сервиса, возвращает self-jwt")
-    public Authentication test() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        return context.getAuthentication();
-    }
 
     /**
      * postNotification.
