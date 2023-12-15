@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.dto.StompAuthenticationToken;
+import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.component.ActiveUserStore;
 import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
@@ -78,14 +79,14 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
         var snapshots = notificationRepository.findActualByUserInfo(
                 user.getName(),
                 user.getAccount().getRoles(),
-                10);
+                100);
 
         if (snapshots.isEmpty()) {
             return;
         }
 
         var messages = snapshots.stream()
-                                .map(notificationFromDaoMapper::mapToDto)
+                                .map(notificationFromDaoMapper::mapToBaseDto)
                                 .toList();
 
         messages.forEach(msg -> convertAndSendToUser(
@@ -134,6 +135,20 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     @SneakyThrows
     private String castDtoToMessage(NotificationDto dto) {
         return objectMapper.writeValueAsString(List.of(socketDtoToUserMessageMapper.mapDtoToMessage(dto)));
+    }
+
+    /**
+     * castDtoToMessage.
+     *
+     * @param dto
+     *         dto
+     *
+     * @return String
+     */
+    @SneakyThrows
+    private String castDtoToMessage(NotificationBaseDto dto) {
+        return ObjectMapperHelper.getObjectMapper()
+                                 .writeValueAsString(List.of(dto));
     }
 
 }

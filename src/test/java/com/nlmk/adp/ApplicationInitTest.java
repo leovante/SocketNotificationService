@@ -3,6 +3,11 @@ package com.nlmk.adp;
 import java.util.List;
 import java.util.UUID;
 
+import com.nlmk.adp.dto.NotificationCheck;
+import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
+import jakarta.validation.ClockProvider;
+import jakarta.validation.ConstraintValidatorContext;
+import lombok.Getter;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -22,6 +27,9 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private KafkaMessageToDtoMapper messageToDtoMapper;
 
     @Autowired
     private NotificationRepository notificationRepository;
@@ -96,6 +104,90 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
         var validTableResult = notificationRepository.findById(uuid);
         Assertions.assertThat(validTableResult).isEmpty();
+    }
+
+    @Test
+    void kafkaIFullnvalidMessageTest() {
+        var payload = getResource(
+                "/kafka/notification_real_invalid.json",
+                DbUserNotificationVer0.class);
+
+        var uuid = UUID.randomUUID();
+        payload.getPk().setId(uuid.toString());
+
+        Context ctx = new Context();
+        var snapshot = messageToDtoMapper.mapDataToDto(payload);
+        new NotificationCheck.DbUserNotificationVer0Validator().isValid(snapshot, ctx);
+
+        Assertions.assertThat(ctx.error_text).contains(List.of(
+                "header should have at least 3 letter",
+                "body should have at least 3 letter",
+                "acceptRoles and rejectRoles should not cross:  admin",
+                "expireAt date should be after now"
+        ));
+    }
+
+    @Getter
+    class Context implements ConstraintValidatorContext {
+        private String error_text;
+
+        @Override
+        public void disableDefaultConstraintViolation() {
+        }
+
+        @Override
+        public String getDefaultConstraintMessageTemplate() {
+            return null;
+        }
+
+        @Override
+        public ClockProvider getClockProvider() {
+            return null;
+        }
+
+        @Override
+        public ConstraintViolationBuilder buildConstraintViolationWithTemplate(String s) {
+            error_text = s;
+            return new BuilderImpl();
+        }
+
+        @Override
+        public <T> T unwrap(Class<T> aClass) {
+            return null;
+        }
+
+        class BuilderImpl implements ConstraintViolationBuilder {
+
+            @Override
+            public NodeBuilderDefinedContext addNode(String s) {
+                return null;
+            }
+
+            @Override
+            public NodeBuilderCustomizableContext addPropertyNode(String s) {
+                return null;
+            }
+
+            @Override
+            public LeafNodeBuilderCustomizableContext addBeanNode() {
+                return null;
+            }
+
+            @Override
+            public ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String s, Class<?> aClass, Integer integer) {
+                return null;
+            }
+
+            @Override
+            public NodeBuilderDefinedContext addParameterNode(int i) {
+                return null;
+            }
+
+            @Override
+            public ConstraintValidatorContext addConstraintViolation() {
+                return null;
+            }
+        }
     }
 
 }
