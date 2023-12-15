@@ -1,6 +1,7 @@
 package com.nlmk.adp.db.entity;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
@@ -62,5 +64,24 @@ public class InvalidNotificationsEntity {
     @LastModifiedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant updatedAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        InvalidNotificationsEntity task = (InvalidNotificationsEntity) o;
+        return id != null && Objects.equals(id, task.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
 }

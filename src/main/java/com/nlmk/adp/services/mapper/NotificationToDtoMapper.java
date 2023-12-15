@@ -6,10 +6,10 @@ import org.mapstruct.Mapping;
 import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.db.entity.NotificationRolesEntity;
 import com.nlmk.adp.db.entity.NotificationUserSuccessEntity;
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 
 /**

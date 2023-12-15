@@ -1,5 +1,6 @@
 package com.nlmk.adp.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,13 +86,14 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
             return;
         }
 
-        var messages = snapshots.stream()
+        var msg = snapshots.stream()
                                 .map(notificationFromDaoMapper::mapToBaseDto)
+                                .sorted(Collections.reverseOrder())
                                 .toList();
 
-        messages.forEach(msg -> convertAndSendToUser(
+        convertAndSendToUser(
                 castDtoToMessage(msg),
-                user));
+                user);
     }
 
     /**
@@ -146,9 +148,8 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
      * @return String
      */
     @SneakyThrows
-    private String castDtoToMessage(NotificationBaseDto dto) {
-        return ObjectMapperHelper.getObjectMapper()
-                                 .writeValueAsString(List.of(dto));
+    private String castDtoToMessage(List<NotificationBaseDto> dto) {
+        return objectMapper.writeValueAsString(dto);
     }
 
 }

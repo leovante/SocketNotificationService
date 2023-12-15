@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 

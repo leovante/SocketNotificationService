@@ -1,5 +1,7 @@
 package com.nlmk.adp.db.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -13,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.nlmk.adp.services.mapper.NotificationRoleType;
@@ -51,6 +54,26 @@ public class NotificationRolesEntity {
             this.setPrimaryKey(new NotificationRolesPk());
         }
         this.getPrimaryKey().setNotificationId(notification.getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        NotificationRolesEntity task = (NotificationRolesEntity) o;
+        return primaryKey.getNotificationId() != null
+                && Objects.equals(primaryKey.getNotificationId(), task.primaryKey.getNotificationId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
 }

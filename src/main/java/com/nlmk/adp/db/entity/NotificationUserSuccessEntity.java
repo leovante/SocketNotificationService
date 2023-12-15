@@ -1,6 +1,7 @@
 package com.nlmk.adp.db.entity;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -13,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 
@@ -50,6 +52,26 @@ public class NotificationUserSuccessEntity {
             this.setPrimaryKey(new NotificationEmailPk());
         }
         this.getPrimaryKey().setNotificationId(notification.getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        NotificationUserSuccessEntity task = (NotificationUserSuccessEntity) o;
+        return primaryKey.getNotificationId() != null
+                && Objects.equals(primaryKey.getNotificationId(), task.primaryKey.getNotificationId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
 }

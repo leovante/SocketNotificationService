@@ -92,7 +92,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
                       and ((nusnotread.email is not null)
                         or (accroles is not null
                             and rejroles is null))
-                    order by notif.kafka_dt asc
+                    order by notif.kafka_dt desc
                     limit :limitElem
                     """,
             nativeQuery = true
