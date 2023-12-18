@@ -1,7 +1,6 @@
 package com.nlmk.adp.services.component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +50,8 @@ public class ActiveUserStore {
                 .findSubscriptions(i -> i.getDestination().contains(topic))
                 .stream()
                 .map(SimpSubscription::getSession)
-                .collect(Collectors.toList());
+                .distinct()
+                .toList();
     }
 
     /**
@@ -65,7 +65,8 @@ public class ActiveUserStore {
                 .stream()
                 .map(SimpSubscription::getSession)
                 .filter(i -> emails.stream().map(EmailDto::email).toList().contains(i.getUser().getName()))
-                .collect(Collectors.toList());
+                .distinct()
+                .toList();
     }
 
 }
