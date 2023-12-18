@@ -41,11 +41,20 @@ class KafkaDateMapperTest {
         );
     }
 
+
     @Test
     void toInstantSuccess4() {
         Assertions.assertEquals(
                 Instant.parse("2022-12-04T12:49:15.346880593Z"),
                 testable.maptoInstant("2022-12-04T12:49:15.346880593Z")
+        );
+    }
+
+    @Test
+    void toInstantSuccess5() {
+        Assertions.assertEquals(
+                Instant.parse("2023-12-18T22:51:58.774732Z"),
+                testable.maptoInstant("2023-12-18T22:51:58.774732Z")
         );
     }
 
