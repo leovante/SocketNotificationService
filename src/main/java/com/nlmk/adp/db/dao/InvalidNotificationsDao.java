@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nlmk.adp.db.entity.InvalidNotificationsEntity;
 
 /**
- * InvalidNotificationsDaoService.
+ * InvalidNotificationsDao.
  */
-public interface InvalidNotificationsDaoService {
+public interface InvalidNotificationsDao {
 
     /**
      * save.

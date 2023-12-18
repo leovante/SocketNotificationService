@@ -12,9 +12,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
-import com.nlmk.adp.db.dao.InvalidNotificationsDaoService;
-import com.nlmk.adp.db.dao.NotificationDaoService;
-import com.nlmk.adp.db.dao.NotificationEmailDaoService;
+import com.nlmk.adp.db.dao.InvalidNotificationsDao;
+import com.nlmk.adp.db.dao.NotificationDao;
+import com.nlmk.adp.db.dao.NotificationEmailDao;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
@@ -41,13 +41,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final KafkaHttpProxyProducer kafkaHttpProxyProducer;
 
-    private final NotificationDaoService notificationDaoService;
+    private final NotificationDao notificationDao;
 
-    private final NotificationEmailDaoService notificationEmailDaoService;
+    private final NotificationEmailDao notificationEmailDao;
+
+    private final InvalidNotificationsDao invalidNotificationsDao;
 
     private final NotificationRepository notificationRepository;
-
-    private final InvalidNotificationsDaoService invalidNotificationsDaoService;
 
     private final SocketMessageSenderService socketMessageSenderService;
 
@@ -67,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
             return;
         }
 
-        notificationDaoService.save(body);
+        notificationDao.save(body);
         applicationEventPublisher.publishEvent(body);
     }
 
@@ -92,12 +92,12 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void invalidate(Object body, String reason) {
         var snapshot = objectMapper.valueToTree(body);
-        invalidNotificationsDaoService.save(snapshot, reason);
+        invalidNotificationsDao.save(snapshot, reason);
     }
 
     @Override
     public NotificationDto getById(UUID id) {
-        return notificationDaoService.getById(id);
+        return notificationDao.getById(id);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void markAllReadedByEmail(Set<UUID> uuids) {
         var email = principalJwt.getName();
         var roles = principalJwt.getRoles();
-        notificationEmailDaoService.markAllReadedByEmail(email, roles, uuids);
+        notificationEmailDao.markAllReadedByEmail(email, roles, uuids);
     }
 
 }

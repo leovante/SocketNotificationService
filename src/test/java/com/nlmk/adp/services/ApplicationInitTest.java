@@ -1,8 +1,9 @@
-package com.nlmk.adp;
+package com.nlmk.adp.services;
 
 import java.util.List;
 import java.util.UUID;
 
+import com.nlmk.adp.BaseSpringBootTest;
 import com.nlmk.adp.dto.NotificationCheck;
 import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
 import jakarta.validation.ClockProvider;

@@ -15,11 +15,11 @@ import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 
 /**
- * NotificationEmailDaoServiceImpl.
+ * NotificationEmailDaoImpl.
  */
 @Service
 @RequiredArgsConstructor
-public class NotificationEmailDaoServiceImpl implements NotificationEmailDaoService {
+public class NotificationEmailDaoImpl implements NotificationEmailDao {
 
     private final NotificationEmailRepository notificationEmailRepository;
 

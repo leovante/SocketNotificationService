@@ -2,6 +2,7 @@ package com.nlmk.adp.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,15 +11,19 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
 import com.nlmk.adp.dto.StompAuthenticationToken;
+import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.services.component.ActiveUserStore;
+import com.nlmk.adp.services.mapper.NotificationRoleType;
 import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 import com.nlmk.adp.services.mapper.SocketDtoToUserSubscribeMapper;
 
@@ -59,8 +64,8 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
         log.info("Send for users message: {}, topic: {}, amount of users: {}",
                  dto, startTopic, activeUserStore.getUserNames().size());
 
-        activeUserStore.getUsersByTopic(startTopic, dto.emails()).stream()
-                       .filter(i -> !checkIsMessageWasReadedByUser(dto.id(), i.getUser().getName()))
+        activeUserStore.getUsersByTopic(startTopic).stream()
+                       .filter(i -> shouldBeSent(dto, i))
                        .forEach(usr -> convertAndSendToUser(
                                castDtoToMessage(dto),
                                (StompAuthenticationToken) usr.getUser().getPrincipal()));
@@ -75,7 +80,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     @Override
     @Transactional
     public void resendToNotReadedWsUsers(StompAuthenticationToken user) {
-        log.info("Send for user message, email: {}, topic: {}", user.getPrincipal().getName(), startTopic);
+        log.info("Send for user message, user name: {}, topic: {}", user.getPrincipal().getName(), startTopic);
 
         var snapshots = notificationRepository.findActualByUserInfo(
                 user.getName(),
@@ -106,10 +111,66 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
      */
     @SneakyThrows
     private void convertAndSendToUser(String message, StompAuthenticationToken user) {
+        log.info("Send message by socket, user name: {}, topic: {}, msg: {}", user.getName(), startTopic, message);
         template.convertAndSendToUser(
                 user.getName(),
                 startTopic,
                 message);
+    }
+
+    /**
+     * shouldBeSent.
+     *
+     * @param dto dto
+     * @param i i
+     * @return boolean
+     */
+    private boolean shouldBeSent(NotificationDto dto, SimpSession i) {
+        var notifEmails = dto.emails().stream().map(EmailDto::email).toList();
+        var userEmail = i.getUser().getName();
+
+        List<RoleDto> notifRoles = dto.roles();
+        Set<String> userRoles = ((StompAuthenticationToken) i.getUser().getPrincipal())
+                .getAccount().getRoles();
+
+        boolean isMatchedByEmail = isMatchedByEmail(notifEmails, userEmail);
+        boolean isMatchedByRoles = isMatchedByRoles(notifRoles, userRoles);
+        boolean isNotReadedByEmail = !checkIsMessageWasReadedByUser(dto.id(), i.getUser().getName());
+
+        return (isMatchedByRoles || isMatchedByEmail) && isNotReadedByEmail;
+    }
+
+    /**
+     * isMatchedByEmail.
+     *
+     * @param notifEmails notifEmails
+     * @param userEmail userEmail
+     * @return boolean
+     */
+    private boolean isMatchedByEmail(List<String> notifEmails, String userEmail) {
+        return notifEmails.contains(userEmail);
+    }
+
+    /**
+     * isMatchedByRoles.
+     *
+     * @param notifRoles notifRoles
+     * @param userRoles userRoles
+     * @return boolean
+     */
+    private boolean isMatchedByRoles(
+            List<RoleDto> notifRoles,
+            Set<String> userRoles
+    ) {
+        boolean isAccepted = notifRoles
+                .stream()
+                .filter(it -> it.roleType() == NotificationRoleType.ACCEPT)
+                .anyMatch(it -> userRoles.contains(it.role()));
+        boolean isRejected = notifRoles
+                .stream()
+                .filter(it -> it.roleType() == NotificationRoleType.REJECT)
+                .anyMatch(it -> userRoles.contains(it.role()));
+        return isAccepted && !isRejected;
     }
 
     /**

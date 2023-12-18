@@ -13,11 +13,11 @@ import com.nlmk.adp.services.mapper.NotificationToDaoMapper;
 import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 
 /**
- * NotificationDaoServiceImpl.
+ * NotificationDaoImpl.
  */
 @Service
 @AllArgsConstructor
-public class NotificationDaoServiceImpl implements NotificationDaoService {
+public class NotificationDaoImpl implements NotificationDao {
 
     private final NotificationToDtoMapper notificationDtoMapper;
 

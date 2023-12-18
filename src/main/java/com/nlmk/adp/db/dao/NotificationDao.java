@@ -6,9 +6,9 @@ import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 
 /**
- * NotificationDaoService.
+ * NotificationDao.
  */
-public interface NotificationDaoService {
+public interface NotificationDao {
 
     /**
      * save.

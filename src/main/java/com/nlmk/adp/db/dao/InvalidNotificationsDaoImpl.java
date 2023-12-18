@@ -9,11 +9,11 @@ import com.nlmk.adp.db.entity.InvalidNotificationsEntity;
 import com.nlmk.adp.db.repository.InvalidNotificationsRepository;
 
 /**
- * InvalidNotificationsDaoServiceImpl.
+ * InvalidNotificationsDaoImpl.
  */
 @Service
 @AllArgsConstructor
-public class InvalidNotificationsDaoServiceImpl implements InvalidNotificationsDaoService {
+public class InvalidNotificationsDaoImpl implements InvalidNotificationsDao {
 
     private final InvalidNotificationsRepository repository;
 

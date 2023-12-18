@@ -7,9 +7,9 @@ import java.util.UUID;
 import com.nlmk.adp.db.entity.NotificationUserSuccessEntity;
 
 /**
- * NotificationEmailDaoService.
+ * NotificationEmailDao.
  */
-public interface NotificationEmailDaoService {
+public interface NotificationEmailDao {
 
     /**
      * markAll.
