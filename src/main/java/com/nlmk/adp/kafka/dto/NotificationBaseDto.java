@@ -22,7 +22,10 @@ public record NotificationBaseDto(
         String header,
 
         @Schema(description = "Ссылка")
-        String href
+        String href,
+
+        @Schema(description = "Порядковый номер прихода уведомления")
+        Long ordinalNumber
 
 )       implements Comparable<NotificationBaseDto> {
     @Override

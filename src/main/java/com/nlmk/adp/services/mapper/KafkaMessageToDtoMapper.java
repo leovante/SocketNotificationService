@@ -43,6 +43,7 @@ public interface KafkaMessageToDtoMapper {
     @Mapping(target = "emails", expression = "java(mapEmailsToDto(req.getData().getAcceptEmails()))")
     @Mapping(target = "happenedAt", source = "ts")
     @Mapping(target = "expiredAt", source = "ts", qualifiedByName = "calcExpiredAt")
+    @Mapping(target = "ordinalNumber", ignore = true)
     NotificationDto mapDataToDto(DbUserNotificationVer0 req);
 
     /**

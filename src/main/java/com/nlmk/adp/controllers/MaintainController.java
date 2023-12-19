@@ -90,7 +90,8 @@ public class MaintainController {
                 header == null ? "Тест заголовок увеломления " + id : header,
                 href == null ? "/acceptVehicles" : URI.create(href).getPath(),
                 List.of(new RoleDto("super-user", NotificationRoleType.ACCEPT)),
-                List.of()
+                List.of(),
+                1L
         );
         notificationService.sendToKafka(dto);
     }

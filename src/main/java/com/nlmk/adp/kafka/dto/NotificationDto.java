@@ -54,7 +54,10 @@ public record NotificationDto(
         List<RoleDto> roles,
 
         @Schema(description = "Список email-идентификаторов пользователей для маршрутизации уведомления.")
-        List<EmailDto> emails
+        List<EmailDto> emails,
+
+        @Schema(description = "Порядковый номер прихода уведомления")
+        Long ordinalNumber
 
 ) {
 }

@@ -61,6 +61,9 @@ public class NotificationEntity {
     @Column(name = "kafka_dt")
     private Instant kafkaDt;
 
+    @Column(name = "ordinal_number", insertable = false, updatable = false, columnDefinition = "serial")
+    private Long ordinalNumber;
+
     @OneToMany(mappedBy = "notification", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private List<NotificationRolesEntity> notificationRolesEntities;
