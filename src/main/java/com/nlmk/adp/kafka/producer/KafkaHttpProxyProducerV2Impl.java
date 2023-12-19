@@ -1,16 +1,22 @@
 package com.nlmk.adp.kafka.producer;
 
+import javax.annotation.PostConstruct;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -19,6 +25,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 
 import com.nlmk.adp.commons.kafka.KafkaHttpProxyProducer;
+import com.nlmk.adp.commons.kafka.config.KafkaRestProxyConfigurationProperties;
 import com.nlmk.adp.commons.kafka.dto.KafkaRestProxyResponse;
 import com.nlmk.adp.commons.kafka.dto.MessageBatchMapper;
 import com.nlmk.adp.commons.kafka.dto.MessagesBatchDto;
@@ -26,29 +33,33 @@ import com.nlmk.adp.commons.kafka.dto.MessagesBatchDto;
 /**
  * Форк KafkaHttpProxyProducerImpl, необходим из-за проблем с версиями java и spring.
  */
+@ConditionalOnProperty(
+        name = {"kafka-rest-proxy.enable"},
+        havingValue = "true",
+        matchIfMissing = true
+)
 @Slf4j
+@Primary
+@Component
+@RequiredArgsConstructor
 public class KafkaHttpProxyProducerV2Impl implements KafkaHttpProxyProducer {
 
     private static final String TOPICS = "/topics/";
 
     private static final String CONTENT = "application/vnd.kafka.avro.v2+json";
 
-    private final WebClient kafkaWebClient;
-
     private final MessageBatchMapper messageBatchMapper;
 
-    /**
-     * Конструктор.
-     */
-    public KafkaHttpProxyProducerV2Impl(
-            MessageBatchMapper messageBatchMapper,
-            String url,
-            String username,
-            String password
-    ) {
-        this.messageBatchMapper = messageBatchMapper;
+    private final KafkaRestProxyConfigurationProperties kafkaRestProxyConfigurationProperties;
 
-        // Этот WebClient приватный для KafkaRestProxy - его никто не перегрузит
+    private WebClient kafkaWebClient;
+
+    @PostConstruct
+    void init() {
+        var username = kafkaRestProxyConfigurationProperties.getUsername();
+        var password = kafkaRestProxyConfigurationProperties.getPassword();
+        var url = kafkaRestProxyConfigurationProperties.getUrl();
+
         this.kafkaWebClient = WebClient
                 .builder()
                 .defaultHeaders(header -> {
