@@ -18,9 +18,11 @@ public class DateFormatConstants {
 
     public static final String KAFKA_FALLBACK_DATE_TIME_PATTERN_3 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSXXX";
 
+    public static final String KAFKA_FALLBACK_DATE_TIME_PATTERN_4 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX";
+
     public static final String KAFKA_DATE_TIME_PATTERNS = "["
             + KAFKA_DATE_TIME_PATTERN + "][" + KAFKA_FALLBACK_DATE_TIME_PATTERN_0 + "]["
-            + KAFKA_FALLBACK_DATE_TIME_PATTERN_3 + "]["
+            + KAFKA_FALLBACK_DATE_TIME_PATTERN_3 + "][" + KAFKA_FALLBACK_DATE_TIME_PATTERN_4 + "]["
             + KAFKA_FALLBACK_DATE_TIME_PATTERN_1 + "][" + KAFKA_FALLBACK_DATE_TIME_PATTERN_2 + "]";
 
 }
