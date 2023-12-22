@@ -1,12 +1,14 @@
 package com.nlmk.adp.services;
 
-import com.nlmk.adp.BaseSpringBootTest;
-import com.nlmk.adp.dto.SimpleStompAccount;
-import com.nlmk.adp.dto.StompAuthenticationToken;
-import com.nlmk.adp.dto.StompPrincipal;
-import com.nlmk.adp.kafka.listeners.NotificationListener;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.RequiredArgsConstructor;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,9 +26,10 @@ import org.springframework.messaging.simp.user.SimpSubscription;
 import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.nlmk.adp.BaseSpringBootTest;
+import com.nlmk.adp.dto.JwtAuthentication;
+import com.nlmk.adp.kafka.listeners.NotificationListener;
+import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
 
@@ -59,11 +62,11 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
                         "1",
                         new LocalSimpUser(
                                 TEST_USER_ACCEPT_EMAIL,
-                                new StompAuthenticationToken(
+                                new JwtAuthentication(
                                         null,
-                                        new SimpleStompAccount(
-                                                new StompPrincipal(TEST_USER_ACCEPT_EMAIL),
-                                                Set.of(TEST_USER_ACCEPT_ROLE, TEST_USER_REJECT_ROLE))))));
+                                        Set.of(TEST_USER_ACCEPT_ROLE, TEST_USER_REJECT_ROLE),
+                                        TEST_USER_ACCEPT_EMAIL,
+                                        null))));
         Mockito.when(simpUserRegistry.findSubscriptions(ArgumentMatchers.any())).thenReturn(Set.of(simpSubscription));
     }
 
@@ -83,7 +86,8 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
 
         Thread.sleep(10000);
         Mockito.verify(template, Mockito.times(1))
-                .convertAndSendToUser(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
+               .convertAndSendToUser(
+                       ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
         var val = (String) valueCapture.getValue();
 
         Assertions.assertThat(val).contains("Поезд 238194958 прибыл на станцию 298519851");
@@ -104,7 +108,8 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
 
         Thread.sleep(10000);
         Mockito.verify(template, Mockito.times(1))
-                .convertAndSendToUser(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
+               .convertAndSendToUser(
+                       ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
         var val = (String) valueCapture.getValue();
 
         Assertions.assertThat(val).contains("Поезд 238194958 прибыл на станцию 298519851");
@@ -126,13 +131,17 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
 
         Thread.sleep(10000);
         Mockito.verify(template, Mockito.times(0))
-                .convertAndSendToUser(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
+               .convertAndSendToUser(
+                       ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), valueCapture.capture());
     }
 
     @RequiredArgsConstructor
     private static class LocalSimpSession implements SimpSession {
+
         private final String id;
+
         private final LocalSimpUser user;
+
         private final Map<String, SimpSubscription> subscriptions = new ConcurrentHashMap(4);
 
         public String getId() {
@@ -146,12 +155,16 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
         public Set<SimpSubscription> getSubscriptions() {
             return new HashSet(this.subscriptions.values());
         }
+
     }
 
     @RequiredArgsConstructor
     private static class LocalSimpSubscription implements SimpSubscription {
+
         private final String id;
+
         private final String destination;
+
         private final LocalSimpSession session;
 
         public String getId() {
@@ -165,12 +178,16 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
         public String getDestination() {
             return this.destination;
         }
+
     }
 
     @RequiredArgsConstructor
     private static class LocalSimpUser implements SimpUser {
+
         private final String name;
+
         private final Principal user;
+
         private final Map<String, SimpSession> userSessions = new ConcurrentHashMap(1);
 
         public String getName() {
@@ -188,12 +205,13 @@ public class MessageFromKafkaRoleTest extends BaseSpringBootTest {
 
         @Nullable
         public SimpSession getSession(@Nullable String sessionId) {
-            return sessionId != null ? (SimpSession)this.userSessions.get(sessionId) : null;
+            return sessionId != null ? (SimpSession) this.userSessions.get(sessionId) : null;
         }
 
         public Set<SimpSession> getSessions() {
             return new HashSet(this.userSessions.values());
         }
+
     }
 
 }

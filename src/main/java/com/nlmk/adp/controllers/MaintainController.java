@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
-import com.nlmk.adp.services.NotificationService;
+import com.nlmk.adp.services.NotificationMaintainService;
 import com.nlmk.adp.services.mapper.NotificationRoleType;
 import nlmk.EnumOp;
 import nlmk.Sys;
@@ -43,7 +43,7 @@ import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 @CrossOrigin
 public class MaintainController {
 
-    private final NotificationService notificationService;
+    private final NotificationMaintainService notificationMaintainService;
 
     /**
      * postNotification.
@@ -63,7 +63,7 @@ public class MaintainController {
     public String postNotification(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {
-        notificationService.sendToKafka(payload);
+        notificationMaintainService.sendToKafka(payload);
         return "Success";
     }
 
@@ -93,7 +93,7 @@ public class MaintainController {
                 List.of(),
                 1L
         );
-        notificationService.sendToKafka(dto);
+        notificationMaintainService.sendToKafka(dto);
     }
 
     /**
@@ -133,7 +133,7 @@ public class MaintainController {
                         emails == null ? List.of() : emails
                 )
         );
-        notificationService.sendTrashToKafka(mes);
+        notificationMaintainService.sendAnythingToKafka(mes);
     }
 
     /**
@@ -151,7 +151,7 @@ public class MaintainController {
     public String postNotificationV2(
             @RequestBody @NotNull @Valid final NotificationDto payload
     ) {
-        notificationService.sendV2(payload);
+        notificationMaintainService.sendWithoutKafka(payload);
         return "Success";
     }
 
@@ -168,7 +168,7 @@ public class MaintainController {
     public NotificationDto getNotification(
             @PathVariable("id") UUID id
     ) {
-        return notificationService.getById(id);
+        return notificationMaintainService.getById(id);
     }
 
 }

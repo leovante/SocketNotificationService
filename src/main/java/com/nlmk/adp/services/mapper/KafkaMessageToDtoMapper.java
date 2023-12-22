@@ -12,8 +12,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.kafka.dto.ReadByUserEmailDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.util.SpringMapperConfig;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
@@ -40,7 +40,7 @@ public interface KafkaMessageToDtoMapper {
     @Mapping(target = "body", source = "data.body", qualifiedByName = "strip")
     @Mapping(target = "href", source = "data.href", qualifiedByName = "calcHref")
     @Mapping(target = "roles", expression = "java(mapRolesToDto(req.getData()))")
-    @Mapping(target = "emails", expression = "java(mapEmailsToDto(req.getData().getAcceptEmails()))")
+    @Mapping(target = "readByUserEmails", expression = "java(mapEmailsToDto(req.getData().getAcceptEmails()))")
     @Mapping(target = "happenedAt", source = "ts")
     @Mapping(target = "expiredAt", source = "ts", qualifiedByName = "calcExpiredAt")
     @Mapping(target = "ordinalNumber", ignore = true)
@@ -116,14 +116,14 @@ public interface KafkaMessageToDtoMapper {
      * Парсинг списка email.
      *
      * @param emails
-     *         emails as strings.
+     *         readByUserEmails as strings.
      *
-     * @return emails.
+     * @return readByUserEmails.
      */
-    default List<EmailDto> mapEmailsToDto(List<String> emails) {
+    default List<ReadByUserEmailDto> mapEmailsToDto(List<String> emails) {
         return emails.stream()
                      .filter(it -> !it.isBlank())
-                     .map(i -> new EmailDto(i, null))
+                     .map(i -> new ReadByUserEmailDto(i, null))
                      .toList();
     }
 

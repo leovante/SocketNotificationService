@@ -23,8 +23,8 @@ import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import com.nlmk.adp.db.entity.NotificationEmailPk;
 import com.nlmk.adp.db.entity.NotificationEntity;
 import com.nlmk.adp.db.entity.NotificationRolesPk;
-import com.nlmk.adp.kafka.dto.EmailDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.kafka.dto.ReadByUserEmailDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.services.mapper.NotificationRoleType;
 
@@ -80,7 +80,8 @@ public @interface NotificationCheck {
             validateBody(dto, errorList);
             validateHref(dto.href(), errorList);
 
-            var emails = CollectionUtils.emptyIfNull(dto.emails()).stream().map(EmailDto::email).toList();
+            var emails = CollectionUtils.emptyIfNull(dto.readByUserEmails()).stream()
+                                        .map(ReadByUserEmailDto::email).toList();
             var roles = CollectionUtils.emptyIfNull(dto.roles()).stream().collect(
                     Collectors.groupingBy(
                             RoleDto::roleType,
@@ -117,7 +118,7 @@ public @interface NotificationCheck {
         }
 
         /**
-         * Проверка списка emails.
+         * Проверка списка readByUserEmails.
          *
          * @param emails
          *         список для проверки.
@@ -176,7 +177,7 @@ public @interface NotificationCheck {
                     .filter(email -> !emailValidator.isValid(email, null))
                     .map(it -> " " + it + " ").collect(Collectors.joining(", "));
             if (!invalidEmails.isEmpty()) {
-                errorList.add("invalid emails: " + invalidEmails);
+                errorList.add("invalid readByUserEmails: " + invalidEmails);
             }
         }
 
@@ -250,7 +251,7 @@ public @interface NotificationCheck {
                 List<String> errorList
         ) {
             if (emails.isEmpty() && acceptRoles.isEmpty()) {
-                errorList.add("emails or acceptRoles should not be empty");
+                errorList.add("readByUserEmails or acceptRoles should not be empty");
             }
         }
 

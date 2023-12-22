@@ -1,6 +1,7 @@
 package com.nlmk.adp.dto;
 
 import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,11 +17,11 @@ import org.springframework.security.core.GrantedAuthority;
 @Accessors
 public class JwtAuthentication extends AbstractAuthenticationToken {
 
-    private String credentialsToken;
+    private final String credentialsToken;
 
-    private String user;
+    private final String userEmailIdentity;
 
-    private Collection<GrantedAuthority> authorities;
+    private final Set<String> roles;
 
     /**
      * Creates a token with the supplied array of authorities.
@@ -29,8 +30,16 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
      *         the collection of <tt>GrantedAuthority</tt>s for the principal represented by this authentication
      *         object.
      */
-    public JwtAuthentication(Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthentication(
+            Collection<? extends GrantedAuthority> authorities,
+            Set<String> roles,
+            String userEmailIdentity,
+            String credentialsToken
+    ) {
         super(authorities);
+        this.roles = roles;
+        this.userEmailIdentity = userEmailIdentity;
+        this.credentialsToken = credentialsToken;
     }
 
     @Override
@@ -40,7 +49,12 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
 
     @Override
     public String getPrincipal() {
-        return user;
+        return userEmailIdentity;
+    }
+
+    @Override
+    public String getName() {
+        return userEmailIdentity;
     }
 
 }

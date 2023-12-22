@@ -46,6 +46,10 @@ spring:
             authorization-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth
             token-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
   kafka:
+    retry:
+      topic:
+        attempts: 2
+        delay: 1s
     consumer:
       topic:
         notification-messsage: ${NLMK_MES_NOTIFICATION_TOPIC:000-1.l3-mesadp.db.user-notification.0}
@@ -81,6 +85,8 @@ spring:
       spring.deserializer.value.delegate.class: io.confluent.kafka.serializers.KafkaAvroDeserializer
       schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
       specific.avro.reader: true
+  session:
+    timeout: 300s
 
 keycloak:
   enabled: true

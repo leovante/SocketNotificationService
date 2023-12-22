@@ -3,9 +3,6 @@ package com.nlmk.adp.services;
 import java.util.List;
 import java.util.UUID;
 
-import com.nlmk.adp.BaseSpringBootTest;
-import com.nlmk.adp.dto.NotificationCheck;
-import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
 import jakarta.validation.ClockProvider;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.Getter;
@@ -15,10 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nlmk.adp.BaseSpringBootTest;
+import com.nlmk.adp.db.dao.InvalidNotificationsDao;
 import com.nlmk.adp.db.repository.InvalidNotificationsRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
+import com.nlmk.adp.dto.NotificationCheck;
 import com.nlmk.adp.kafka.listeners.NotificationListener;
-import com.nlmk.adp.services.NotificationService;
+import com.nlmk.adp.services.mapper.KafkaMessageToDtoMapper;
 import nlmk.l3.mesadp.DbUserNotificationVer0;
 
 class ApplicationInitTest extends BaseSpringBootTest {
@@ -28,6 +28,9 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private InvalidNotificationsDao invalidNotificationsDao;
 
     @Autowired
     private KafkaMessageToDtoMapper messageToDtoMapper;
@@ -93,7 +96,7 @@ class ApplicationInitTest extends BaseSpringBootTest {
         payload.getData().setAcceptEmails(List.of("admin", "operator"));
         payload.getData().setRejectRoles(List.of("operator"));
 
-        notificationService.invalidate(payload, error_text);
+        invalidNotificationsDao.saveNew(payload, error_text);
         var invalidTableResult = invalidNotificationsRepository.findAll()
                                                                .stream()
                                                                .filter(f -> f.getRawMessage().findValue("id").toString()
@@ -130,6 +133,7 @@ class ApplicationInitTest extends BaseSpringBootTest {
 
     @Getter
     class Context implements ConstraintValidatorContext {
+
         private String error_text;
 
         @Override
@@ -175,7 +179,9 @@ class ApplicationInitTest extends BaseSpringBootTest {
             }
 
             @Override
-            public ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String s, Class<?> aClass, Integer integer) {
+            public ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String s,
+                                                                                          Class<?> aClass,
+                                                                                          Integer integer) {
                 return null;
             }
 
@@ -188,7 +194,9 @@ class ApplicationInitTest extends BaseSpringBootTest {
             public ConstraintValidatorContext addConstraintViolation() {
                 return null;
             }
+
         }
+
     }
 
 }

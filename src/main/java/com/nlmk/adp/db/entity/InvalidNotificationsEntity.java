@@ -1,7 +1,6 @@
 package com.nlmk.adp.db.entity;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,8 +14,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
@@ -47,41 +46,26 @@ public class InvalidNotificationsEntity {
     )
     private UUID id;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "raw_message")
     @Convert(converter = RawMessageConverter.class)
     private JsonNode rawMessage;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "error_message")
     @Length(max = 8092)
     private String errorMessage;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "created_at")
     @CreatedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant createdAt;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "updated_at")
     @LastModifiedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant updatedAt;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-
-        InvalidNotificationsEntity task = (InvalidNotificationsEntity) o;
-        return id != null && Objects.equals(id, task.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 
 }

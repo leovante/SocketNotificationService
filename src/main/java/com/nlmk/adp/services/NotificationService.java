@@ -4,14 +4,35 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+
+import com.nlmk.adp.db.dao.NotificationDao;
+import com.nlmk.adp.db.dao.NotificationEmailDao;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
-import nlmk.l3.mesadp.DbUserNotificationVer0;
+import com.nlmk.adp.services.component.PrincipalJwt;
+import com.nlmk.adp.services.mapper.NotificationToDtoMapper;
 
 /**
- * NotificationService.
+ * NotificationServiceImpl.
  */
-public interface NotificationService {
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class NotificationService {
+
+    private final PrincipalJwt principalJwt;
+
+    private final NotificationDao notificationDao;
+
+    private final NotificationEmailDao notificationEmailDao;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    private final NotificationToDtoMapper notificationToDtoMapper;
 
     /**
      * send.
@@ -19,51 +40,16 @@ public interface NotificationService {
      * @param body
      *         body
      */
-    void send(NotificationDto body);
+    public void send(NotificationDto body) {
+        var existed = notificationDao.getById(body.id());
+        if (existed.isPresent()) {
+            log.info("Handled message is presented, uuid: " + body.id());
+            return;
+        }
 
-    /**
-     * sendV2.
-     *
-     * @param body
-     *         body
-     */
-    void sendV2(NotificationDto body);
-
-    /**
-     * sendToKafka.
-     *
-     * @param body
-     *         body
-     */
-    void sendToKafka(NotificationDto body);
-
-    /**
-     * invalidate.
-     *
-     * @param body
-     *         body
-     * @param reason
-     *         reason
-     */
-    void invalidate(Object body, String reason);
-
-    /**
-     * 123.
-     *
-     * @param body
-     *         123.
-     */
-    void sendTrashToKafka(DbUserNotificationVer0 body);
-
-    /**
-     * ById.
-     *
-     * @param id
-     *         id.
-     *
-     * @return notif.
-     */
-    NotificationDto getById(UUID id);
+        notificationDao.saveNew(body);
+        applicationEventPublisher.publishEvent(body);
+    }
 
     /**
      * ByRole.
@@ -73,14 +59,25 @@ public interface NotificationService {
      *
      * @return NotificationBaseDto.
      */
-    List<NotificationBaseDto> getBacklogNotificationsForCurrentUser(Integer limit);
+    public List<NotificationBaseDto> getBacklogNotificationsForCurrentUser(Integer limit) {
+        var roles = principalJwt.getRoles();
+        var email = principalJwt.getName();
+        return notificationDao.getBacklog(email, roles, limit)
+                              .stream()
+                              .map(notificationToDtoMapper::mapToBaseDto)
+                              .toList();
+    }
 
     /**
-     * markAllReadedByEmail.
+     * Пометить уведомления прочитанными.
      *
      * @param uuids
-     *         uuids
+     *         идентификаторы уведомлений.
      */
-    void markAllReadedByEmail(Set<UUID> uuids);
+    public void markNotificationsAsReadByUser(Set<UUID> uuids) {
+        var email = principalJwt.getName();
+        var roles = principalJwt.getRoles();
+        notificationEmailDao.markNotificationsAsReadByUser(email, roles, uuids);
+    }
 
 }
