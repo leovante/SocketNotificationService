@@ -16,12 +16,12 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import com.nlmk.adp.dto.JwtAuthentication;
-import com.nlmk.adp.dto.StompAuthenticationToken;
-import com.nlmk.adp.services.component.AuthJwt;
 
 /**
  * UserInterceptor.
@@ -32,17 +32,22 @@ import com.nlmk.adp.services.component.AuthJwt;
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class UserInterceptor implements ChannelInterceptor {
 
-    private final AuthJwt authService;
+    private final AuthenticationManager authService;
+
     @Value("${websocket.topic.start:/user/topic/notification}")
     private String startTopic;
+
     @Value("${websocket.topic.log:/topic/log}")
     private String logTopic;
 
     /**
      * preSend.
      *
-     * @param message message
-     * @param channel channel
+     * @param message
+     *         message
+     * @param channel
+     *         channel
+     *
      * @return Message
      */
     @Override
@@ -50,18 +55,18 @@ public class UserInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         switch (Optional.ofNullable(accessor)
-                .map(acc -> acc.getCommand())
-                .orElse(StompCommand.ERROR)) {
+                        .map(acc -> acc.getCommand())
+                        .orElse(StompCommand.ERROR)) {
             case CONNECT -> {
                 final String token = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
 
-                final StompAuthenticationToken user = (StompAuthenticationToken) Optional
+                final JwtAuthentication user = Optional
                         .ofNullable(token)
                         .map(m -> {
-                            var auth = new JwtAuthentication(null);
-                            auth.setCredentialsToken(token);
+                            var auth = new BearerTokenAuthenticationToken(token);
                             return authService.authenticate(auth);
                         })
+                        .map(it -> (JwtAuthentication) it)
                         .orElseThrow(() -> new OAuth2AuthenticationException("Access Denied"));
 
                 accessor.setUser(user);
@@ -82,8 +87,11 @@ public class UserInterceptor implements ChannelInterceptor {
     /**
      * validateSubscription.
      *
-     * @param principal principal
-     * @param topicDestination topicDestination
+     * @param principal
+     *         principal
+     * @param topicDestination
+     *         topicDestination
+     *
      * @return boolean
      */
     private boolean validateSubscription(Principal principal, String topicDestination) {

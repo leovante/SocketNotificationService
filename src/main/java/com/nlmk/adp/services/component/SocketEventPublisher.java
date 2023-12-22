@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.nlmk.adp.dto.StompAuthenticationToken;
+import com.nlmk.adp.dto.JwtAuthentication;
 import com.nlmk.adp.kafka.dto.NotificationDto;
 import com.nlmk.adp.services.SocketMessageSenderService;
 
@@ -42,8 +42,8 @@ public class SocketEventPublisher {
     @EventListener
     @Async
     public void send(Principal user) {
-        if (user instanceof StompAuthenticationToken) {
-            socketMessageSenderService.resendToNotReadedWsUsers((StompAuthenticationToken) user);
+        if (user instanceof JwtAuthentication) {
+            socketMessageSenderService.resendToNotReadedWsUsers((JwtAuthentication) user);
         }
         log.info("Handle notification to publish, uuid: {}", user.getName());
     }

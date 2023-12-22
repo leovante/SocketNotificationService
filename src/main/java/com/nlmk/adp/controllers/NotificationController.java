@@ -69,7 +69,7 @@ public class NotificationController {
             @Parameter(description = "Список uuid уведомлений с пометкой прочитано")
             @RequestBody Set<UUID> uuids
     ) {
-        notificationService.markAllReadedByEmail(uuids);
+        notificationService.markNotificationsAsReadByUser(uuids);
         return ResponseEntity.ok().build();
     }
 

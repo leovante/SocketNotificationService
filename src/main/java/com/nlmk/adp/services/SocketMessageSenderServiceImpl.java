@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nlmk.adp.db.repository.NotificationEmailRepository;
 import com.nlmk.adp.db.repository.NotificationRepository;
-import com.nlmk.adp.dto.StompAuthenticationToken;
-import com.nlmk.adp.kafka.dto.EmailDto;
+import com.nlmk.adp.dto.JwtAuthentication;
 import com.nlmk.adp.kafka.dto.NotificationBaseDto;
 import com.nlmk.adp.kafka.dto.NotificationDto;
+import com.nlmk.adp.kafka.dto.ReadByUserEmailDto;
 import com.nlmk.adp.kafka.dto.RoleDto;
 import com.nlmk.adp.services.component.ActiveUserStore;
 import com.nlmk.adp.services.mapper.NotificationRoleType;
@@ -68,7 +68,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
                        .filter(i -> shouldBeSent(dto, i))
                        .forEach(usr -> convertAndSendToUser(
                                castDtoToMessage(dto),
-                               (StompAuthenticationToken) usr.getUser().getPrincipal()));
+                               (JwtAuthentication) usr.getUser().getPrincipal()));
     }
 
     /**
@@ -79,22 +79,23 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
      */
     @Override
     @Transactional
-    public void resendToNotReadedWsUsers(StompAuthenticationToken user) {
-        log.info("Send for user message, user name: {}, topic: {}", user.getPrincipal().getName(), startTopic);
+    public void resendToNotReadedWsUsers(JwtAuthentication user) {
+        log.info("Send for user message, user name: {}, topic: {}", user.getName(), startTopic);
 
         var snapshots = notificationRepository.findActualByUserInfo(
                 user.getName(),
-                user.getAccount().getRoles(),
-                100);
+                user.getRoles(),
+                100
+        );
 
         if (snapshots.isEmpty()) {
             return;
         }
 
         var msg = snapshots.stream()
-                                .map(notificationFromDaoMapper::mapToBaseDto)
-                                .sorted(Collections.reverseOrder())
-                                .toList();
+                           .map(notificationFromDaoMapper::mapToBaseDto)
+                           .sorted(Collections.reverseOrder())
+                           .toList();
 
         convertAndSendToUser(
                 castDtoToMessage(msg),
@@ -110,8 +111,13 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
      *         user
      */
     @SneakyThrows
-    private void convertAndSendToUser(String message, StompAuthenticationToken user) {
-        log.info("Send message by socket, user name: {}, topic: {}, msg: {}", user.getName(), startTopic, message);
+    private void convertAndSendToUser(String message, JwtAuthentication user) {
+        log.info(
+                "Send message by socket, user name: {}, topic: {}, msg: {}",
+                user.getName(),
+                startTopic,
+                message
+        );
         template.convertAndSendToUser(
                 user.getName(),
                 startTopic,
@@ -121,17 +127,19 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     /**
      * shouldBeSent.
      *
-     * @param dto dto
-     * @param i i
+     * @param dto
+     *         dto
+     * @param i
+     *         i
+     *
      * @return boolean
      */
     private boolean shouldBeSent(NotificationDto dto, SimpSession i) {
-        var notifEmails = dto.emails().stream().map(EmailDto::email).toList();
+        var notifEmails = dto.readByUserEmails().stream().map(ReadByUserEmailDto::email).toList();
         var userEmail = i.getUser().getName();
 
         List<RoleDto> notifRoles = dto.roles();
-        Set<String> userRoles = ((StompAuthenticationToken) i.getUser().getPrincipal())
-                .getAccount().getRoles();
+        Set<String> userRoles = ((JwtAuthentication) i.getUser().getPrincipal()).getRoles();
 
         boolean isMatchedByEmail = isMatchedByEmail(notifEmails, userEmail);
         boolean isMatchedByRoles = isMatchedByRoles(notifRoles, userRoles);
@@ -143,8 +151,11 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     /**
      * isMatchedByEmail.
      *
-     * @param notifEmails notifEmails
-     * @param userEmail userEmail
+     * @param notifEmails
+     *         notifEmails
+     * @param userEmail
+     *         userEmail
+     *
      * @return boolean
      */
     private boolean isMatchedByEmail(List<String> notifEmails, String userEmail) {
@@ -154,8 +165,11 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
     /**
      * isMatchedByRoles.
      *
-     * @param notifRoles notifRoles
-     * @param userRoles userRoles
+     * @param notifRoles
+     *         notifRoles
+     * @param userRoles
+     *         userRoles
+     *
      * @return boolean
      */
     private boolean isMatchedByRoles(

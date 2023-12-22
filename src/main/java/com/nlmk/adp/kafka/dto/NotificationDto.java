@@ -26,8 +26,8 @@ import com.nlmk.adp.dto.NotificationCheck;
  *         ссылка, на которую произойдет переход при нажатии на уведомление.
  * @param roles
  *         список ролей для маршрутизации уведомления.
- * @param emails
- *         список emails для маршрутизации уведомления.
+ * @param readByUserEmails
+ *         список readByUserEmails для маршрутизации уведомления.
  */
 @NotificationCheck
 public record NotificationDto(
@@ -54,7 +54,7 @@ public record NotificationDto(
         List<RoleDto> roles,
 
         @Schema(description = "Список email-идентификаторов пользователей для маршрутизации уведомления.")
-        List<EmailDto> emails,
+        List<ReadByUserEmailDto> readByUserEmails,
 
         @Schema(description = "Порядковый номер прихода уведомления")
         Long ordinalNumber

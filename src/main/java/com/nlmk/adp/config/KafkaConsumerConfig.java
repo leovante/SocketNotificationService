@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
-import com.nlmk.adp.services.NotificationService;
+import com.nlmk.adp.db.dao.InvalidNotificationsDao;
 
 /**
  * Конфигурация получения сообщений по кафка.
@@ -19,18 +19,21 @@ import com.nlmk.adp.services.NotificationService;
 @RequiredArgsConstructor
 public class KafkaConsumerConfig extends KafkaProperties.Consumer {
 
-    public static final int RETRY_TIMEOUT = 1000;
-
     @Bean
-    DefaultErrorHandler errorHandler(NotificationService notificationService) {
+    DefaultErrorHandler errorHandler(
+            InvalidNotificationsDao invalidNotificationsDao,
+            KafkaProperties kafkaProperties
+    ) {
+        var attempts = kafkaProperties.getRetry().getTopic().getAttempts();
+        var delay = kafkaProperties.getRetry().getTopic().getDelay().getSeconds() * 1000;
         return new DefaultErrorHandler(
-                (rec, ex) -> handler(notificationService, rec, ex),
-                new FixedBackOff(RETRY_TIMEOUT, 2)
+                (rec, ex) -> handler(invalidNotificationsDao, rec, ex),
+                new FixedBackOff(delay, attempts)
         );
     }
 
     private static void handler(
-            NotificationService notificationService,
+            InvalidNotificationsDao invalidNotificationsDao,
             ConsumerRecord<?, ?> rec, Exception ex
     ) {
         var cause = ex.getCause();
@@ -38,7 +41,7 @@ public class KafkaConsumerConfig extends KafkaProperties.Consumer {
         log.error("Kafka consuming error", ex);
         String message = String.format("%s : %s", cause.getClass().getName(), cause.getMessage());
         try {
-            notificationService.invalidate(recValue, message);
+            invalidNotificationsDao.saveNew(recValue, message);
         } catch (Exception exp) {
             log.error("Error logging kafka consuming error", exp);
         }

@@ -10,8 +10,6 @@ import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 
-import com.nlmk.adp.kafka.dto.EmailDto;
-
 /**
  * Служебный компонент для хранения вебсокет-сессий.
  */
@@ -50,21 +48,6 @@ public class ActiveUserStore {
                 .findSubscriptions(i -> i.getDestination().contains(topic))
                 .stream()
                 .map(SimpSubscription::getSession)
-                .distinct()
-                .toList();
-    }
-
-    /**
-     * getUsersByTopic.
-     *
-     * @return List
-     */
-    public List<SimpSession> getUsersByTopic(String topic, List<EmailDto> emails) {
-        return simpUserRegistry
-                .findSubscriptions(i -> i.getDestination().contains(topic))
-                .stream()
-                .map(SimpSubscription::getSession)
-                .filter(i -> emails.stream().map(EmailDto::email).toList().contains(i.getUser().getName()))
                 .distinct()
                 .toList();
     }

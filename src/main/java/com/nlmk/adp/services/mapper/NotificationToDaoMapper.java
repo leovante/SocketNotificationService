@@ -67,7 +67,7 @@ public interface NotificationToDaoMapper {
      * @return Set
      */
     default List<NotificationUserSuccessEntity> mapEmailsToEntity(NotificationDto notificationDto) {
-        return notificationDto.emails().stream()
+        return notificationDto.readByUserEmails().stream()
                               .map(dto -> {
                                   var entity = new NotificationUserSuccessEntity();
                                   var emailPk = new NotificationEmailPk();
