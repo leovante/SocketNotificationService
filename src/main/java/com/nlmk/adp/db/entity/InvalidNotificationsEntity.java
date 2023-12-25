@@ -13,9 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,7 +29,9 @@ import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 /**
  * InvalidNotificationsEntity.
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Builder
 @NoArgsConstructor
@@ -38,6 +41,7 @@ import com.nlmk.adp.db.entity.convert.RawMessageConverter;
 public class InvalidNotificationsEntity {
 
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -46,23 +50,19 @@ public class InvalidNotificationsEntity {
     )
     private UUID id;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "raw_message")
     @Convert(converter = RawMessageConverter.class)
     private JsonNode rawMessage;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "error_message")
     @Length(max = 8092)
     private String errorMessage;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "created_at")
     @CreatedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant createdAt;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "updated_at")
     @LastModifiedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
