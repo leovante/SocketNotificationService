@@ -1,9 +1,9 @@
 package com.nlmk.adp.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
  * Конфигурация маппера.
@@ -11,13 +11,19 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 @Configuration
 public class ObjectMapperConfig {
 
+    /**
+     * Конфиг jackson (для invalid notif логирования).
+     *
+     * @return конфиг jackson.
+     */
     @Bean
-    Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
-        return new Jackson2ObjectMapperBuilder()
-                .mixIn(
-                        org.apache.avro.specific.SpecificRecord.class,
-                        JacksonIgnoreAvroProperties.class
-                );
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> {
+            builder.mixIn(
+                    org.apache.avro.specific.SpecificRecord.class,
+                    JacksonIgnoreAvroProperties.class
+            );
+        };
     }
 
     abstract class JacksonIgnoreAvroProperties {
