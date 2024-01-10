@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nlmk.adp.kafka.dto.NotificationDto;
@@ -39,7 +40,6 @@ import nlmk.l3.mesadp.db.user.notification.ver0.RecordData;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/maintain")
-@PreAuthorize("hasRole('super-user')")
 @CrossOrigin
 public class MaintainController {
 
@@ -76,6 +76,7 @@ public class MaintainController {
     @SuppressWarnings("ParameterNumber")
     @Operation(summary = "Отправить тестовое уведомление супер-пользователю")
     @PostMapping("/notification-with-kafka-for-super-user")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void notifySuperUser(
             @RequestParam @Nullable String header,
             @RequestParam @Nullable String body,
@@ -105,6 +106,7 @@ public class MaintainController {
     @SuppressWarnings("ParameterNumber")
     @Operation(summary = "Отправка любых сообщений в kafka")
     @PostMapping("/trash-notification")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void sendTrash(
             @RequestParam @Nullable String ts,
             @RequestParam @Nullable EnumOp operation,

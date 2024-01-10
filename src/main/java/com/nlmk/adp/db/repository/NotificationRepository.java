@@ -45,7 +45,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
                     where notif.expired_at > now()
                        and (nus.email is not null
                        or (accroles is not null and rejroles is null))
-                    ORDER BY notif.kafka_dt desc
+                    ORDER BY notif.ts desc
                     limit :limitElem
                     """,
             nativeQuery = true
@@ -93,7 +93,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
                       and ((nusnotread.email is not null)
                         or (accroles is not null
                             and rejroles is null))
-                    order by notif.kafka_dt desc
+                    order by notif.ts desc
                     limit :limitElem
                     """,
             nativeQuery = true

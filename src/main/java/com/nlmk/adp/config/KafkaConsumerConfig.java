@@ -1,6 +1,5 @@
 package com.nlmk.adp.config;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -16,7 +15,6 @@ import com.nlmk.adp.db.dao.InvalidNotificationsDao;
  */
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 public class KafkaConsumerConfig extends KafkaProperties.Consumer {
 
     @Bean

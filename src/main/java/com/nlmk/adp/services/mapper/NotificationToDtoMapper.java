@@ -32,7 +32,7 @@ public interface NotificationToDtoMapper {
     @Mapping(target = "href", source = "href")
     @Mapping(target = "roles", source = "notificationRolesEntities")
     @Mapping(target = "readByUserEmails", source = "notificationUserSuccessEntities")
-    @Mapping(target = "happenedAt", source = "kafkaDt")
+    @Mapping(target = "happenedAt", source = "kafkaTs")
     @Mapping(target = "expiredAt", source = "expiredAt")
     NotificationDto mapToDto(NotificationEntity entity);
 
@@ -48,7 +48,7 @@ public interface NotificationToDtoMapper {
     @Mapping(target = "header", source = "header")
     @Mapping(target = "body", source = "body")
     @Mapping(target = "href", source = "href")
-    @Mapping(target = "happenedAt", source = "kafkaDt")
+    @Mapping(target = "happenedAt", source = "kafkaTs")
     NotificationBaseDto mapToBaseDto(NotificationEntity entity);
 
     /**

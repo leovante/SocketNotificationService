@@ -28,7 +28,7 @@ public interface NotificationToDaoMapper {
      * @return NotificationEntity
      */
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "kafkaDt", source = "happenedAt")
+    @Mapping(target = "kafkaTs", source = "happenedAt")
     @Mapping(target = "notificationRolesEntities", expression = "java(mapRolesToEntity(dto))")
     @Mapping(target = "notificationUserSuccessEntities", expression = "java(mapEmailsToEntity(dto))")
     @Mapping(target = "createdAt", ignore = true)

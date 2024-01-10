@@ -23,6 +23,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class StompHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
+
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${websocket.topic.log:/topic/log}")
@@ -31,7 +32,8 @@ public class StompHandler {
     /**
      * ConnectEvent.
      *
-     * @param <S> S
+     * @param <S>
+     *         S
      */
     @Component
     class ConnectEvent<S> implements ApplicationListener<SessionConnectEvent> {
@@ -39,8 +41,8 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionConnectEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                    .map(Principal::getName)
-                    .orElse(null);
+                                .map(Principal::getName)
+                                .orElse(null);
 
             if (id == null) {
                 log.info("No user event to connect");
@@ -59,7 +61,8 @@ public class StompHandler {
     /**
      * SubscribeEvent.
      *
-     * @param <S> S
+     * @param <S>
+     *         S
      */
     @Component
     class SubscribeEvent<S> implements ApplicationListener<SessionSubscribeEvent> {
@@ -67,8 +70,8 @@ public class StompHandler {
         @Override
         public void onApplicationEvent(SessionSubscribeEvent event) {
             String id = Optional.ofNullable(event.getUser())
-                    .map(Principal::getName)
-                    .orElse(null);
+                                .map(Principal::getName)
+                                .orElse(null);
 
             if (id == null) {
                 log.info("No user event to subscribe");
@@ -89,25 +92,24 @@ public class StompHandler {
     /**
      * DisconnectEvent.
      *
-     * @param <S> S
+     * @param <S>
+     *         S
      */
     @Component
     class DisconnectEvent<S> implements ApplicationListener<SessionDisconnectEvent> {
 
         @Override
         public void onApplicationEvent(SessionDisconnectEvent event) {
-            String id = Optional.ofNullable(event.getUser())
-                    .map(Principal::getName)
-                    .orElse("");
+            String userId = Optional.ofNullable(event.getUser())
+                                    .map(Principal::getName)
+                                    .orElse(null);
 
-            if (id == null) {
+            if (userId == null) {
                 log.info("No user event to disconnect");
                 return;
             }
 
-            messagingTemplate.convertAndSend(
-                    logTopic,
-                    "Disconnect session for user: " + event.getUser().getName());
+            messagingTemplate.convertAndSend(logTopic, "Disconnect session for user: " + userId);
 
             log.info("stomp session disconnected");
         }

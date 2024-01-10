@@ -60,7 +60,7 @@ class ApplicationInitTest extends BaseSpringBootTest {
             it.assertThat(result.getCreatedAt()).isNotNull();
             it.assertThat(result.getUpdatedAt()).isNotNull();
             it.assertThat(result.getExpiredAt()).isNotNull();
-            it.assertThat(result.getKafkaDt()).isNotNull();
+            it.assertThat(result.getKafkaTs()).isNotNull();
 
             var rolesResult = result.getNotificationRolesEntities().stream().toList();
             it.assertThat(rolesResult)

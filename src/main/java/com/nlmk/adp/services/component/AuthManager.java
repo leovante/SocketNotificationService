@@ -28,13 +28,6 @@ import com.nlmk.adp.dto.KeyckloakUserDto;
 @RequiredArgsConstructor
 public class AuthManager implements AuthenticationManager {
 
-    /**
-     * Префикс роли.
-     *
-     * @see SecurityExpressionRoot.defaultRolePrefix префикс роли.
-     */
-    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-
     private final ObjectMapper objectMapper;
 
     @Override
@@ -60,7 +53,7 @@ public class AuthManager implements AuthenticationManager {
         Set<String> roles = user.getRealmAccess().getRoles();
         var authorities = roles.stream()
                                .filter(it -> !it.isBlank())
-                               .map(i -> new SimpleGrantedAuthority(DEFAULT_ROLE_PREFIX + i))
+                               .map(SimpleGrantedAuthority::new)
                                .toList();
 
         if (user.getEmail() == null) {
