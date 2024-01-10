@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "kafkaTimestamp": "1212"
+  },
+  "data": {
+    "body": "body",
+    "header": "header",
+    "href": "http://href.nlmk.com",
+    "acceptRoles": [
+      "admin",
+      "admin1"
+    ],
+    "rejectRoles": [
+      "operator"
+    ],
+    "acceptEmails": [
+      "test@nlmk.com"
+    ]
+  }
+}

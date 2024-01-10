@@ -5,6 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="schema/2023_10_20_init.sql" relativeToChangelogFile="true"/>
+    <include file="schema/000-create-table-notification.sql" relativeToChangelogFile="true"/>
+    <include file="schema/001-create-table-notification-roles.sql" relativeToChangelogFile="true"/>
+    <include file="schema/002-create-table-notification-user-success.sql" relativeToChangelogFile="true"/>
+    <include file="schema/003-create-table-invalid-notifications.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

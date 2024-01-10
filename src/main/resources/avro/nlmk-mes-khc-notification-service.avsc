@@ -1,0 +1,215 @@
+{
+  "type": "record",
+  "name": "DbUserNotificationVer0",
+  "namespace": "nlmk.l3.mesadp",
+  "doc": "Пользовательские уведомления в системе MES ADP",
+  "fields": [
+    {
+      "name": "ts",
+      "type": "string",
+      "doc": "Время события для уведомления в ISO 8601:2004 с указанием TZ"
+    },
+    {
+      "name": "op",
+      "type": {
+        "type": "enum",
+        "name": "EnumOp",
+        "namespace": "nlmk",
+        "symbols": [
+          "U",
+          "D",
+          "I"
+        ]
+      },
+      "doc": "Вид операции [U]pdate, [D]elete, [I]nsert"
+    },
+    {
+      "name": "pk",
+      "type": {
+        "type": "record",
+        "name": "PkType",
+        "namespace": "nlmk.l3.mesadp.db.user.notification.ver0",
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            },
+            "doc": "Идентификатор события  (UUID, генерируется отправителем)"
+          }
+        ]
+      },
+      "doc": "Первичный ключ записи в виде структуры"
+    },
+    {
+      "name": "sys",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Sys",
+          "namespace": "nlmk",
+          "fields": [
+            {
+              "name": "seqID",
+              "type": "long",
+              "doc": "Монотонно возрастающий счетчик для проверки или восстановления оригинальной последовательности",
+              "default": -1
+            },
+            {
+              "name": "traceID",
+              "type": "string",
+              "doc": "Сквозной Trace ID (обычно UUID)",
+              "default": ""
+            }
+          ]
+        }
+      ],
+      "doc": "Системные поля, заполняемые источником",
+      "default": null
+    },
+    {
+      "name": "metadata",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Metadata",
+          "namespace": "nlmk",
+          "fields": [
+            {
+              "name": "kafkaKeySchemaID",
+              "type": "int",
+              "doc": "Версия схемы ключа",
+              "default": -1
+            },
+            {
+              "name": "kafkaValueSchemaID",
+              "type": "int",
+              "doc": "Версия схемы значения",
+              "default": -1
+            },
+            {
+              "name": "kafkaKey",
+              "type": "string",
+              "doc": "Ключ в Kafka",
+              "default": ""
+            },
+            {
+              "name": "kafkaPartition",
+              "type": "int",
+              "doc": "Номер партиции",
+              "default": -1
+            },
+            {
+              "name": "kafkaOffset",
+              "type": "long",
+              "doc": "Offset в Kafka",
+              "default": -1
+            },
+            {
+              "name": "kafkaTimestamp",
+              "type": "string",
+              "doc": "Время сообщения в Kafka",
+              "default": ""
+            },
+            {
+              "name": "kafkaTopic",
+              "type": "string",
+              "doc": "Имя топика",
+              "default": ""
+            },
+            {
+              "name": "kafkaHeaders",
+              "type": [
+                "null",
+                {
+                  "type": "map",
+                  "values": "string"
+                }
+              ],
+              "doc": "Заголовки в Kafka",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "doc": "Мета структура, заполняется Подписчиком после чтения",
+      "default": null
+    },
+    {
+      "name": "data",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "RecordData",
+          "namespace": "nlmk.l3.mesadp.db.user.notification.ver0",
+          "fields": [
+            {
+              "name": "header",
+              "type": "string",
+              "doc": "Название уведомления, отображаемое в заголовке, кратко передает суть сообщения"
+            },
+            {
+              "name": "body",
+              "type": "string",
+              "doc": "Полный текст уведомления"
+            },
+            {
+              "name": "href",
+              "type": "string",
+              "doc": "Ссылка на ту часть системы, в которую пользователь должен перейти при клике на уведомление"
+            },
+            {
+              "name": "type",
+              "type": {
+                "type": "enum",
+                "name": "NotificationType",
+                "symbols": [
+                  "INFO"
+                ]
+              },
+              "doc": "Тип уведомления"
+            },
+            {
+              "name": "acceptRoles",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": "string"
+                }
+              ],
+              "doc": "Роли пользователей, которые получат уведомление (по умолчанию - все пользователи)",
+              "default": null
+            },
+            {
+              "name": "acceptEmails",
+              "type": {
+                "type": "array",
+                "items": "string"
+              },
+              "doc": "E-Mails пользователей для идентификации пользователей"
+            },
+            {
+              "name": "rejectRoles",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": "string"
+                }
+              ],
+              "doc": "Роли пользователей, которые НЕ получат уведомление, даже если попадают под условия accept",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "doc": "Данные",
+      "default": null
+    }
+  ]
+}

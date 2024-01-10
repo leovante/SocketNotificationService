@@ -18,7 +18,7 @@ public class HomeController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping("/")
     public String index() {
-        return "redirect:swagger-ui/";
+        return "redirect:/swagger-ui/index.html";
     }
 
 }

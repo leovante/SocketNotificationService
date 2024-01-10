@@ -2,9 +2,11 @@ server:
   port: ${SERVER_PORT:7070}
 
 spring:
+  liquibase:
+    change-log: classpath:db/changelog-master.xml
   application:
     name: nlmk-mes-notifications
-  mvc:
+  web:
     locale: ${LOCALE:ru_RU}
     locale-resolver: fixed
   messages:
@@ -14,11 +16,13 @@ spring:
     baseUrl: ${ZIPKIN_BASE_URL}
   sleuth:
     enabled: false
+  sql:
+    init:
+      platform: postgres
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    platform: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -38,12 +42,10 @@ spring:
             authorization-grant-type: client_credentials
         provider:
           keycloak:
-            authorization-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/auth
-            token-uri: http://localhost:8081/realms/nlmk-local/protocol/openid-connect/token
-  cache:
-    caffeine:
-      nsi:
-        expireAfterWrite: 60  # в минутах
+            authorization-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/auth
+            token-uri: ${KEYCLOAK_SERVER_URL:http://localhost:8081}/realms/${KEYCLOAK_REALM:mes-adp-test}/protocol/openid-connect/token
+  kafka:
+    enabled: true
 
 keycloak:
   enabled: true
@@ -60,13 +62,13 @@ springdoc:
       client-id: ${KEYCLOAK_CLIENT_ID:notifications-id}
       client-secret: ${KEYCLOAK_CLIENT_SECRET:1VXjz363YasrBia2LgDZfvEOA0ELxOlu}
 
-
 logging:
   aop-debug-rest: ${AOP_DEBUG_REST:false}
   aop-debug-kafka: ${AOP_DEBUG_KAFKA:false}
   aop-debug-service: ${AOP_DEBUG_SERVICE:false}
   level:
     root: ${LOG_LEVEL:INFO}
+    com.nlmk.adp: DEBUG
   config: classpath:logback-local.xml
 
 management:

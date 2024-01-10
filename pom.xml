@@ -6,8 +6,8 @@
     <parent>
         <groupId>com.nlmk</groupId>
         <artifactId>spring-boot-starter-adp</artifactId>
-        <version>0.9.6</version>
-        <relativePath />
+        <version>1.0.0-beta-notgraphql</version>
+        <relativePath>parent_pom.xml</relativePath>
     </parent>
 
     <groupId>com.nlmk.mes</groupId>
@@ -21,26 +21,63 @@
     <name>nlmk-mes-notifications</name>
 
     <properties>
-        <java.version>17</java.version>
-        <lombok.version>1.18.30</lombok.version>
-        <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
-        <checkstyle.version>8.39</checkstyle.version>
-        <spring.openapi.version>1.6.14</spring.openapi.version>
-        <apt.mavenplugin.version>1.1.3</apt.mavenplugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <adp-kafka-rest-proxy-spring-boot-starter.version>1.0.1</adp-kafka-rest-proxy-spring-boot-starter.version>
         <testcontainers.version>1.18.0</testcontainers.version>
     </properties>
 
     <dependencies>
-        <!-- openapi documentation -->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${spring.openapi.version}</version>
+            <groupId>com.nlmk</groupId>
+            <artifactId>adp-kafka-rest-proxy-spring-boot-starter</artifactId>
+            <version>${adp-kafka-rest-proxy-spring-boot-starter.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-data-rest</artifactId>
-            <version>${spring.openapi.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-stomp</artifactId>
+            <version>6.1.4</version>
+        </dependency>
+
+        <!--SECURITY-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-messaging</artifactId>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.1</version>
         </dependency>
 
         <!--TEST-->
@@ -57,9 +94,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-wiremock</artifactId>
+            <version>4.0.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>2.27.2</version>
+            <version>3.3.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -67,29 +110,26 @@
     <build>
         <finalName>app</finalName>
         <plugins>
+
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>false</fork>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>${apt.mavenplugin.version}</version>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>process</goal>
+                            <goal>schema</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+                    <outputDirectory>${project.basedir}/target/generated-sources/avro</outputDirectory>
+                    <stringType>String</stringType>
+                </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -120,18 +160,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                    <generateReleasePoms>false</generateReleasePoms>
-                    <scmCommentPrefix>[release]:</scmCommentPrefix>
-                    <arguments>-Dmaven.javadoc.skip=true -Dmaven.test.skip=true</arguments>
-                    <goals>validate</goals>
-                    <preparationGoals>validate</preparationGoals>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 
