@@ -60,8 +60,8 @@ public class NotificationEntity {
     @Length(max = VARCHAR_FIELD_MAX_SIZE)
     private String href;
 
-    @Column(name = "kafka_dt")
-    private Instant kafkaDt;
+    @Column(name = "ts")
+    private Instant kafkaTs;
 
     @Column(name = "ordinal_number", insertable = false, updatable = false, columnDefinition = "serial")
     private Long ordinalNumber;

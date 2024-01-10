@@ -20,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+    public static final String SUPER_USER_ROLE = "super-user";
+
     /**
      * 123.
      *
@@ -48,6 +50,7 @@ public class WebSecurityConfig {
                 })
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/").permitAll()
                                                    .requestMatchers("/api/*").permitAll()
+                                                   .requestMatchers("/api/maintain/*").hasAuthority(SUPER_USER_ROLE)
                                                    .requestMatchers("/error").permitAll()
                                                    .requestMatchers("/swagger-ui/*").permitAll()
                                                    .requestMatchers("/v3/api-docs/**").permitAll()

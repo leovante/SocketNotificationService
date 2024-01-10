@@ -1,6 +1,7 @@
 package com.nlmk.adp.services;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -94,7 +95,7 @@ public class SocketMessageSenderServiceImpl implements SocketMessageSenderServic
 
         var msg = snapshots.stream()
                            .map(notificationFromDaoMapper::mapToBaseDto)
-                           .sorted(Collections.reverseOrder())
+                           .sorted(Collections.reverseOrder(Comparator.comparing(NotificationBaseDto::happenedAt)))
                            .toList();
 
         convertAndSendToUser(
