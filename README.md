@@ -1,15 +1,5 @@
-NlmkMesNotifications Service
+Notifications Service
 ======================================
-
-Пререквизиты
-----------------
-Перед тем как развернуть приложение, необходимо подготовить `settings.xml` и указать в IntelliJ IDEA путь к нему.  
-Шаги выполнения:
- 1. Скачайте [settings.xml](https://git.nlmk.com/mes-adp/gitlab-ci/-/blob/master/maven/settings.xml).
- 2. Откройте загруженный файл и в тегах `username` и `password` укажите свои доменные НЛМК логин и пароль. 
- 3. Поместите загруженный файл в локальный репозиторий maven (по умолчанию путь для Windows пользователей: `C:\Users\<User_Name>\.m2`).
- 4. Проверьте, что в IntelliJ IDEA указан данный `settings.xml`. Для этого перейдите в `File | Settings | Build, Execution, Deployment | Build Tools | Maven` настройка`User setting file`.   
-    Если указан другой `settings.xml`, измените путь к файлу на необходимый.
 
 Сборка
 ----------------
